@@ -1,0 +1,62 @@
+# project.name
+name: demo
+# 数据库配置
+database:
+  caseSensitive: true
+  # 数据库连接
+  jdbcConnection:
+    dialect: MYSQL
+    driver: org.hsqldb.jdbcDriver
+    url: jdbc:hsqldb:mem:generator
+    user: root
+    password: root
+  # 数据库关键字
+  keywords:
+    - order
+    - desc
+  # java类型和数据库类型对应关系
+  typeMap:
+    java.lang.String: char, varchar
+    java.lang.Long: bigint
+  # 全局主键配置
+  tableKey:
+    identity: true
+    column: id
+  # 单个表的配置
+  tables:
+    - name: sys_user #TODO 考虑支持 % _ 模糊匹配
+      domainName: User #TODO 模糊匹配时，不能直接指定名称，需要考虑移出前缀
+      tableKey: # 单独配置，优先级更高
+        identity: true
+        column: id
+    - name: sys_role
+      domainName: Role
+# 项目结构配置
+dictionaries: #目录结构，可以多级
+  - name: api/src/main
+    dictionaries:
+      - name: java
+        packages: #包，可以多层
+          - name: 'io.mybatis.${project.name}'
+            packages:
+              - name: api
+                templates: #模板文件
+                  - name: '${entity}Service' #生成的文件名
+                    file: 'service.ftl'  #使用的模板，相对classpath路径
+              - name: model
+                templates:
+                  - name: '${entity}'
+                    file: 'entity.ftl'
+      - name: resources
+        dictionaries:
+          - name: mappers
+            templates:
+              - name: '${entity}Mapper.xml'
+#项目根路径下面也可以放模板
+templates:
+  - name: .gitignore #只有name时，直接找该名字的模板
+    content: | #模板内容
+      *.iml
+      .idea
+      target/
+

@@ -30,19 +30,19 @@ MyBatis Mapper 要求 MyBatis 最低版本为
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-mapper</artifactId>
-    <version>1.0.0-Preview</version>
+    <version>1.0.0-Preview2</version>
   </dependency>
   <!-- 使用 Service 层封装时 -->
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-service</artifactId>
-    <version>1.0.0-Preview</version>
+    <version>1.0.0-Preview2</version>
   </dependency>
   <!-- 使用 ActiveRecord 模式时 -->
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-activerecord</artifactId>
-    <version>1.0.0-Preview</version>
+    <version>1.0.0-Preview2</version>
   </dependency>
 </dependencies>
 ```
@@ -51,11 +51,11 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 
 ```groovy
 dependencies {
-  compile("io.mybatis:mybatis-mapper:1.0.0-Preview")
+  compile("io.mybatis:mybatis-mapper:1.0.0-Preview2")
   // 使用 Service 层封装时
-  compile("io.mybatis:mybatis-service:1.0.0-Preview")
+  compile("io.mybatis:mybatis-service:1.0.0-Preview2")
   // 使用 ActiveRecord 模式时
-  compile("io.mybatis:mybatis-activerecord:1.0.0-Preview")
+  compile("io.mybatis:mybatis-activerecord:1.0.0-Preview2")
 }
 ```
 
@@ -320,3 +320,158 @@ service 模块对应开发中的 service 层，或者说是 Spring 中的 `@Serv
 activerecord 模块提供了 4 个接口类、1个工具类、1个配置类和1个Spring Boot自动配置类。
 
 点击[查看详细介绍](./activerecord/README.md)。
+
+## 7. generator 代码生成器模块
+
+代码生成器和 MyBatis Generator 没有任何联系，这是一个和 MyBatis 没有直接关系的通用代码生成器。
+
+代码生成器的数据分为基础配置信息和代码数据信息，默认的代码数据信息来自于数据库表信息的（后续会考虑支持通过维护数据自动生成表和代码），
+通过设置好的模板生成对应的代码（目前的设计还能直接生成项目结构，省去 maven archetype 原型）。
+
+点击[查看详细介绍](./generator/README.md)。
+
+## 8. 实现通用方法
+
+当前项目中 [mapper/src/main/java/io/mybatis/mapper](./mapper/src/main/java/io/mybatis/mapper) 的所有实现都是可以参考的例子，
+这里通过一个简单的例子，来说明实现过程中需要考虑和注意的地方。
+
+### 8.1 需求
+
+实现一个方法，以实体类作为查询条件，查询指定列的 `SUM` 求和结果。
+
+这个需求要实现的就是类似 `SELECT SUM(指定列) FROM TABLE WHERE ...` 这样一个 SQL，虽然功能简单，但是实现中涉及的技术点非常多。
+
+### 8.2 接口定义
+
+针对上面的需求，定义接口和相应的方法如下：
+
+```java
+public interface SumMapper<T> {
+
+  /**
+   * 根据 entity 查询条件，查询 sum(column) 总数
+   *
+   * @param column 指定的查询列
+   * @param entity 查询条件
+   * @return 总数
+   */
+  @Lang(Caching.class)
+  @SelectProvider(type = SumMapperProvider.class, method = "sum")
+  long sum(@Param("column") Fn<T, ? extends Number> column, @Param("entity") T entity);
+
+  class SumMapperProvider {
+    public static String sum(ProviderContext providerContext) {
+      return "需要实现的 SQL";
+    }
+  }
+}
+```
+
+现在详细看一下这里面的细节。
+
+首先建议自定义通用方法时，将 Provider 作为内部类放在相应的接口中，此时每一个通用方法都只是一个 java 文件， 复制粘贴分享起来更方便。
+
+再看具体方法的定义，指定的查询列通过 `@Param("column") Fn<T, ? extends Number> column` 参数指定，
+`Fn<T, ? extends Number>` 是一个有泛型的接口，和 Java8 的 `Function<T, R>` 是一个类型， 这个函数是根据一个类型转换为另一个类型的值，因此对应到实体类中时，就是实体类中 `get` 方法，
+`get`方法的入参是实体类，返回值为 `get` 方法的返回值，所以使用 `Fn<T, R>` 定义的参数，使用的都是实体类中 get 方法的引用， 例如 `User::getId` 方法引用，入参是 `User`，返回值为 `Long`
+。因此这里的 `sum` 方法中，`T` 代表的实体类型，
+`? extends Number` 是 `get` 方法返回值的类型必须为 `Number` 数字类型，
+
+第二个参数 `@Param("entity") T entity` 是以实体类作为查询条件，这部分的 SQL 可以参考 `EntityMapper` 中的 `select` 方法实现。
+
+在接口方法上，还有一个 MyBatis Provider 提供的必须使用的 `@Lang(Caching.class)` 注解，使用这个注解后， 在 Provider 中可以通过 `SqlScript.caching` 方法返回经过包装后的
+SQL， 另一个注解是 MyBatis `@SelectProvider`，指定了实现该方法对应的类和方法名。
+
+在 `SumMapperProvider` 实现类中，提供了静态的 `sum` 方法，方法参数为 `ProviderContext`，包含了执行方法的完整信息，
+这里静态方法的好处是，执行方法的时候，直接调用类的静态方法即可，不需要实例化 `SumMapperProvider` 后在调用实例方法， 可以有效的提高性能。
+
+下面在看 `sum` 方法的具体实现：
+
+```java
+class SumMapperProvider {
+  public static String sum(ProviderContext providerContext) {
+    return SqlScript.caching(providerContext, new SqlScript() {
+      @Override
+      public String getSql(EntityTable entity) {
+        return "SELECT SUM(${column.toColumn()}) FROM " + entity.table()
+            + ifTest("entity != null", () ->
+            where(() ->
+                entity.whereColumns().stream().map(column ->
+                    ifTest(column.notNullTest("entity."), () -> "AND " + column.columnEqualsProperty("entity."))
+                ).collect(Collectors.joining(LF)))
+        );
+      }
+    });
+  }
+}
+```
+
+这里调用 `static String caching(ProviderContext providerContext, SqlScript sqlScript)` 方法，在 `SqlScript` 匿名类中，
+实现 `String getSql(EntityTable entity)` 方法，这个方法提供了实体类的信息 `EntityTable`。
+
+接下来就是具体拼 SQL 的过程，在 `SUM` 方法中调用了 `${column.toColumn()}`，通过 `$` 方式传参时，参数部分执行的 OGNL，
+`column` 是 `Fn<T,R>` 类型，这个类型有一个 `String toColumn()` 的默认方法，可以返回字段对应的列名。
+
+然后就是 `entity.table()` 得到表名，在 `String ifTest(String test, LRSupplier content)` 方法中，第一个参数是判断条件， 第二个参数是个函数式接口（继承 `Supplier`
+），接口需要返回一个 `String` 类型的部分 SQL，在接口中定义了两个参数名为 `column` 和 `entity`， 所以这里判断 `entity != null`
+，如果有值，再拼查询条件，查询条件使用了 `String where(LRSupplier content)`， 这会在外面包装一层 `<where>` 标签，之后就是获取 `entity.whereColumns()` 所有查询列。
+在调用 `column.notNullTest("entity.")` 和 `column.columnEqualsProperty("entity.")` 指定了属性前缀 `entity.`。
+
+实现中的具体细节可以看看 `ifTest, where, entity.xxxx()` 等方法。
+
+### 8.3 测试验证
+
+MyBatis Mapepr 使用特别简单，你现在只需要让自己的 Mapper 继承上面新增的接口就可以直接使用通用的方法，不需要任何其他的配置。
+
+```java
+public interface UserMapper extends SumMapper<User> {
+
+}
+```
+
+测试代码：
+
+```java
+SumMapper<User> userMapper=sqlSession.getMapper(UserMapper.class);
+    User user=new User();
+    user.setSex("女");
+    long sum=userMapper.sum(User::getId,user);
+```
+
+`sum` 通用方法生成的对应的 SQL XML 如下：
+
+```xml
+
+<script>
+  SELECT SUM(${column.toColumn()}) FROM user
+  <if test="entity != null">
+    <where>
+      <if test="entity.id != null">
+        AND id = #{entity.id}
+      </if>
+      <if test="entity.userName != null">
+        AND name = #{entity.userName}
+      </if>
+      <if test="entity.sex != null">
+        AND sex = #{entity.sex}
+      </if>
+    </where>
+  </if>
+</script>
+```
+
+上面测试用例执行时，生成的 SQL 日志如下：
+
+```sql
+DEBUG
+[main] - ==>  Preparing:
+SELECT SUM(id)
+FROM user
+WHERE sex = ? DEBUG [main] - ==> Parameters: 女(String)
+TRACE [main] - <==    Columns: C1
+TRACE [main] - <==        Row: 410
+DEBUG [main] - <==      Total: 1
+```
+
+实现上面通用方法用不了10分钟的时间，针对这个方法的文档写了 1 小时左右的时间， 等你了解 `SqlScript` 接口中的方法，以及 `EntityTable` 和 `EntityColumn` 中包含的默认方法时，
+你也可以轻松的实现自己需要的方法。

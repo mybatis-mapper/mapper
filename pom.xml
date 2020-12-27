@@ -23,7 +23,7 @@
   <groupId>io.mybatis</groupId>
   <artifactId>mybatis-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-Preview</version>
+  <version>1.0.0-Preview2</version>
 
   <name>MyBatis Mapper</name>
   <description>MyBatis Mapper</description>
@@ -55,6 +55,7 @@
     <module>service</module>
     <module>activerecord</module>
     <module>common</module>
+    <module>generator</module>
   </modules>
 
   <properties>

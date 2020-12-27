@@ -25,31 +25,30 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>mybatis-mapper</artifactId>
+  <artifactId>mybatis-generator</artifactId>
 
   <dependencies>
-    <dependency>
-      <groupId>io.mybatis</groupId>
-      <artifactId>mybatis-provider</artifactId>
-    </dependency>
     <dependency>
       <groupId>io.mybatis</groupId>
       <artifactId>mybatis-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.mybatis.generator</groupId>
+      <artifactId>mybatis-generator-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
   </dependencies>
-
 </project>
