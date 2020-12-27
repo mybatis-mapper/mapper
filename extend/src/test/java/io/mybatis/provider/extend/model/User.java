@@ -30,24 +30,24 @@ import java.util.Date;
 @Extend.Table(value = "sys_user", remark = "系统用户", autoResultMap = true)
 public class User {
   @Extend.Column(id = true, remark = "主键", updatable = false, insertable = false)
-  private Long id;
+  private Long    id;
   @Extend.Column(value = "name", remark = "帐号")
-  private String name;
+  private String  name;
   @Extend.Column(value = "is_admin", remark = "是否为管理员", updatable = false)
   private boolean admin;
   @Extend.Column(remark = "顺序号", orderBy = "DESC")
   private Integer seq;
   @Extend.Column(numericScale = "4", remark = "积分（保留4位小数）")
-  private Double points;
+  private Double  points;
   @Extend.Column(selectable = false, remark = "密码")
-  private String password;
+  private String  password;
   @Entity.Column("when_created")
   @Extend.Column(remark = "创建时间", jdbcType = JdbcType.TIMESTAMP)
-  private Date whenCreated;
+  private Date    whenCreated;
   @Extend.Column(remark = "介绍", typeHandler = StringTypeHandler.class)
-  private String info;
+  private String  info;
   //不是表字段
-  private String noExtendColumn;
+  private String  noExtendColumn;
 
   public Long getId() {
     return id;

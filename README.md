@@ -51,11 +51,11 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 
 ```groovy
 dependencies {
-  compile("io.mybatis:mybatis-mapper:最新版本")
+  compile("io.mybatis:mybatis-mapper:1.0.0-Preview")
   // 使用 Service 层封装时
-  compile("io.mybatis:mybatis-service:最新版本")
+  compile("io.mybatis:mybatis-service:1.0.0-Preview")
   // 使用 ActiveRecord 模式时
-  compile("io.mybatis:mybatis-activerecord:最新版本")
+  compile("io.mybatis:mybatis-activerecord:1.0.0-Preview")
 }
 ```
 

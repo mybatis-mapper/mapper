@@ -16,8 +16,8 @@
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD MApper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.mybatis.activerecord.spring.RoleMapper">
-	<select id="findById" resultType="io.mybatis.activerecord.spring.Role">
-		select *
-		from role
-	</select>
+  <select id="findById" resultType="io.mybatis.activerecord.spring.Role">
+    select *
+    from role
+  </select>
 </mapper>
