@@ -151,7 +151,7 @@ public interface UserMapper extends Mapper<User, Long> {
 > ```
 > Spring Boot 中，还可以直接给接口添加 `@org.apache.ibatis.annotations.Mapper` 注解，增加注解后可以省略 `@MapperScan` 配置。
 
-#### 1.4.1 使用
+#### 1.4.3 使用
 
 定义好接口后，就可以获取 `UserMapper` 使用，下面是简单示例：
 ```java
