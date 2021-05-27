@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${project.attrs.basePackage}.mapper.${it.name.className}Mapper">
+  <resultMap id="baseResultMap" type="${project.attrs.basePackage}.model.${it.name.className}">
+    <#list it.columns as column>
+    <#if column.pk>
+    <id property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
+    <#else>
+    <result property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
+    </#if>
+    </#list>
+  </resultMap>
+</mapper>
