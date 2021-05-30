@@ -26,7 +26,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 public class ActiveRecordTest {
@@ -103,28 +102,28 @@ public class ActiveRecordTest {
     user.setRoleId(2);
     user.saveSelective();
     Assert.assertNotNull(user.getId());
-    user = user.findById(user.getId()).get();
+    user = user.findById(user.getId());
     Assert.assertNotNull(user.getName());
 
     user.setName("develop");
     user.setRoleId(null);
     user.updateSelective();
-    user = user.findById(user.getId()).get();
+    user = user.findById(user.getId());
     Assert.assertEquals("develop", user.getName());
     Assert.assertNotNull(user.getRoleId());
 
     user.setRoleId(null);
     user.update();
-    user = user.findById(user.getId()).get();
+    user = user.findById(user.getId());
     Assert.assertNull(user.getRoleId());
 
     user.setName(null);
     user.updateSelective(User::getName, User::getRoleId);
-    user = user.findById(user.getId()).get();
+    user = user.findById(user.getId());
     Assert.assertNull(user.getName());
 
     user.deleteById();
-    Assert.assertFalse(user.findById(user.getId()).isPresent());
+    Assert.assertNull(user.findById(user.getId()));
 
     user.setName("delete");
     user.setId(null);
@@ -159,7 +158,7 @@ public class ActiveRecordTest {
     Assert.assertEquals(3, user.count());
     Assert.assertEquals(3, user.findList().size());
     user.setName("admin");
-    Assert.assertTrue(user.findOne().isPresent());
+    Assert.assertNotNull(user.findOne());
   }
 
   @Test
@@ -208,9 +207,9 @@ public class ActiveRecordTest {
     }
     example.clear();
     example.createCriteria().andEqualTo(User::getName, "admin");
-    Optional<User> userOptional = user.findOne(example);
-    Assert.assertTrue(userOptional.isPresent());
-    Assert.assertEquals(1, userOptional.get().getId().intValue());
+    user = user.findOne(example);
+    Assert.assertNotNull(user);
+    Assert.assertEquals(1, user.getId().intValue());
   }
 
 }

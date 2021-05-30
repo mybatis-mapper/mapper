@@ -21,7 +21,6 @@ import io.mybatis.mapper.example.Example;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 建议将继承该抽象类的实现类的作用范围控制在 Service 层，不能超出范围，其它层使用时转换为 VO 或 DTO 后使用
@@ -76,8 +75,8 @@ public interface ExampleRecord<T, I extends Serializable> extends MapperRecord<T
    * @param example 查询条件
    * @return 实体
    */
-  default Optional<T> findOne(Example<T> example) {
-    return baseMapper().selectOneByExample(example);
+  default T findOne(Example<T> example) {
+    return baseMapper().selectOneByExample(example).orElse(null);
   }
 
   /**

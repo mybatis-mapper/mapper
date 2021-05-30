@@ -20,7 +20,6 @@ import io.mybatis.mapper.example.Example;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Example 接口
@@ -72,7 +71,7 @@ public interface ExampleService<T, I extends Serializable> {
    * @param example 查询条件
    * @return 实体
    */
-  Optional<T> findOne(Example<T> example);
+  T findOne(Example<T> example);
 
   /**
    * 根据 example 条件查询

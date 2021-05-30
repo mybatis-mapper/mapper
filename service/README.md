@@ -67,8 +67,8 @@ public static final Code SAVE_FAILURE   = new Code("501", "保存失败");
 - `int delete(T entity);`: 根据当前类的值作为条件进行删除（注意：当所有字段都没有值时可能会清库）
 - `int deleteById(I id);`: 根据主键进行删除
 - `<F> int deleteByFieldList(Fn<T, F> field, List<F> fieldValueList);`: 根据指定字段集合删除
-- `Optional<T> findById(I id);`: 根据指定的主键查询
-- `Optional<T> findOne(T entity);`: 以当前类作为条件查询一个，当结果多于1个时出错
+- `T findById(I id);`: 根据指定的主键查询
+- `T findOne(T entity);`: 以当前类作为条件查询一个，当结果多于1个时出错
 - `List<T> findList(T entity);`: 以当前类作为条件查询
 - `<F> List<T> findByFieldList(Fn<T, F> field, List<F> fieldValueList);`: 根据指定字段集合查询
 - `List<T> findAll();`: 查询全部
@@ -97,7 +97,7 @@ public boolean pkHasValue(User entity) {
 - `int delete(Example<T> example);`：根据 example 条件批量删除
 - `int update(T entity, Example<T> example);`：根据 example 查询条件批量更新（所有字段）
 - `int updateSelective(T entity, Example<T> example);`：根据 example 查询条件批量更新（非空字段）
-- `Optional<T> findOne(Example<T> example);`：根据 example 条件查询一个，当结果多于1个时出错
+- `T findOne(Example<T> example);`：根据 example 条件查询一个，当结果多于1个时出错
 - `List<T> findList(Example<T> example);`：根据 example 条件查询
 - `long count(Example<T> example);`：根据 example 查询总数
 
@@ -197,7 +197,7 @@ public interface RoleService {
    * @param id 主键
    * @return 实体
    */
-  Optional<Role> findById(Integer id);
+  Role findById(Integer id);
 
 }
 ```

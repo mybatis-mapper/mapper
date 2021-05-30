@@ -20,7 +20,6 @@ import io.mybatis.mapper.fn.Fn;
 import io.mybatis.service.model.Role;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoleService {
 
@@ -73,6 +72,6 @@ public interface RoleService {
    * @param id 主键
    * @return 实体
    */
-  Optional<Role> findById(Integer id);
+  Role findById(Integer id);
 
 }

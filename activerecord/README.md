@@ -60,8 +60,8 @@ public interface MapperRecord<T, I extends Serializable, M extends Mapper<T, I>>
 - `default void deleteById()`：根据主键进行删除
 - `default void deleteById(I id)`：根据指定的主键进行删除
 - `default <F> int deleteByFieldList(Fn<T, F> field, List<F> fieldValueList)`：根据指定字段集合删除
-- `default Optional<T> findById(I id)`：根据指定的主键查询
-- `default Optional<T> findOne()`：以当前类作为条件查询一个，当结果多于1个时出错
+- `default T findById(I id)`：根据指定的主键查询
+- `default T findOne()`：以当前类作为条件查询一个，当结果多于1个时出错
 - `default List<T> findList()`：以当前类作为条件查询
 - `default <F> List<T> findByFieldList(Fn<T, F> field, List<F> fieldValueList)`：根据指定字段集合查询
 - `default List<T> findAll()`：查询全部
@@ -79,7 +79,7 @@ public interface MapperRecord<T, I extends Serializable, M extends Mapper<T, I>>
 - `default int delete(Example<T> example)`：根据 example 条件批量删除
 - `default int update(Example<T> example)`：根据 example 查询条件批量更新（所有字段）
 - `default int updateSelective(Example<T> example)`：根据 example 查询条件批量更新（非空字段）
-- `default Optional<T> findOne(Example<T> example)`：根据 example 条件查询一个，当结果多于1个时出错
+- `default T findOne(Example<T> example)`：根据 example 条件查询一个，当结果多于1个时出错
 - `default List<T> findList(Example<T> example)`：根据 example 条件查询
 - `default long count(Example<T> example)`：根据 example 查询总数
 

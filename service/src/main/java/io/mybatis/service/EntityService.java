@@ -20,7 +20,6 @@ import io.mybatis.mapper.fn.Fn;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 实体类基本接口
@@ -128,7 +127,7 @@ public interface EntityService<T, I extends Serializable> {
    * @param id 主键
    * @return 实体
    */
-  Optional<T> findById(I id);
+  T findById(I id);
 
   /**
    * 以当前类作为条件查询一个，当结果多于1个时出错
@@ -136,7 +135,7 @@ public interface EntityService<T, I extends Serializable> {
    * @param entity 实体类
    * @return 实体
    */
-  Optional<T> findOne(T entity);
+  T findOne(T entity);
 
   /**
    * 以当前类作为条件查询

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 import static io.mybatis.common.core.Code.*;
 
@@ -141,8 +140,8 @@ public abstract class AbstractService<T, I extends Serializable, M extends Mappe
    * @return 实体
    */
   @Override
-  public Optional<T> findById(I id) {
-    return baseMapper.selectByPrimaryKey(id);
+  public T findById(I id) {
+    return baseMapper.selectByPrimaryKey(id).orElse(null);
   }
 
   /**
@@ -152,8 +151,8 @@ public abstract class AbstractService<T, I extends Serializable, M extends Mappe
    * @return 实体
    */
   @Override
-  public Optional<T> findOne(T entity) {
-    return baseMapper.selectOne(entity);
+  public T findOne(T entity) {
+    return baseMapper.selectOne(entity).orElse(null);
   }
 
   /**
@@ -243,8 +242,8 @@ public abstract class AbstractService<T, I extends Serializable, M extends Mappe
    * @return 实体
    */
   @Override
-  public Optional<T> findOne(Example<T> example) {
-    return baseMapper.selectOneByExample(example);
+  public T findOne(Example<T> example) {
+    return baseMapper.selectOneByExample(example).orElse(null);
   }
 
   /**

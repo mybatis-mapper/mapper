@@ -27,7 +27,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 public class ServiceTest {
@@ -56,20 +55,19 @@ public class ServiceTest {
   @Test
   public void testRoleService() {
     RoleService roleService = context.getBean(RoleService.class);
-    Optional<Role> roleOptional = roleService.findById(1);
-    Assert.assertTrue(roleOptional.isPresent());
-    Role role = roleOptional.get();
+    Role role = roleService.findById(1);
+    Assert.assertNotNull(role);
     role = roleService.save(role);
     Assert.assertFalse(role.getId().equals(1));
 
     role.setName("develop");
     role = roleService.update(role);
-    role = roleService.findById(role.getId()).get();
+    role = roleService.findById(role.getId());
     Assert.assertEquals("develop", role.getName());
 
     role.setName(null);
     role = roleService.updateSelective(role, Role::getName);
-    role = roleService.findById(role.getId()).get();
+    role = roleService.findById(role.getId());
     Assert.assertNull(role.getName());
 
     Assert.assertEquals(1, roleService.deleteById(role.getId()));
@@ -124,29 +122,29 @@ public class ServiceTest {
     user.setRoleId(2);
     userService.saveSelective(user);
     Assert.assertNotNull(user.getId());
-    user = userService.findById(user.getId()).get();
+    user = userService.findById(user.getId());
     Assert.assertNotNull(user.getName());
     Assert.assertEquals("DEFAULT", user.getName());
 
     user.setName("develop");
     user.setRoleId(null);
     userService.updateSelective(user);
-    user = userService.findById(user.getId()).get();
+    user = userService.findById(user.getId());
     Assert.assertEquals("develop", user.getName());
     Assert.assertNotNull(user.getRoleId());
 
     user.setRoleId(null);
     userService.update(user);
-    user = userService.findById(user.getId()).get();
+    user = userService.findById(user.getId());
     Assert.assertNull(user.getRoleId());
 
     user.setName(null);
     userService.updateSelective(user, User::getName, User::getRoleId);
-    user = userService.findById(user.getId()).get();
+    user = userService.findById(user.getId());
     Assert.assertNull(user.getName());
 
     userService.deleteById(user.getId());
-    Assert.assertFalse(userService.findById(user.getId()).isPresent());
+    Assert.assertFalse(userService.findById(user.getId()) != null);
 
     user.setName("delete");
     user.setId(null);
@@ -181,7 +179,7 @@ public class ServiceTest {
     Assert.assertEquals(3, userService.count(user));
     Assert.assertEquals(3, userService.findList(user).size());
     user.setName("admin");
-    Assert.assertTrue(userService.findOne(user).isPresent());
+    Assert.assertTrue(userService.findOne(user) != null);
   }
 
   @Test
@@ -189,7 +187,7 @@ public class ServiceTest {
     UserService userService = context.getBean(UserService.class);
     Example<User> example = userService.example();
     example.createCriteria().andEqualTo(User::getId, 2);
-    User user = userService.findOne(example).get();
+    User user = userService.findOne(example);
     Assert.assertEquals(1, userService.delete(example));
     userService.save(user);
     String name = "example";
@@ -237,9 +235,9 @@ public class ServiceTest {
 
     example.clear();
     example.createCriteria().andEqualTo(User::getName, "admin");
-    Optional<User> userOptional = userService.findOne(example);
-    Assert.assertTrue(userOptional.isPresent());
-    Assert.assertEquals(1, userOptional.get().getId().intValue());
+    user = userService.findOne(example);
+    Assert.assertNotNull(user);
+    Assert.assertEquals(1, user.getId().intValue());
   }
 
 }

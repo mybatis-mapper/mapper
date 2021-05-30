@@ -24,7 +24,6 @@ import io.mybatis.provider.EntityTable;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 import static io.mybatis.common.core.Code.*;
 
@@ -172,8 +171,8 @@ public interface EntityRecord<T, I extends Serializable> extends MapperRecord<T,
    * @param id 主键
    * @return 实体
    */
-  default Optional<T> findById(I id) {
-    return baseMapper().selectByPrimaryKey(id);
+  default T findById(I id) {
+    return baseMapper().selectByPrimaryKey(id).orElse(null);
   }
 
   /**
@@ -181,8 +180,8 @@ public interface EntityRecord<T, I extends Serializable> extends MapperRecord<T,
    *
    * @return 实体
    */
-  default Optional<T> findOne() {
-    return baseMapper().selectOne((T) this);
+  default T findOne() {
+    return baseMapper().selectOne((T) this).orElse(null);
   }
 
   /**
