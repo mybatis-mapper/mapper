@@ -6,9 +6,10 @@
 ## 项目文件简介
 
 所有内容都在 `src/main/resources` 下面：
-- `lib` jar 目录，将数据库驱动放到该目录下
+- `lib` 目录，代码生成器和数据库驱动 jar 包放到该目录下
   - `mysql-connector-java-5.1.49.jar` MySQL驱动，当前只提供了MySQL驱动，
-    自己可以替换版本，连接其他数据库时，将对应的驱动放到当前 lib 目录下
+    自己可以替换版本，连接其他数据库时，将对应的驱动放到当前 lib 目录下，
+    你可以把自己常用的各种数据库驱动都放在这里。
   - `rui-cli.jar` 代码生成器 
 - `mapper-templates` 模板文件
   - `extend` 基于 `@Extend` 注解的代码模板
@@ -23,6 +24,31 @@
   - `serviceImpl.java` Service 接口实现模板
 - `project.yaml` 代码生成器配置文件
 
+这部分内容需要下载使用，为了方便使用，提供一个压缩包直接下载使用。
+
+> **百度网盘**  
+> 链接: https://pan.baidu.com/s/1fzxiZaDB9zT0mUW7NKiQTA   
+> 提取码: kgtk  
+> 
+> **GitHub**  
+> https://github.com/mybatis-mapper/mapper/blob/master/generator/rui-cli.zip  
+> 
+> **Gitee**(需登录)  
+> https://gitee.com/mybatis-mapper/mapper/blob/master/generator/rui-cli.zip  
+> 
+> 数据库驱动部分提供一些链接，可以根据需要进行下载：
+> - [MySQL Connector/J](https://mvnrepository.com/artifact/mysql/mysql-connector-java)
+> - [MariaDB Java Client](https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client)
+> - [PostgreSQL JDBC Driver](https://mvnrepository.com/artifact/org.postgresql/postgresql)
+> - [Microsoft JDBC Driver For SQL Server](https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc)
+> - [JTDS for Microsoft SQL Server](https://mvnrepository.com/artifact/net.sourceforge.jtds/jtds)
+> - [Oracle JDBC Driver - Ojdbc10](https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10)
+> - [SQLite JDBC](https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc)
+> - [Apache Derby Client JDBC Driver](https://mvnrepository.com/artifact/org.apache.derby/derbyclient)
+> - [ClickHouse JDBC](https://mvnrepository.com/artifact/ru.yandex.clickhouse/clickhouse-jdbc)
+> - [DB2 - IBM Data Server Driver For JDBC and SQLJ](https://mvnrepository.com/artifact/com.ibm.db2/jcc)
+> - [Informix Driver](https://mvnrepository.com/artifact/com.informix/informix-driver)
+
 ## 代码生成器配置 project.yaml
 
 下面通过注释介绍每一项配置的含义或者作用：
@@ -30,10 +56,12 @@
 # 模板的名字，生成代码的根目录名称
 name: mybatis-mapper-demo
 # 代码生成的路径，可以使用 SYS 和 ENV 等变量，具体包含的内容和运行环境有关
-# user.dir 为当前运行命令的目录，path 不设置时的默认值也是当前路径，在命令行中可以通过 —o 重新指定位置
+# user.dir 为当前运行命令的目录，path 不设置时的默认值也是当前路径
 # 当 path 路径以 .zip 后缀结尾时，会将生成的目录结构和代码放到压缩包中
+#【命令行】可以通过 —o 重新指定位置
 path: ${SYS['user.dir']}/
 # 模板文件所在路径，默认为相对 path 所在的位置，不设置时和 path 相同
+#【命令行】可以通过 —T 重新指定位置
 templates: mapper-templates
 # 数据库配置
 database: 
@@ -41,17 +69,23 @@ database:
   jdbcConnection:
     # 使用方言，默认为 JDBC 方式，可能会取不到表或字段注释
     # 后续介绍如何通过字典匹配注释值
+    #【命令行】可以通过 --jdbc.dialect 覆盖
     dialect: MYSQL
     # jdbc驱动
+    #【命令行】可以通过 --jdbc.driver 覆盖
     driver: com.mysql.jdbc.Driver
     # jdbc连接地址
+    #【命令行】可以通过 --jdbc.url 覆盖
     url: jdbc:mysql://localhost:3306/test?useSSL=false
     # 用户名
+    #【命令行】可以通过 --jdbc.user 覆盖
     user: root
     # 密码
+    #【命令行】可以通过 --jdbc.password 覆盖
     password: root
   # 获取表配置，支持 % 和 _ 模糊匹配，可以配置多个值  
   # 还有一个支持复杂规则 tableRules 属性后续单独介绍
+  #【命令行】可以通过 -t table1,table2 覆盖
   tables:
     - '%'
   # 根据类型对字段类型打标签, 可以通过 column.tags.TAG 的 true/false 来判断当前列是否有该标签
@@ -69,6 +103,7 @@ database:
     - order
     - desc
 # 附加属性
+#【命令行】可以通过 -AbasePackage=com.company 覆盖或增加新属性
 attrs: # 子目录（文件）可以通过 parent.parent...attrs.属性名 可以逐级向上使用属性
   # 这里设置了一个基础包名
   basePackage: io.mybatis.demo.mybatis
@@ -163,255 +198,65 @@ files:
   - `OVERRIDE`: 覆盖，默认值
   - `ONCE`: 只生成一次，或者如果目录或文件已存在时不生成(目录存在时，子文件也不会生成）
   - `MERGE`: 合并已存在的文件和新生成的文件，需要满足规则才能合并
-- `times: 1`
-  可选配置 times，默认值 1，默认情况下，模板只经过一次变量替换，有时存在多层变量嵌套时，执行多次才能全部替换
+- `times: 1` 可选配置 times，默认值 1，默认情况下，模板只经过一次变量替换，有时存在多层变量嵌套时，执行多次才能全部替换
 
 >上面示例中的 `iterFilter: it.name.original.o.startsWith("sys")` 中的 `it.name.original.o` 很奇怪，下面模板介绍为什么会这么写。
 
-除了上面这些属性外，还有一个只在示例配置文件出现了一次的类型 `type`：
-
-```yaml
-- name: '${project.attrs.basePackage}'
-  type: PACKAGE
-```
-
-`type`: 文件类型，有下面4种类型：
-- `DIR`: 目录
-- `PACKAGE`: 代码结构目录（例如：java中的包名）
-- `TEMPLATE`: 模板，经过模板赋值处理（只有 `file` 没有 `name` 时，生成的文件名使用 `file` 名，当同时存在时，`name` 为文件名，`file` 为内容）
-- `STATIC`: 静态内容，不经过模板处理（只有 `name` 没有 `file` 时认为是 `STATIC`，找不到文件就是空文件）
-
-一般情况下，必须设置第一级包（`PACKAGE`）的类型，也就是示例中第一层的包，`name`可以多层(如`io.mybatis.mapper`)，不必把第一级包名单独列出来设置。
-
-其他没有设置的都是运行时自动计算的类型，计算类型的规则如下：
-1. 如果指定了类型，就使用指定的类型（配置的根默认是 `DIR`，根指的是和 `name`,`path`,`templates`一级的属性）。
-2. 如果包含 `files` 属性，也就是有子目录/子文件的情况，这种情况下：
-  1. 如果存在上级，并且上级为 `PACKAGE` 类型，则当前类型也是 `PACKAGE`，所以 `PACKAGE` 类型下面的目录默认都是 `PACKAGE`。
-  2. 如果没有上级或者上级不是 `PACKAGE`，则为 `DIR` 类型。
-3. 如果 `file` 属性有值（配置的模板名），为 `TEMPLATE` 类型。
-4. 如果 `name` 属性有值（生成的文件名），为 `STATIC` 类型。
-5. 如果 `parent` 存在，就和 `parent.type` 一样。
-5. 上面情况都不满足时，默认为 `DIR` 类型。
-
 ## 模板文件介绍
 
-目前代码模板支持 `FreeMarker` 和 `Mvel2` 两种，默认使用 `FreeMarker` 模板引擎，不能修改为其他模板引擎，后续根据反馈进行扩展。
+目前代码模板使用 `FreeMarker` 模板引擎，点击查看 [模板语言参考文档](http://www.kerneler.com/freemarker2.3.23/ref.html)。
 
-以 `extend/model.java` 为例，分段对代码模板进行介绍。
-```java
-package ${package};
-```
-首先是 `${package}`，所有在 `file.type: PACKAGE` 下面的代码模板都可以直接使用该变量，
-这个变量代表了当前模板文件所在包，包名自动计算，
-可以通过 `${package.parent}` 获取上级包名，可以递归使用，例如 `${package.parent.parent}`。
+针对 model 提供了 4 套模板：
 
-```java
-import io.mybatis.provider.Entity;
-import io.mybatis.provider.extend.Extend;
-import org.apache.ibatis.type.JdbcType;
+- `extend` 基于 `@Extend` 注解的代码模板
+  - `model.java`  普通的实体类模板
+  - `model-lombok.java` 使用 lombok 注解的实体类模板
+- `simple` 基于 `@Entity` 注解的代码模板
+  - `model.java`  普通的实体类模板
+  - `model-lombok.java` 使用 lombok 注解的实体类模板
 
-<#list it.importJavaTypes as javaType>
-import ${javaType};
-</#list>
-```
-这里是`import`部分，除了根据模板内容写死的部分内容外，还要把数据类型导入进来，数据类型在 `it.importJavaTypes` 中。
-当在其他代码引用当前这个 model 类时，可以使用下面的方式导入：
-```java
-import ${project.attrs.basePackage}.model.${it.name.className};
-```
-如果知道包的相对位置，也可以:
-```java
-import ${package.parent}.model.${it.name.className};
+修改配置文件下面的地方选择想要使用的文档：
+
+```yaml
+# 在 model 包下面
+- name: model
+  files:
+    # 有实体类代码，类名为表名的类形式
+    - name: '${it.name.className}.java'
+      # 此处有4种模板示例，具体类型看上面介绍
+      # file: simple/model.java
+      # file: simple/model-lombok.java
+      file: extend/model.java
+      # file: extend/model-lombok.java
+      iter: tables
 ```
 
-再之后就是当前 model 的类名和基本的注释信息:
-```java
-/**
- * ${it.name} - ${it.comment}
- *
- * @author ${SYS['user.name']}
- */
-@Extend.Table("${it.name}" remark = "${it.comment}", autoResultMap = true)
-public class ${it.name.className} {
-```
-这里给实体类添加了 mybatis-mapper 中的 `@Extend.Table` 注解，
-这里使用 `${SYS['user.name']}` 作为 `@author`，你也可以写死，或者设置为其他变量。
-
-这里的 `${it.name}` 代表了表名，`${it.name.className}` 代表了表名对应的类名形式，
-这里的 `it.name` 有很多种形式，假设有表名或字段名为: `user_role`,下面举例列出所有可用的形式。
-
-- `${it.name}`: 表名，值为: `user_role`
-- `${it.name.original}`: 原始表名，值为: `user_role`
-- `${it.name.lowercase}`: 表名的小写形式，值为: `user_role`
-- `${it.name.uppercase}`: 表名的大写形式，值为: `USER_ROLE`
-- `${it.name.underlineCase}`: 表名的下划线形式，值为: `user_role`（驼峰会转下划线）
-- `${it.name.noUnderlineCase}`: 表名的无下划线形式，值为: `userrole`
-- `${it.name.upperUnderlineCase}`: 表名的大写下划线形式，值为: `USER_ROLE`（驼峰会转下划线）
-- `${it.name.camelCase}`: 表名的驼峰形式，值为: `userRole`
-- `${it.name.upperCamelCase}`: 表名的大写驼峰形式，值为: `UserRole`
-- `${it.name.className}`: 表名的类名形式，值为: `UserRole`
-- `${it.name.fieldName}`: 表名的字段形式，值为: `userRole`
-  
-除了上面的多种形式外，除 `${it.name}` 外，其他形式都还有复数形式：
-
-- `${it.name.className.o}`: 表名的类名形式的原始值，和不带 `.o` 一样
-- `${it.name.className.s}`: 表名的类名形式的复数形式，值为: `UserRoles`
-- `${it.name.fieldName.o}`: 表名的字段形式的原始值，和不带 `.o` 一样
-- `${it.name.fieldName.s}`: 表名的字段形式的复数形式，值为: `userRoles`
-
->复数形式一般用于 RESTFul `Controller` 时的规范资源路径名。
-
-因为 `it.name` 不是简单的 `String` 类型，因此使用最终的原始名称和 `String` 运算时，
-需要使用下面的形式：
-```
-${it.name.original.o}
-# 或者 mvel 表达式时
-it.name.toString()
-```
-
-继续回到 `extend/model.java` 模板：
-```java
-  <#list it.columns as column>
-  <#if column.pk>
-  @Extend.Column(value = "${column.name}", id = true, remark = "${column.comment}", updatable = false, insertable = false)
-  <#else>
-  @Extend.Column(value = "${column.name}", remark = "${column.comment}"<#if column.tags.jdbcType>, jdbcType = JdbcType.${column.jdbcType}</#if>)
-  </#if>
-  private ${column.javaType} ${column.name.fieldName};
-  
-  </#list>
-  
-  <#list it.columns as column>
-```
-通过 `freemarker` 语法中的 `<#list>` 对 `it` 中的所有列 `columns` 进行循环，
-区分主键类型进行分别处理。
-
-在 `<#if column.tags.jdbcType>, jdbcType = JdbcType.${column.jdbcType}</#if>` 中，
-用到了代码生成器配置中的标签功能，如果有 `jdbcType` 标签，就在注解指定 `JdbcType` 的类型，
-主要是日期读写时，指定类型才能取对日期时间的精确度。
-
-通过 `${column.javaType}` 获取字段类型，这个类型不带包名，因此在 `import` 时导入了字段类型。
-
-也可以写成带有包名的完整类型名： `${column.javaType.fullName}`。
-
-代码模板最后一部分就是 setter 和 getter 方法：
-```java
-  <#list it.columns as column>
-  /**
-   * 获取 ${column.comment}
-   *
-   * @return ${column.name.fieldName} - ${column.comment}
-   */
-  public ${column.javaType} get${column.name.className}() {
-    return ${column.name.fieldName};
-  }
-  
-  /**
-   * 设置${column.comment}
-   *
-   * @param ${column.name.fieldName} ${column.comment}
-   */
-  public void set${column.name.className}(${column.javaType} ${column.name.fieldName}) {
-    this.${column.name.fieldName} = ${column.name.fieldName};
-  }
-  
-  </#list>
-}
-```
 当使用 lombok 版本的模板时，实体类使用了 `@Getter` 和 `@Setter` 注解，代码体中就不需要生成 getter 和 setter 的代码。
 如果你想使用 lombok 的 `@Data` 或其他注解，你可以实现自己的模板（注意 `import` 相应的类型）。
 
 ## ENV 和 SYS 可选值，使用示例
 
 代码生成器配置和模板中都可以使用 ENV 和 SYS 变量，这些变量和运行的环境有关，
-代码生成器运行时会输出当前环境的这些信息，例如下面的内容（示例为 macOS）：
+代码生成器运行时会输出当前环境的这些信息，想要修改为某些值时可以运行之后查找想要使用的名字。
+例如下面展示的**部分内容**（示例为 macOS）：
 ```
 [main] TRACE Project - SYS可用参数:
-[main] TRACE Project - SYS['gopherProxySet'] = false
-[main] TRACE Project - SYS['awt.toolkit'] = sun.lwawt.macosx.LWCToolkit
-[main] TRACE Project - SYS['socksProxyHost'] = 127.0.0.1
-[main] TRACE Project - SYS['http.proxyHost'] = 127.0.0.1
-[main] TRACE Project - SYS['java.specification.version'] = 11
-[main] TRACE Project - SYS['sun.cpu.isalist'] = 
-[main] TRACE Project - SYS['sun.jnu.encoding'] = UTF-8
-[main] TRACE Project - SYS['https.proxyPort'] = 8889
-[main] TRACE Project - SYS['java.vm.vendor'] = Oracle Corporation
-[main] TRACE Project - SYS['sun.arch.data.model'] = 64
-[main] TRACE Project - SYS['idea.test.cyclic.buffer.size'] = 1048576
-[main] TRACE Project - SYS['java.vendor.url'] = https://openjdk.java.net/
-[main] TRACE Project - SYS['user.timezone'] = 
-[main] TRACE Project - SYS['os.name'] = Mac OS X
-[main] TRACE Project - SYS['java.vm.specification.version'] = 11
-[main] TRACE Project - SYS['sun.java.launcher'] = SUN_STANDARD
 [main] TRACE Project - SYS['user.country'] = CN
-[main] TRACE Project - SYS['jdk.debug'] = release
-[main] TRACE Project - SYS['sun.cpu.endian'] = little
 [main] TRACE Project - SYS['user.home'] = /Users/liuzh
-[main] TRACE Project - SYS['user.language'] = zh
-[main] TRACE Project - SYS['java.specification.vendor'] = Oracle Corporation
-[main] TRACE Project - SYS['java.version.date'] = 2020-07-14
-[main] TRACE Project - SYS['java.home'] = /Library/Java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home
-[main] TRACE Project - SYS['file.separator'] = /
-[main] TRACE Project - SYS['https.proxyHost'] = 127.0.0.1
-[main] TRACE Project - SYS['java.vm.compressedOopsMode'] = Zero based
-[main] TRACE Project - SYS['line.separator'] = 
-
-[main] TRACE Project - SYS['java.specification.name'] = Java Platform API Specification
-[main] TRACE Project - SYS['java.vm.specification.vendor'] = Oracle Corporation
-[main] TRACE Project - SYS['java.awt.graphicsenv'] = sun.awt.CGraphicsEnvironment
-[main] TRACE Project - SYS['user.script'] = Hans
-[main] TRACE Project - SYS['sun.management.compiler'] = HotSpot 64-Bit Tiered Compilers
-[main] TRACE Project - SYS['java.runtime.version'] = 11.0.8+10-LTS
-[main] TRACE Project - SYS['user.name'] = liuzh
-[main] TRACE Project - SYS['path.separator'] = :
-[main] TRACE Project - SYS['os.version'] = 10.14.6
-[main] TRACE Project - SYS['java.runtime.name'] = Java(TM) SE Runtime Environment
-[main] TRACE Project - SYS['file.encoding'] = UTF-8
-[main] TRACE Project - SYS['java.vm.name'] = Java HotSpot(TM) 64-Bit Server VM
-[main] TRACE Project - SYS['java.vendor.version'] = 18.9
-[main] TRACE Project - SYS['java.vendor.url.bug'] = https://bugreport.java.com/bugreport/
-[main] TRACE Project - SYS['java.io.tmpdir'] = /var/folders/2t/___9446s3_13b0mqw389wsy40000gn/T/
-[main] TRACE Project - SYS['java.version'] = 11.0.8
 [main] TRACE Project - SYS['user.dir'] = /Users/liuzh/IdeaProjects/rui/core
-[main] TRACE Project - SYS['os.arch'] = x86_64
-[main] TRACE Project - SYS['socksProxyPort'] = 1080
-[main] TRACE Project - SYS['java.vm.specification.name'] = Java Virtual Machine Specification
-[main] TRACE Project - SYS['java.awt.printerjob'] = sun.lwawt.macosx.CPrinterJob
-[main] TRACE Project - SYS['sun.os.patch.level'] = unknown
-[main] TRACE Project - SYS['java.vendor'] = Oracle Corporation
-[main] TRACE Project - SYS['java.vm.info'] = mixed mode
-[main] TRACE Project - SYS['java.vm.version'] = 11.0.8+10-LTS
-[main] TRACE Project - SYS['sun.io.unicode.encoding'] = UnicodeBig
-[main] TRACE Project - SYS['java.class.version'] = 55.0
-[main] TRACE Project - SYS['http.proxyPort'] = 8889
+
 [main] TRACE Project - ENV可用参数:
-[main] TRACE Project - ENV['PATH'] = /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/go/bin/
-[main] TRACE Project - ENV['JAVA_MAIN_CLASS_59298'] = com.intellij.rt.junit.JUnitStarter
-[main] TRACE Project - ENV['SHELL'] = /bin/bash
 [main] TRACE Project - ENV['USER'] = liuzh
-[main] TRACE Project - ENV['VERSIONER_PYTHON_PREFER_32_BIT'] = no
-[main] TRACE Project - ENV['TMPDIR'] = /var/folders/2t/___9446s3_13b0mqw389wsy40000gn/T/
-[main] TRACE Project - ENV['SSH_AUTH_SOCK'] = /private/tmp/com.apple.launchd.ExoXHAM01C/Listeners
-[main] TRACE Project - ENV['XPC_FLAGS'] = 0x0
-[main] TRACE Project - ENV['VERSIONER_PYTHON_VERSION'] = 2.7
-[main] TRACE Project - ENV['__CF_USER_TEXT_ENCODING'] = 0x1F5:0x19:0x34
-[main] TRACE Project - ENV['Apple_PubSub_Socket_Render'] = /private/tmp/com.apple.launchd.ka761yBfMO/Render
-[main] TRACE Project - ENV['LOGNAME'] = liuzh
-[main] TRACE Project - ENV['LC_CTYPE'] = zh_CN.UTF-8
 [main] TRACE Project - ENV['PWD'] = /Users/liuzh/IdeaProjects/rui/core
-[main] TRACE Project - ENV['XPC_SERVICE_NAME'] = com.jetbrains.intellij.7796.51577403-F31F-4931-B778-60546B7A8CE8
-[main] TRACE Project - ENV['TOOLBOX_VERSION'] = 1.20.8352
 [main] TRACE Project - ENV['HOME'] = /Users/liuzh
 ```
 在模板中使用时，直接参考上面的写法，例如 `${SYS['user.home']}` 和 `${ENV['HOME']}`。
-
-了解代码生成器配置和模板后，再看如何使用代码生成器生成代码。
 
 ## 代码生成器 rui-cli.jar
 
 代码生成器提供了一个可执行 jar 文件: rui-cli.jar
 
-> 后续会提供基于 java swing 的客户端，可以通过 UI 简单操作生成代码。
+> 后续会提供基于 java swing 的 GUI 客户端，可以通过 UI 简单操作生成代码。
 
 可执行 jar 文件使用方式：
 
@@ -452,7 +297,7 @@ it.name.toString()
 
 ## 使用文档
 
-上面介绍了很多代码生成器的细节，最关键的内容是项目结构和代码模板，
+上面介绍了部分代码生成器的细节，最关键的内容是项目结构和代码模板，
 这两部分内容需要理解上面的内容后，根据自己的项目进行设计和模板编写，
 一旦编写好，只要项目结构和模板内容不变，这套模板就可以一直使用，
 后续变化的地方就是 JDBC连接配置，指定要连的数据库和要获取的表信息，
@@ -503,13 +348,12 @@ tables:
 #### 包名修改
 
 示例中为了展示 `attrs` 属性的用法，因此在这里配置了一个 `basePackage` 属性，这个属性在下面的包名 `name` 使用了，
-不使用 `attrs`，直接将包名写到 `name` 也可以。按照这里的写法，修改为自己项目的包名，
-例如：`com.company.cms`，如果你的包和这里结构不一样，可以自己调整 `files` 适配自己的结构。
+根据自己的包名修改这里，例如：`com.company.cms`，如果你的包和这里结构不一样，可以自己调整 `files` 适配自己的结构。
 
 #### 类名规则
 
 在 mapper 包下面循环生成了每个表对应的 Mapper 接口，这里定义的名称为 `'${it.name.className}Mapper.java'`，
-已表的类名+`Mapper` 后缀作为接口名，如果你喜欢使用 `Dao` 后缀，就可以改为 `'${it.name.className}Dao.java'`，
+`表的类名`+`Mapper` 后缀作为接口名，如果你喜欢使用 `Dao` 后缀，就可以改为 `'${it.name.className}Dao.java'`，
 还需要注意修改所有使用（注入）该接口的地址，例如在 `serviceImpl.java` 模板中：
 ```java
 //省略其他
@@ -643,7 +487,10 @@ Archive:  cms.zip
 
 睿Rui是一个非常灵活易用的代码生成器，包含的功能细节非常的多，本篇文档旨在入门，还有很多内容没有展示出来，后续会针对睿Rui提供一些进阶使用文档，后续的计划如下：
 
+- 【文档】编写自己的代码模板
+- 【文档】项目结构和代码的配置
 - 【文档】tableRules 表名、列名特殊配置配置和字典设置
+- 【文档】MERGE 合并文件用法介绍
 - 【文档】使用 睿Rui 生成完整项目  
 - 【直播】分享 睿Rui-cli 代码生成器配置和使用
 - 【文档】睿Rui-tpl 代码模板生成器的使用文档（生成代码生成器配置的工具）
