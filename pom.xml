@@ -23,7 +23,7 @@
   <groupId>io.mybatis</groupId>
   <artifactId>mybatis-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-RC</version>
+  <version>1.0.0-RC2</version>
 
   <name>mybatis-parent</name>
   <description>MyBatis Mapper Parent</description>
