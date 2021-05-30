@@ -23,7 +23,7 @@
   <groupId>io.mybatis</groupId>
   <artifactId>mybatis-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-Preview</version>
+  <version>1.0.0-RC</version>
 
   <name>mybatis-parent</name>
   <description>MyBatis Mapper Parent</description>
@@ -70,13 +70,9 @@
     <mybatis.version>3.5.6</mybatis.version>
     <mybatis-spring.version>2.0.6</mybatis-spring.version>
     <mybatis-spring-boot.version>2.1.4</mybatis-spring-boot.version>
-    <mybatis-generator.version>1.4.0</mybatis-generator.version>
 
     <springframework.version>5.3.1</springframework.version>
     <springboot.version>2.4.0</springboot.version>
-
-    <freemarker.version>2.3.28</freemarker.version>
-    <snakeyaml.version>1.27</snakeyaml.version>
 
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.13</junit.version>
@@ -104,26 +100,6 @@
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
         <version>${mybatis-spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mybatis.generator</groupId>
-        <artifactId>mybatis-generator-core</artifactId>
-        <version>${mybatis-generator.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.freemarker</groupId>
-        <artifactId>freemarker</artifactId>
-        <version>${freemarker.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.abel533</groupId>
-        <artifactId>DBMetadata-core</artifactId>
-        <version>0.1.1</version>
       </dependency>
 
       <!-- Spring 版本控制 -->
@@ -221,7 +197,7 @@
               </execution>
             </executions>
           </plugin>
-          <!-- GPG mvn clean deploy -P release -Dgpg.passphrase=YourPassphase-->
+          <!-- GPG mvn clean deploy -P deploy-oss-maven -Dgpg.passphrase=YourPassphase-->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
