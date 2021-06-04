@@ -322,3 +322,10 @@ service 模块对应开发中的 service 层，或者说是 Spring 中的 `@Serv
 activerecord 模块提供了 4 个接口类、1个工具类、1个配置类和1个Spring Boot自动配置类。
 
 点击[查看详细介绍](./activerecord/README.md)。
+
+## 7. generator 模块
+
+本项目直接使用了一个功能强大的代码生成器 `睿Rui`，这个代码生成器可以设置项目的目录结构和具体的代码模板，
+可以方便的从零生成一个完整的项目，也可以在已有项目结构中生成指定的代码文件。
+
+点击[查看详细介绍](./generator/README.md)。
