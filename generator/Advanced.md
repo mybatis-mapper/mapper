@@ -11,12 +11,8 @@
     自己可以替换版本，连接其他数据库时，将对应的驱动放到当前 lib 目录下
   - `rui-cli.jar` 代码生成器 
 - `mapper-templates` 模板文件
-  - `extend` 基于 `@Extend` 注解的代码模板
-    - `model.java`  普通的实体类模板
-    - `model-lombok.java` 使用 lombok 注解的实体类模板
-  - `simple` 基于 `@Entity` 注解的代码模板
-      - `model.java`  普通的实体类模板
-      - `model-lombok.java` 使用 lombok 注解的实体类模板
+  - `model.java`  普通的实体类模板
+  - `model-lombok.java` 使用 lombok 注解的实体类模板
   - `mapper.java` Mapper 接口模板
   - `mapper.xml` Mapper XML 模板
   - `service.java` Service 接口模板
@@ -207,7 +203,6 @@ package ${package};
 
 ```java
 import io.mybatis.provider.Entity;
-import io.mybatis.provider.extend.Extend;
 import org.apache.ibatis.type.JdbcType;
 
 <#list it.importJavaTypes as javaType>
@@ -231,10 +226,10 @@ import ${package.parent}.model.${it.name.className};
  *
  * @author ${SYS['user.name']}
  */
-@Extend.Table("${it.name}" remark = "${it.comment}", autoResultMap = true)
+@Entity.Table("${it.name}" remark = "${it.comment}", autoResultMap = true)
 public class ${it.name.className} {
 ```
-这里给实体类添加了 mybatis-mapper 中的 `@Extend.Table` 注解，
+这里给实体类添加了 mybatis-mapper 中的 `@Entity.Table` 注解，
 这里使用 `${SYS['user.name']}` 作为 `@author`，你也可以写死，或者设置为其他变量。
 
 这里的 `${it.name}` 代表了表名，`${it.name.className}` 代表了表名对应的类名形式，
@@ -273,9 +268,9 @@ it.name.toString()
 ```java
   <#list it.columns as column>
   <#if column.pk>
-  @Extend.Column(value = "${column.name}", id = true, remark = "${column.comment}", updatable = false, insertable = false)
+  @Entity.Column(value = "${column.name}", id = true, remark = "${column.comment}", updatable = false, insertable = false)
   <#else>
-  @Extend.Column(value = "${column.name}", remark = "${column.comment}"<#if column.tags.jdbcType>, jdbcType = JdbcType.${column.jdbcType}</#if>)
+  @Entity.Column(value = "${column.name}", remark = "${column.comment}"<#if column.tags.jdbcType>, jdbcType = JdbcType.${column.jdbcType}</#if>)
   </#if>
   private ${column.javaType} ${column.name.fieldName};
   

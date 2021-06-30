@@ -157,7 +157,7 @@ public void registerAsDefault() {
 这个方法将自己设为了默认实例。另一个 `mapperProviderUser` 不是默认的，这个对象在下面的基类中使用：
 ```java
 public class BaseId<T extends BaseId> implements ActiveRecord<T, Integer> {
-  @Extend.Column(id = true, insertable = false)
+  @Entity.Column(id = true, insertable = false)
   private Integer id;
 
   @Override

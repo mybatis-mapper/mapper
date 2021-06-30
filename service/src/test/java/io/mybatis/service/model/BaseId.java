@@ -16,10 +16,10 @@
 
 package io.mybatis.service.model;
 
-import io.mybatis.provider.extend.Extend;
+import io.mybatis.provider.Entity;
 
 public class BaseId<T extends BaseId> {
-  @Extend.Column(id = true, insertable = false)
+  @Entity.Column(id = true, insertable = false)
   private Integer id;
 
   public Integer getId() {

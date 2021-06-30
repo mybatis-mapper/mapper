@@ -87,11 +87,9 @@ files:
               - name: model
                 files:
                   - name: '${it.name.className}.java'
-                    # 此处有4种模板示例，分别列出来加了注释
-                    # file: simple/model.java
-                    # file: simple/model-lombok.java
-                    file: extend/model.java
-                    # file: extend/model-lombok.java
+                    # 此处有2种模板示例，分别列出来加了注释
+                    file: model.java
+                    # file: model-lombok.java
                     iter: tables
               - name: service
                 files:

@@ -17,11 +17,10 @@
 package io.mybatis.service.model;
 
 import io.mybatis.provider.Entity;
-import io.mybatis.provider.extend.Extend;
 
 @Entity.Table
 public class Role {
-  @Extend.Column(id = true, insertable = false)
+  @Entity.Column(id = true, insertable = false)
   private Integer id;
 
   @Entity.Column

@@ -12,12 +12,8 @@
     你可以把自己常用的各种数据库驱动都放在这里。
   - `rui-cli.jar` 代码生成器 
 - `mapper-templates` 模板文件
-  - `extend` 基于 `@Extend` 注解的代码模板
-    - `model.java`  普通的实体类模板
-    - `model-lombok.java` 使用 lombok 注解的实体类模板
-  - `simple` 基于 `@Entity` 注解的代码模板
-      - `model.java`  普通的实体类模板
-      - `model-lombok.java` 使用 lombok 注解的实体类模板
+  - `model.java`  普通的实体类模板
+  - `model-lombok.java` 使用 lombok 注解的实体类模板
   - `mapper.java` Mapper 接口模板
   - `mapper.xml` Mapper XML 模板
   - `service.java` Service 接口模板
@@ -151,11 +147,9 @@ files:
               - name: model
                 files:
                   - name: '${it.name.className}.java'
-                    # 此处有4种模板示例，分别列出来加了注释
-#                    file: simple/model.java
-#                    file: simple/model-lombok.java
-                    file: extend/model.java
-#                    file: extend/model-lombok.java
+                    # 此处有2种模板示例，分别列出来加了注释
+                    file: model.java
+#                    file: model-lombok.java
                     iter: tables
               - name: service
                 files:
@@ -206,14 +200,10 @@ files:
 
 目前代码模板使用 `FreeMarker` 模板引擎，点击查看 [模板语言参考文档](http://www.kerneler.com/freemarker2.3.23/ref.html)。
 
-针对 model 提供了 4 套模板：
+针对 model 提供了 2 套模板：
 
-- `extend` 基于 `@Extend` 注解的代码模板
-  - `model.java`  普通的实体类模板
-  - `model-lombok.java` 使用 lombok 注解的实体类模板
-- `simple` 基于 `@Entity` 注解的代码模板
-  - `model.java`  普通的实体类模板
-  - `model-lombok.java` 使用 lombok 注解的实体类模板
+- `model.java`  普通的实体类模板
+- `model-lombok.java` 使用 lombok 注解的实体类模板
 
 修改配置文件下面的地方选择想要使用的文档：
 
@@ -223,11 +213,9 @@ files:
   files:
     # 有实体类代码，类名为表名的类形式
     - name: '${it.name.className}.java'
-      # 此处有4种模板示例，具体类型看上面介绍
-      # file: simple/model.java
-      # file: simple/model-lombok.java
-      file: extend/model.java
-      # file: extend/model-lombok.java
+      # 此处有2种模板示例，具体类型看上面介绍
+      file: model.java
+      # file: model-lombok.java
       iter: tables
 ```
 

@@ -110,8 +110,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
      * @param columns     列集合
      */
     private Fns(Class<E> entityClass, String table, List<EntityColumn> columns) {
-      super(null);
-      this.entityClass = entityClass;
+      super(entityClass);
       this.table = table;
       this.columns = columns;
     }

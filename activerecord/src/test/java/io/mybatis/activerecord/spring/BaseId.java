@@ -18,10 +18,10 @@ package io.mybatis.activerecord.spring;
 
 import io.mybatis.activerecord.ActiveRecord;
 import io.mybatis.mapper.Mapper;
-import io.mybatis.provider.extend.Extend;
+import io.mybatis.provider.Entity;
 
 public class BaseId<T extends BaseId> implements ActiveRecord<T, Integer> {
-  @Extend.Column(id = true, insertable = false)
+  @Entity.Column(id = true, insertable = false)
   private Integer id;
 
   @Override

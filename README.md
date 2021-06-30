@@ -97,14 +97,14 @@ public class User {
 实体类上 **必须添加** `@Entity.Table` 注解指定实体类对应的表名，建议明确指定表名，不提供表名的时候，使用类名作为表名。
 所有属于表中列的字段，**必须添加** `@Entity.Column` 注解，不指定列名时，使用字段名（不做任何转换），通过 `id=true` 可以标记字段为主键。
 
->`@Entity` 中包含的这两个注解只提供了最简单的配置信息，想要使用更多的配置，参考下面 **3. extend 模块** 的内容，
->扩展部分提供了两套扩展注解，下面是一个简单示例：
+>`@Entity` 中包含的这两个注解提供了大量的配置属性，想要使用更多的配置，参考下面 **3. @Entity 注解** 的内容，
+>下面是一个简单示例：
 >```java
->@Extend.Table(value = "sys_user", remark = "系统用户", autoResultMap = true)
+>@Entity.Table(value = "sys_user", remark = "系统用户", autoResultMap = true)
 >public class User {
->  @Extend.Column(id = true, remark = "主键", updatable = false, insertable = false)
+>  @Entity.Column(id = true, remark = "主键", updatable = false, insertable = false)
 >  private Long   id;
->  @Extend.Column(value = "name", remark = "帐号")
+>  @Entity.Column(value = "name", remark = "帐号")
 >  private String userName;
 >  //省略其他
 >}
@@ -277,16 +277,11 @@ public interface Mapper<T, I extends Serializable>
 
 点击[查看详细介绍](./mapper/README.md)。
 
-## 3. extend 模块
+## 3. @Entity 注解
 
-基于 **mybatis-mapper/provider** 核心部分扩展更新表和列的信息，可以直接配合 mapper 使用。
+这部分属于 **mybatis-mapper/provider** 核心部分提供的基础注解，可以直接配合 mapper 使用。
 
-这个模块有两个作用：
-
-1. 演示如何通过 SPI 扩展实体的配置信息。
-2. 通过扩展支持更多可用的配置项。
-
-点击[查看详细介绍](./extend/README.md)。
+点击[查看详细介绍](./Entity.md)。
 
 ## 4. common 模块
 

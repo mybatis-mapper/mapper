@@ -1,6 +1,7 @@
 package ${package};
 
 import io.mybatis.provider.Entity;
+import org.apache.ibatis.type.JdbcType;
 
 <#list it.importJavaTypes as javaType>
 import ${javaType};
@@ -11,16 +12,13 @@ import ${javaType};
  *
  * @author ${SYS['user.name']}
  */
-@Entity.Table("${it.name}")
+@Entity.Table("${it.name}" remark = "${it.comment}", autoResultMap = true)
 public class ${it.name.className} {
   <#list it.columns as column>
-  /**
-   * ${column.comment}
-   */
   <#if column.pk>
-  @Entity.Column(value = "${column.name}", id = true)
+  @Entity.Column(value = "${column.name}", id = true, remark = "${column.comment}", updatable = false, insertable = false)
   <#else>
-  @Entity.Column("${column.name}")
+  @Entity.Column(value = "${column.name}", remark = "${column.comment}"<#if column.tags.jdbcType>, jdbcType = JdbcType.${column.jdbcType}</#if>)
   </#if>
   private ${column.javaType} ${column.name.fieldName};
 

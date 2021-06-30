@@ -39,11 +39,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.mybatis</groupId>
-      <artifactId>mybatis-extend</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
     </dependency>
