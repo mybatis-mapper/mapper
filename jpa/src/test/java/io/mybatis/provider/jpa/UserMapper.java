@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.mybatis.provider.extend;
+package io.mybatis.provider.jpa;
 
-import io.mybatis.provider.defaults.DefaultEntityClassFinder;
+import io.mybatis.provider.Caching;
+import org.apache.ibatis.annotations.Lang;
+import org.apache.ibatis.annotations.SelectProvider;
 
-/**
- * 支持识别带有 @Extend.Table 的实体类
- *
- * @author liuzh
- */
-public class ExtendEntityClassFinder extends DefaultEntityClassFinder {
+public interface UserMapper {
 
-  @Override
-  public boolean isEntityClass(Class<?> clazz) {
-    return clazz.isAnnotationPresent(Extend.Table.class) || super.isEntityClass(clazz);
-  }
+  @Lang(Caching.class)
+  @SelectProvider(type = BaseProvider.class, method = "getById")
+  User getById(Long id);
 
 }
