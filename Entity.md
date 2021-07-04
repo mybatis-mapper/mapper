@@ -7,22 +7,20 @@
 注解提供了大量的配置属性，详细介绍看代码注释：
 
 ```java
-/**
- * 表对应的实体
- *
- * @author liuzh
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Entity {
+  /**
+   * 对应实体类
+   */
+  Class<?> value();
 
   /**
-   * 表附加信息
+   * 表名
    */
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.TYPE)
   @interface Table {
-
     /**
      * 表名，默认空时使用对象名（不进行任何转换）
      */
@@ -42,15 +40,39 @@ public @interface Entity {
      * 自动根据字段生成 <resultMap>
      */
     boolean autoResultMap() default false;
+
+    /**
+     * 属性配置
+     */
+    Prop[] props() default {};
   }
 
   /**
-   * 列附加信息
+   * 属性配置
+   */
+  @interface Prop {
+    /**
+     * 属性名
+     */
+    String name();
+
+    /**
+     * 属性值
+     */
+    String value();
+
+    /**
+     * 属性值类型，支持 String, Integer, Long, Boolean, Double, Float 六种类型
+     */
+    Class type() default String.class;
+  }
+
+  /**
+   * 列名
    */
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.FIELD)
   @interface Column {
-
     /**
      * 列名，默认空时使用字段名（不进行任何转换）
      */
@@ -100,8 +122,12 @@ public @interface Entity {
      * 小数位数 {, numericScale=2}
      */
     String numericScale() default "";
-  }
 
+    /**
+     * 属性配置
+     */
+    Prop[] props() default {};
+  }
 }
 ```
 
@@ -112,6 +138,7 @@ public @interface Entity {
 - remark：备注，仅用于在注解上展示，不用于任何其他处理
 - resultMap：使用指定的 `<resultMap>`
 - autoResultMap：自动根据字段生成 `<resultMap>`
+- props: 属性配置，没有明确的作用，实体类上的配置信息会写入 `EntityTable.props` 中
 
 备注只是展示，没有真正的作用。真正有用的是后两个字段，通过 `resultMap` 可以指定在其他地方定义好的 `<resultMap>`，
 可以直接在 XML 中定义好，这里直接使用。`autoResultMap` 和 `resultMap` 相反，但功能相同，
@@ -121,7 +148,13 @@ public @interface Entity {
 这部分的示例如下：
 ```java
 //autoResultMap 自动生成 <resultMap> 结果映射，支持查询结果中的 typeHandler 等配置
-@Entity.Table(value = "sys_user", remark = "系统用户", autoResultMap = true)
+@Entity.Table(value = "sys_user", remark = "系统用户", autoResultMap = true,
+  props = {
+    //deleteByExample方法中的Example条件不能为空，默认允许空，另外两个配置类似
+    @Entity.Prop(name = "deleteByExample.allowEmpty", value = "false", type = Boolean.class),
+    @Entity.Prop(name = "updateByExample.allowEmpty", value = "false", type = Boolean.class),
+    @Entity.Prop(name = "updateByExampleSelective.allowEmpty", value = "false", type = Boolean.class)
+  })
 public class User {
 //忽略其他
 }
