@@ -18,7 +18,13 @@ package io.mybatis.mapper.model;
 
 import io.mybatis.provider.Entity;
 
-@Entity.Table("user")
+@Entity.Table(value = "user",
+  props = {
+    @Entity.Prop(name = "deleteByExample.allowEmpty", value = "false", type = Boolean.class),
+    @Entity.Prop(name = "updateByExample.allowEmpty", value = "false", type = Boolean.class),
+    @Entity.Prop(name = "updateByExampleSelective.allowEmpty", value = "false", type = Boolean.class)
+  }
+)
 public class User {
   @Entity.Column(id = true)
   private Long   id;
@@ -54,9 +60,9 @@ public class User {
   @Override
   public String toString() {
     return "User{" +
-        "id=" + id +
-        ", name='" + userName + '\'' +
-        ", sex='" + sex + '\'' +
-        '}';
+      "id=" + id +
+      ", name='" + userName + '\'' +
+      ", sex='" + sex + '\'' +
+      '}';
   }
 }

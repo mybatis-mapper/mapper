@@ -52,26 +52,12 @@ public class Example<T> {
    * 多组条件通过 OR 连接
    */
   protected List<Criteria<T>> oredCriteria;
-  /**
-   * 允许Example查询条件为空
-   */
-  protected boolean           allowCriteriaEmpty;
 
   /**
    * 默认构造方法，不允许Example查询条件为空，不能操作全库
    */
   public Example() {
     oredCriteria = new ArrayList<>();
-  }
-
-  /**
-   * 是否允许 Example 查询条件为空，允许空时可能会操作全库
-   *
-   * @param allowCriteriaEmpty 是否允许Example查询条件为空，默认 false 不允许
-   */
-  public Example(boolean allowCriteriaEmpty) {
-    this();
-    this.allowCriteriaEmpty = allowCriteriaEmpty;
   }
 
   /**
@@ -121,7 +107,6 @@ public class Example<T> {
     selectColumns = null;
     startSql = null;
     endSql = null;
-    allowCriteriaEmpty = false;
   }
 
   /**
@@ -236,56 +221,31 @@ public class Example<T> {
   }
 
   /**
-   * 是否允许查询条件为空
-   *
-   * @return 是否允许查询条件为空，默认 false 不允许
-   */
-  public boolean isAllowCriteriaEmpty() {
-    return allowCriteriaEmpty;
-  }
-
-  /**
-   * 设置是否允许查询条件为空
-   *
-   * @param allowCriteriaEmpty true允许空，一般用于查询，false不允许空，一般用于修改和删除
-   */
-  public void setAllowCriteriaEmpty(boolean allowCriteriaEmpty) {
-    this.allowCriteriaEmpty = allowCriteriaEmpty;
-  }
-
-  /**
-   * 设置是否允许查询条件为空
-   *
-   * @param allowCriteriaEmpty true允许空，一般用于查询，false不允许空，一般用于修改和删除
-   */
-  public void allowCriteriaEmpty(boolean allowCriteriaEmpty) {
-    this.allowCriteriaEmpty = allowCriteriaEmpty;
-  }
-
-  /**
-   * 获取所有条件，当前方法会校验所有查询条件，如果不存在查询条件就抛出异常。
-   * <p>
-   * 不允许通过 Example 相关方法操作全表！！！
+   * 获取所有条件
    *
    * @return 条件
    */
   public List<Criteria<T>> getOredCriteria() {
-    if (!allowCriteriaEmpty) {
-      if (oredCriteria.size() == 0) {
-        throw new IllegalArgumentException("Example Criteria cannot be empty");
-      }
-      boolean noCriteria = true;
-      for (Criteria<T> criteria : oredCriteria) {
-        if (!criteria.getCriteria().isEmpty()) {
-          noCriteria = false;
-          break;
-        }
-      }
-      if (noCriteria) {
-        throw new IllegalArgumentException("Example Criteria cannot be empty");
+    return oredCriteria;
+  }
+
+  /**
+   * 查询条件是否为空
+   *
+   * @return
+   */
+  public boolean isEmpty() {
+    if (oredCriteria.size() == 0) {
+      return true;
+    }
+    boolean noCriteria = true;
+    for (Criteria<T> criteria : oredCriteria) {
+      if (!criteria.getCriteria().isEmpty()) {
+        noCriteria = false;
+        break;
       }
     }
-    return oredCriteria;
+    return noCriteria;
   }
 
   /**

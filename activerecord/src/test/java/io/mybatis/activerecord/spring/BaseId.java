@@ -20,6 +20,7 @@ import io.mybatis.activerecord.ActiveRecord;
 import io.mybatis.mapper.Mapper;
 import io.mybatis.provider.Entity;
 
+@Entity.Table
 public class BaseId<T extends BaseId> implements ActiveRecord<T, Integer> {
   @Entity.Column(id = true, insertable = false)
   private Integer id;

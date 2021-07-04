@@ -35,6 +35,9 @@ public class JpaEntityTableFactory implements EntityTableFactory {
     EntityTable entityTable = chain.createEntityTable(entityClass);
     if (entityClass.isAnnotationPresent(Table.class)) {
       Table table = entityClass.getAnnotation(Table.class);
+      if(entityTable == null) {
+        entityTable = EntityTable.of(entityClass);
+      }
       if (!table.name().isEmpty()) {
         entityTable.table(table.name());
       }

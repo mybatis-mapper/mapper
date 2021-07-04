@@ -19,6 +19,7 @@ package io.mybatis.mapper.example;
 import io.mybatis.mapper.BaseMapperTest;
 import io.mybatis.mapper.UserMapper;
 import io.mybatis.mapper.model.User;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
@@ -47,7 +48,6 @@ public class UserExampleMapperTest extends BaseMapperTest {
 
       example.clear();
       example.setSelectColumns("count(distinct sex) as id");
-      example.setAllowCriteriaEmpty(true);
       Optional<User> user = exampleMapper.selectOneByExample(example);
       Assert.assertTrue(user.isPresent());
       Assert.assertEquals(2L, user.get().getId().longValue());
@@ -63,7 +63,6 @@ public class UserExampleMapperTest extends BaseMapperTest {
       example.clear();
       example.orderBy(User::getId, Example.Order.DESC);
       example.setEndSql("limit 1");
-      example.setAllowCriteriaEmpty(true);
       user = exampleMapper.selectOneByExample(example);
       Assert.assertTrue(user.isPresent());
       Assert.assertEquals("韩千叶", user.get().getUserName());
@@ -71,7 +70,6 @@ public class UserExampleMapperTest extends BaseMapperTest {
       example.clear();
       example.setDistinct(true);
       example.selectColumns(User::getSex);
-      example.allowCriteriaEmpty(true);
       long count = exampleMapper.countByExample(example);
       Assert.assertEquals(2, count);
 
@@ -125,6 +123,19 @@ public class UserExampleMapperTest extends BaseMapperTest {
     }
   }
 
+  @Test(expected = PersistenceException.class)
+  public void testDeleteByExampleEmpty() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      exampleMapper.deleteByExample(new Example<>());
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
+
   @Test
   public void testUpdateByExample() {
     SqlSession sqlSession = getSqlSession();
@@ -143,6 +154,22 @@ public class UserExampleMapperTest extends BaseMapperTest {
     }
   }
 
+  @Test(expected = PersistenceException.class)
+  public void testUpdateByExampleEmpty() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      User user = new User();
+      user.setId(1L);
+      user.setUserName("男主角");
+      exampleMapper.updateByExample(user, new Example<>());
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
+
   @Test
   public void testUpdateByExampleSelective() {
     SqlSession sqlSession = getSqlSession();
@@ -153,6 +180,21 @@ public class UserExampleMapperTest extends BaseMapperTest {
       User user = new User();
       user.setUserName("主角");
       Assert.assertEquals(10, exampleMapper.updateByExampleSelective(user, example));
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
+
+  @Test(expected = PersistenceException.class)
+  public void testUpdateByExampleSelectiveEmpty() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      User user = new User();
+      user.setUserName("主角");
+      exampleMapper.updateByExampleSelective(user, new Example<>());
       sqlSession.rollback();
     } finally {
       //不要忘记关闭sqlSession

@@ -18,6 +18,7 @@ package io.mybatis.service.model;
 
 import io.mybatis.provider.Entity;
 
+@Entity.Table
 public class BaseId<T extends BaseId> {
   @Entity.Column(id = true, insertable = false)
   private Integer id;

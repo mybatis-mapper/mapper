@@ -60,7 +60,7 @@ public class ExampleProvider {
       "      </trim>\n" +
       "    </if>\n" +
       "  </foreach>\n" +
-      "</where>";
+      "</where>\n";
 
   /**
    * example 结构的动态 SQL 查询条件，用于多个参数时，Example 对应 @Param("example")
@@ -94,7 +94,7 @@ public class ExampleProvider {
       "      </trim>\n" +
       "    </if>\n" +
       "  </foreach>\n" +
-      "</where>";
+      "</where>\n";
 
   /**
    * 根据 Example 删除
@@ -106,7 +106,10 @@ public class ExampleProvider {
     return SqlScript.caching(providerContext, (entity, util) ->
         util.ifTest("startSql != null and startSql != ''", () -> "${startSql}")
             + "DELETE FROM " + entity.table()
-            + util.parameterNotNull("Example Criteria cannot be empty")
+            + util.parameterNotNull("Example cannot be null")
+            //是否允许空条件，默认允许，允许时不检查查询条件
+            + (entity.getProp("deleteByExample.allowEmpty", true) ?
+                  "" : util.variableIsFalse("_parameter.isEmpty()", "Example Criteria cannot be empty"))
             + EXAMPLE_WHERE_CLAUSE
             + util.ifTest("endSql != null and endSql != ''", () -> "${endSql}"));
   }
@@ -125,7 +128,11 @@ public class ExampleProvider {
             + "UPDATE " + entity.table()
             + set(() -> entity.updateColumns().stream().map(
             column -> column.columnEqualsProperty("entity.")).collect(Collectors.joining(",")))
-            + parameterNotNull("Example Criteria cannot be empty")
+            //TODO 测试
+            + variableNotNull("example", "Example cannot be null")
+            //是否允许空条件，默认允许，允许时不检查查询条件
+            + (entity.getProp("updateByExample.allowEmpty", true) ?
+                  "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
       }
@@ -147,7 +154,11 @@ public class ExampleProvider {
             + set(() -> entity.updateColumns().stream().map(
             column -> ifTest(column.notNullTest("entity."),
                 () -> column.columnEqualsProperty("entity.") + ",")).collect(Collectors.joining(LF)))
-            + parameterNotNull("Example Criteria cannot be empty")
+            //TODO 测试
+            + variableNotNull("example", "Example cannot be null")
+            //是否允许空条件，默认允许，允许时不检查查询条件
+            + (entity.getProp("updateByExampleSelective.allowEmpty", true) ?
+                  "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
       }
