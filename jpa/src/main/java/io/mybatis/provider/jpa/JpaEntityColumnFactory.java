@@ -35,15 +35,9 @@ public class JpaEntityColumnFactory implements EntityColumnFactory {
     Optional<List<EntityColumn>> optionalEntityColumns = chain.createEntityColumn(entityTable, field);
     if (field.isAnnotationPresent(Transient.class)) {
       return Optional.empty();
-    } else if (optionalEntityColumns.isPresent()) {
-
-    } else if (field.isAnnotationPresent(Column.class)) {
-      Column column = field.getAnnotation(Column.class);
-      String columnName = column.name();
-      if (columnName.isEmpty()) {
-        columnName = field.getName();
-      }
-      optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(columnName)));
+    } else if (!optionalEntityColumns.isPresent()) {
+      //没有 @Transient 注解的字段都认为是表字段，不自动排除字段
+      optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(field.getName())));
     }
     if (optionalEntityColumns.isPresent()) {
       List<EntityColumn> entityColumns = optionalEntityColumns.get();
