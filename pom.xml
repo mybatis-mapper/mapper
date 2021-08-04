@@ -67,12 +67,12 @@
 
     <provider.version>1.0.0-SNAPSHOT</provider.version>
 
-    <mybatis.version>3.5.6</mybatis.version>
+    <mybatis.version>3.5.7</mybatis.version>
     <mybatis-spring.version>2.0.6</mybatis-spring.version>
-    <mybatis-spring-boot.version>2.1.4</mybatis-spring-boot.version>
+    <mybatis-spring-boot.version>2.2.0</mybatis-spring-boot.version>
 
-    <springframework.version>5.3.1</springframework.version>
-    <springboot.version>2.4.0</springboot.version>
+    <springframework.version>5.3.9</springframework.version>
+    <springboot.version>2.5.3</springboot.version>
 
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.13</junit.version>
