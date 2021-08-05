@@ -7,7 +7,9 @@
     <id property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
     <#else>
     <result property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
-    </#if>
+    <#if column.comment?has_content><!-- ${column.comment} -->
+  </#if>
+</#if>
     </#list>
   </resultMap>
 </mapper>

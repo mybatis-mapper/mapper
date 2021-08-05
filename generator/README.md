@@ -20,18 +20,12 @@
   - `serviceImpl.java` Service 接口实现模板
 - `project.yaml` 代码生成器配置文件
 
-这部分内容需要下载使用，为了方便使用，提供一个压缩包直接下载使用。
+这部分内容需要下载使用，为了方便使用，提供一个压缩包直接下载使用（最新模板从当前项目下载）。
 
 > **百度网盘**  
-> 链接: https://pan.baidu.com/s/1fzxiZaDB9zT0mUW7NKiQTA   
-> 提取码: kgtk  
-> 
-> **GitHub**  
-> https://github.com/mybatis-mapper/mapper/blob/master/generator/rui-cli.zip  
-> 
-> **Gitee**(需登录)  
-> https://gitee.com/mybatis-mapper/mapper/blob/master/generator/rui-cli.zip  
-> 
+> 链接：https://pan.baidu.com/s/1uyROE1dgvrp8h-yGG3rR6Q   
+> 提取码：an7g
+>
 > 数据库驱动部分提供一些链接，可以根据需要进行下载：
 > - [MySQL Connector/J](https://mvnrepository.com/artifact/mysql/mysql-connector-java)
 > - [MariaDB Java Client](https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client)

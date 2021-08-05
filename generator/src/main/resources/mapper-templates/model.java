@@ -8,11 +8,11 @@ import ${javaType};
 </#list>
 
 /**
- * ${it.name} - ${it.comment}
+ * ${it.name} <#if it.comment?has_content>- ${it.comment}</#if>
  *
  * @author ${SYS['user.name']}
  */
-@Entity.Table("${it.name}" remark = "${it.comment}", autoResultMap = true)
+@Entity.Table(value = "${it.name}", <#if it.comment?has_content>remark = "${it.comment}", </#if>autoResultMap = true)
 public class ${it.name.className} {
   <#list it.columns as column>
   <#if column.pk>
