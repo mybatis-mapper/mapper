@@ -129,6 +129,8 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
           EntityTable entityTable = this.columns.get(i).entityTable();
           this.table = entityTable.table();
           this.entityClass = entityTable.entityClass();
+          this.resultMap = entityTable.resultMap();
+          this.autoResultMap = entityTable.autoResultMap();
         }
       }
     }

@@ -17,6 +17,7 @@
 package io.mybatis.mapper.example;
 
 import io.mybatis.mapper.fn.Fn;
+import io.mybatis.provider.EntityColumn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,12 +120,14 @@ public class Example<T> {
       selectColumns = "";
     }
     for (Fn<T, Object> fn : fns) {
-      String column = fn.toColumn();
+      EntityColumn entityColumn = fn.toEntityColumn();
+      String column = entityColumn.column();
       String field = fn.toField();
       if (selectColumns.length() != 0) {
         selectColumns += ",";
       }
-      if (column.equals(field)) {
+      //fix 如果有设置 autoResultMap 就不能有 AS
+      if (column.equals(field) || entityColumn.entityTable().useResultMaps()) {
         selectColumns += column;
       } else {
         selectColumns += column + " AS " + field;
