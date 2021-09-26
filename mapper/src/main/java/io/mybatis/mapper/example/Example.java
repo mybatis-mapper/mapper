@@ -200,8 +200,40 @@ public class Example<T> {
   public Example<T> orderBy(Fn<T, Object> fn, Order order) {
     if (orderByClause == null) {
       orderByClause = "";
+    } else {
+      orderByClause += ", ";
     }
     orderByClause += fn.toColumn() + " " + order;
+    return this;
+  }
+
+  /**
+   * 通过方法引用方式设置排序字段，升序排序
+   *
+   * @param fns 排序列的方法引用
+   * @return Example
+   */
+  public Example<T> orderByAsc(Fn<T, Object>... fns) {
+    if (fns != null && fns.length > 0) {
+      for (int i = 0; i < fns.length; i++) {
+        orderBy(fns[i], Order.ASC);
+      }
+    }
+    return this;
+  }
+
+  /**
+   * 通过方法引用方式设置排序字段，降序排序
+   *
+   * @param fns 排序列的方法引用
+   * @return Example
+   */
+  public Example<T> orderByDesc(Fn<T, Object>... fns) {
+    if (fns != null && fns.length > 0) {
+      for (int i = 0; i < fns.length; i++) {
+        orderBy(fns[i], Order.DESC);
+      }
+    }
     return this;
   }
 

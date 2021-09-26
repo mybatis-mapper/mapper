@@ -62,6 +62,14 @@ public class UserExampleMapperTest extends BaseMapperTest {
 
       example.clear();
       example.orderBy(User::getId, Example.Order.DESC);
+      example.orderBy(User::getSex, Example.Order.ASC);
+      example.setEndSql("limit 1");
+      user = exampleMapper.selectOneByExample(example);
+      Assert.assertTrue(user.isPresent());
+      Assert.assertEquals("韩千叶", user.get().getUserName());
+
+      example.clear();
+      example.orderByDesc(User::getId, User::getSex);
       example.setEndSql("limit 1");
       user = exampleMapper.selectOneByExample(example);
       Assert.assertTrue(user.isPresent());
