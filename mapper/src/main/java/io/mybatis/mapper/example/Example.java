@@ -20,6 +20,7 @@ import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -79,6 +80,14 @@ public class Example<T> {
     Criteria<T> criteria = createCriteriaInternal();
     oredCriteria.add(criteria);
     return criteria;
+  }
+
+  /**
+   * 创建一个 or条件片段（不追加到当前Example）
+   * @return 条件
+   */
+  public OrCriteria<T> orPart() {
+    return new OrCriteria<>();
   }
 
   /**
@@ -418,6 +427,21 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andOr(OrCriteria<T> orCriteria1, OrCriteria<T> orCriteria2, OrCriteria<T>... orCriterias) {
+      List<OrCriteria<T>> orCriteriaList = new ArrayList<>(orCriterias != null ? orCriterias.length + 2 : 2);
+      orCriteriaList.add(orCriteria1);
+      orCriteriaList.add(orCriteria2);
+      if (orCriterias != null) {
+        orCriteriaList.addAll(Arrays.asList(orCriterias));
+      }
+      return andOr(orCriteriaList);
+    }
+
+    public Criteria<T> andOr(List<OrCriteria<T>> orCriteriaList) {
+      criteria.add(new Criterion(null, orCriteriaList));
+      return (Criteria<T>) this;
+    }
+
     /**
      * 手写条件
      *
@@ -458,6 +482,121 @@ public class Example<T> {
     }
   }
 
+  public static class OrCriteria<T> extends Criteria<T> {
+
+    protected OrCriteria() {
+      super();
+    }
+
+    @Override
+    @Deprecated
+    public final OrCriteria<T> andOr(OrCriteria<T> orCriteria1, OrCriteria<T> orCriteria2, OrCriteria<T>... orCriterias){
+      throw new UnsupportedOperationException("Currently does not support nested [OR] operations.");
+    }
+
+    @Override
+    @Deprecated
+    public final OrCriteria<T> andOr(List<OrCriteria<T>> orCriteriaList){
+      throw new UnsupportedOperationException("Currently does not support nested [OR] operations.");
+    }
+
+    @Override
+    public OrCriteria<T> andIsNull(Fn<T, Object> fn) {
+      super.andIsNull(fn);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andIsNotNull(Fn<T, Object> fn) {
+      super.andIsNotNull(fn);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andEqualTo(Fn<T, Object> fn, Object value) {
+      super.andEqualTo(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andNotEqualTo(Fn<T, Object> fn, Object value) {
+      super.andNotEqualTo(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andGreaterThan(Fn<T, Object> fn, Object value) {
+      super.andGreaterThan(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andGreaterThanOrEqualTo(Fn<T, Object> fn, Object value) {
+      super.andGreaterThanOrEqualTo(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andLessThan(Fn<T, Object> fn, Object value) {
+      super.andLessThan(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andLessThanOrEqualTo(Fn<T, Object> fn, Object value) {
+      super.andLessThanOrEqualTo(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andIn(Fn<T, Object> fn, Iterable values) {
+      super.andIn(fn, values);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
+      super.andNotIn(fn, values);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andBetween(Fn<T, Object> fn, Object value1, Object value2) {
+      super.andBetween(fn, value1, value2);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
+      super.andNotBetween(fn, value1, value2);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andLike(Fn<T, Object> fn, String value) {
+      super.andLike(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andNotLike(Fn<T, Object> fn, String value) {
+      super.andNotLike(fn, value);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andCondition(String condition) {
+      super.andCondition(condition);
+      return this;
+    }
+
+    @Override
+    public OrCriteria<T> andCondition(String condition, Object value) {
+      super.andCondition(condition, value);
+      return this;
+    }
+  }
+
   public static class Criterion {
     private final String condition;
 
@@ -472,6 +611,8 @@ public class Example<T> {
     private boolean betweenValue;
 
     private boolean listValue;
+
+    private boolean orValue;
 
     protected Criterion(String condition, Object value) {
       this(condition, value, null);
@@ -488,7 +629,11 @@ public class Example<T> {
       this.condition = condition;
       this.value = value;
       if (value instanceof Collection<?>) {
-        this.listValue = true;
+        if (condition != null) {
+          this.listValue = true;
+        } else {
+          this.orValue = true;
+        }
       } else {
         this.singleValue = true;
       }
@@ -532,6 +677,17 @@ public class Example<T> {
 
     public boolean isSingleValue() {
       return singleValue;
+    }
+
+    public boolean isOrValue() {
+      if (orValue && this.value instanceof Collection) {
+        return ((Collection<?>) this.value)
+                .stream()
+                .filter(item -> item instanceof OrCriteria)
+                .map(OrCriteria.class::cast)
+                .anyMatch(GeneratedCriteria::isValid);
+      }
+      return false;
     }
   }
 }
