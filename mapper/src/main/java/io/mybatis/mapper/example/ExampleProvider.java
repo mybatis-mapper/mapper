@@ -29,6 +29,25 @@ import java.util.stream.Collectors;
  */
 public class ExampleProvider {
 
+  private static final String EXAMPLE_WHERE_CLAUSE_INNER_WHEN =
+          "            <when test=\"criterion.noValue\">\n" +
+          "              AND ${criterion.condition}\n" +
+          "            </when>\n" +
+          "            <when test=\"criterion.singleValue\">\n" +
+          "              AND ${criterion.condition} #{criterion.value}\n" +
+          "            </when>\n" +
+          "            <when test=\"criterion.betweenValue\">\n" +
+          "              AND ${criterion.condition} #{criterion.value} AND\n" +
+          "              #{criterion.secondValue}\n" +
+          "            </when>\n" +
+          "            <when test=\"criterion.listValue\">\n" +
+          "              AND ${criterion.condition}\n" +
+          "              <foreach close=\")\" collection=\"criterion.value\" item=\"listItem\"\n" +
+          "                open=\"(\" separator=\",\">\n" +
+          "                #{listItem}\n" +
+          "              </foreach>\n" +
+          "            </when>\n";
+
   /**
    * example 结构的动态 SQL 查询条件，用于接口参数只有一个 Example 对象时
    */
@@ -38,21 +57,18 @@ public class ExampleProvider {
       "      <trim prefix=\"(\" prefixOverrides=\"AND\" suffix=\")\">\n" +
       "        <foreach collection=\"criteria.criteria\" item=\"criterion\">\n" +
       "          <choose>\n" +
-      "            <when test=\"criterion.noValue\">\n" +
-      "              AND ${criterion.condition}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.singleValue\">\n" +
-      "              AND ${criterion.condition} #{criterion.value}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.betweenValue\">\n" +
-      "              AND ${criterion.condition} #{criterion.value} AND\n" +
-      "              #{criterion.secondValue}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.listValue\">\n" +
-      "              AND ${criterion.condition}\n" +
-      "              <foreach close=\")\" collection=\"criterion.value\" item=\"listItem\"\n" +
-      "                open=\"(\" separator=\",\">\n" +
-      "                #{listItem}\n" +
+                   EXAMPLE_WHERE_CLAUSE_INNER_WHEN +
+      "            <when test=\"criterion.orValue\">\n" +
+      "              <foreach collection=\"criterion.value\" item=\"orCriteria\" separator=\" OR \" open = \" AND (\" close = \")\">\n" +
+      "                <if test=\"orCriteria.valid\">\n" +
+      "                  <trim prefix=\"(\" prefixOverrides=\"AND\" suffix=\")\">\n" +
+      "                    <foreach collection=\"orCriteria.criteria\" item=\"criterion\">\n" +
+      "                      <choose>\n" +
+                               EXAMPLE_WHERE_CLAUSE_INNER_WHEN +
+      "                      </choose>\n" +
+      "                    </foreach>\n" +
+      "                  </trim>\n" +
+      "                </if>\n" +
       "              </foreach>\n" +
       "            </when>\n" +
       "          </choose>\n" +
@@ -66,27 +82,23 @@ public class ExampleProvider {
    * example 结构的动态 SQL 查询条件，用于多个参数时，Example 对应 @Param("example")
    */
   public static final String UPDATE_BY_EXAMPLE_WHERE_CLAUSE = "<where>\n" +
-      "  <foreach collection=\"example.oredCriteria\" item=\"criteria\"\n" +
-      "    separator=\" OR \">\n" +
+      "  <foreach collection=\"example.oredCriteria\" item=\"criteria\"\n separator=\" OR \">\n" +
       "    <if test=\"criteria.valid\">\n" +
       "      <trim prefix=\"(\" prefixOverrides=\"AND\" suffix=\")\">\n" +
       "        <foreach collection=\"criteria.criteria\" item=\"criterion\">\n" +
       "          <choose>\n" +
-      "            <when test=\"criterion.noValue\">\n" +
-      "              AND ${criterion.condition}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.singleValue\">\n" +
-      "              AND ${criterion.condition} #{criterion.value}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.betweenValue\">\n" +
-      "              AND ${criterion.condition} #{criterion.value} AND\n" +
-      "              #{criterion.secondValue}\n" +
-      "            </when>\n" +
-      "            <when test=\"criterion.listValue\">\n" +
-      "              AND ${criterion.condition}\n" +
-      "              <foreach close=\")\" collection=\"criterion.value\" item=\"listItem\"\n" +
-      "                open=\"(\" separator=\",\">\n" +
-      "                #{listItem}\n" +
+                   EXAMPLE_WHERE_CLAUSE_INNER_WHEN +
+      "            <when test=\"criterion.orValue\">\n" +
+      "              <foreach collection=\"criterion.value\" item=\"orCriteria\" separator=\" OR \" open = \" AND (\" close = \")\">\n" +
+      "                <if test=\"orCriteria.valid\">\n" +
+      "                  <trim prefix=\"(\" prefixOverrides=\"AND\" suffix=\")\">\n" +
+      "                    <foreach collection=\"orCriteria.criteria\" item=\"criterion\">\n" +
+      "                      <choose>\n" +
+                               EXAMPLE_WHERE_CLAUSE_INNER_WHEN +
+      "                      </choose>\n" +
+      "                    </foreach>\n" +
+      "                  </trim>\n" +
+      "                </if>\n" +
       "              </foreach>\n" +
       "            </when>\n" +
       "          </choose>\n" +

@@ -19,6 +19,7 @@ package io.mybatis.mapper.fn;
 import java.beans.Introspector;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -29,7 +30,8 @@ import java.util.regex.Pattern;
  */
 public class Reflections {
   private static final Pattern GET_PATTERN = Pattern.compile("^get[A-Z].*");
-  private static final Pattern IS_PATTERN  = Pattern.compile("^is[A-Z].*");
+  private static final Pattern IS_PATTERN                 = Pattern.compile("^is[A-Z].*");
+  private static final Pattern INSTANTIATED_CLASS_PATTERN = Pattern.compile("\\(L(?<cls>.+);\\).+");
 
   private Reflections() {
   }
@@ -46,7 +48,14 @@ public class Reflections {
         getter = getter.substring(2);
       }
       String field = Introspector.decapitalize(getter);
-      String implClass = serializedLambda.getImplClass().replaceAll("/", "\\.");
+      //主要是这里  serializedLambda.getInstantiatedMethodType()
+      Matcher matcher = INSTANTIATED_CLASS_PATTERN.matcher(serializedLambda.getInstantiatedMethodType());
+      String implClass;
+      if (matcher.find()) {
+        implClass = matcher.group("cls").replaceAll("/", "\\.");
+      } else {
+        implClass = serializedLambda.getImplClass().replaceAll("/", "\\.");
+      }
       Class<?> clazz = Class.forName(implClass);
       return new ClassField(clazz, field);
     } catch (ReflectiveOperationException e) {

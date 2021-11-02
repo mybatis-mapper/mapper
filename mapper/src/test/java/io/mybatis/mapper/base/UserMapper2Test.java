@@ -18,6 +18,7 @@ package io.mybatis.mapper.base;
 
 import io.mybatis.mapper.BaseMapperTest;
 import io.mybatis.mapper.UserMapper2;
+import io.mybatis.mapper.example.Example;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.mapper.model.User;
 import org.apache.ibatis.session.SqlSession;
@@ -119,6 +120,22 @@ public class UserMapper2Test extends BaseMapperTest {
     } finally {
       //不要忘记关闭sqlSession
       sqlSession.close();
+    }
+  }
+
+  @Test
+  public void testOrCondition(){
+    try(SqlSession sqlSession = getSqlSession()){
+      UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
+      Example<User> example = mapper.example();
+      example.createCriteria()
+              .andEqualTo(User::getSex,"男")
+              .andOr(example.orPart()
+                              .andLike(User::getUserName,"杨%"),
+                      example.orPart()
+                              .andLike(User::getUserName,"俞%")
+                              .andLike(User::getUserName,"%舟"));
+      Assert.assertEquals(2,mapper.countByExample(example));
     }
   }
 }
