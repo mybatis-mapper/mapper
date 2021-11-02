@@ -22,6 +22,9 @@ import io.mybatis.provider.EntityColumn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+
+import static io.mybatis.provider.EntityTable.DELIMITER;
 
 /**
  * 通用的 Example 查询对象
@@ -130,7 +133,13 @@ public class Example<T> {
       if (column.equals(field) || entityColumn.entityTable().useResultMaps()) {
         selectColumns += column;
       } else {
-        selectColumns += column + " AS " + field;
+        Matcher matcher = DELIMITER.matcher(column);
+        //eg: mysql `order` == field order | sqlserver [order] == field order
+        if (matcher.find() && field.equals(matcher.group(1))) {
+          selectColumns += column;
+        } else {
+          selectColumns += column + " AS " + field;
+        }
       }
     }
     return this;
