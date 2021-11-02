@@ -24,13 +24,14 @@ import io.mybatis.common.util.I18n;
  * @author liuzh
  */
 public class Code {
-  public static final String CODE_BUNDLE    = "mybatis_common_code";
-  public static final Code   SUCCESS        = new Code("00000");
-  public static final Code   FAILURE        = new Code("M0100");
-  public static final Code   UNKONWN        = new Code("M0200");
-  public static final Code   SAVE_FAILURE   = new Code("M0201");
-  public static final Code   UPDATE_FAILURE = new Code("M0202");
-  public static final Code   DELETE_FAILURE = new Code("M0203");
+  public static final String        CODE_BUNDLE    = "mybatis_common_code";
+  public static final I18n.Language LANG           = I18n.language(CODE_BUNDLE);
+  public static final Code          SUCCESS        = new Code("00000");
+  public static final Code          FAILURE        = new Code("M0100");
+  public static final Code          UNKONWN        = new Code("M0200");
+  public static final Code          SAVE_FAILURE   = new Code("M0201");
+  public static final Code          UPDATE_FAILURE = new Code("M0202");
+  public static final Code          DELETE_FAILURE = new Code("M0203");
 
   private String code;
   private String message;
@@ -40,7 +41,7 @@ public class Code {
 
   public Code(String code) {
     this.code = code;
-    this.message = I18n.message(CODE_BUNDLE, code);
+    this.message = LANG.message(code);
   }
 
   public Code(String code, String message) {

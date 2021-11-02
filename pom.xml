@@ -106,6 +106,19 @@
         <optional>true</optional>
       </dependency>
 
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
       <!-- Spring 版本控制 -->
       <dependency>
         <groupId>org.springframework</groupId>
@@ -120,19 +133,6 @@
         <version>${springboot.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
