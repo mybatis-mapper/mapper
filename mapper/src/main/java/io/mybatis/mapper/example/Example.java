@@ -122,7 +122,7 @@ public class Example<T> {
     for (Fn<T, Object> fn : fns) {
       EntityColumn entityColumn = fn.toEntityColumn();
       String column = entityColumn.column();
-      String field = fn.toField();
+      String field = entityColumn.field().getName();
       if (selectColumns.length() != 0) {
         selectColumns += ",";
       }

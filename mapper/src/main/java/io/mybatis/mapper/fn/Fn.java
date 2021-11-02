@@ -32,8 +32,14 @@ import java.util.stream.Collectors;
  * @author liuzh
  */
 public interface Fn<T, R> extends Function<T, R>, Serializable {
-
-  Map<Fn, EntityColumn> FN_COLUMN_MAP = new HashMap<>();
+  /**
+   * 缓存方法引用和对应的列信息
+   */
+  Map<Fn, EntityColumn>           FN_COLUMN_MAP      = new HashMap<>();
+  /**
+   * 缓存方法引用和对应的字段信息
+   */
+  Map<Fn, Reflections.ClassField> FN_CLASS_FIELD_MAP = new HashMap<>();
 
   /**
    * 指定字段集合的虚拟表
@@ -66,7 +72,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
    * @return 方法引用对应的字段信息
    */
   default String toField() {
-    return Reflections.fnToFieldName(this).getField();
+    return toClassField().getField();
   }
 
   /**
@@ -79,18 +85,38 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   }
 
   /**
+   * 获取字段信息
+   *
+   * @return 字段名和所在类信息
+   */
+  default Reflections.ClassField toClassField() {
+    if (!FN_CLASS_FIELD_MAP.containsKey(this)) {
+      synchronized (this) {
+        if(!FN_CLASS_FIELD_MAP.containsKey(this)) {
+          FN_CLASS_FIELD_MAP.put(this, Reflections.fnToFieldName(this));
+        }
+      }
+    }
+    return FN_CLASS_FIELD_MAP.get(this);
+  }
+
+  /**
    * 转换为字段对应的列信息：获取方法引用对应的列信息
    *
    * @return 方法引用对应的列信息
    */
   default EntityColumn toEntityColumn() {
     if (!FN_COLUMN_MAP.containsKey(this)) {
-      Reflections.ClassField classField = Reflections.fnToFieldName(this);
-      EntityColumn entityColumn = EntityFactory.create(classField.getClazz()).columns().stream()
-          .filter(column -> column.property().equals(classField.getField())).findFirst()
-          .orElseThrow(() -> new RuntimeException(classField.getField()
+      synchronized (this) {
+        if (!FN_COLUMN_MAP.containsKey(this)) {
+          Reflections.ClassField classField = toClassField();
+          EntityColumn entityColumn = EntityFactory.create(classField.getClazz()).columns().stream()
+            .filter(column -> column.property().equals(classField.getField())).findFirst()
+            .orElseThrow(() -> new RuntimeException(classField.getField()
               + " does not mark database column field annotations, unable to obtain column information"));
-      FN_COLUMN_MAP.put(this, entityColumn);
+          FN_COLUMN_MAP.put(this, entityColumn);
+        }
+      }
     }
     return FN_COLUMN_MAP.get(this);
   }
