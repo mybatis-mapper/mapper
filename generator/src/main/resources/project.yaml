@@ -101,6 +101,11 @@ files:
                       - name: '${it.name.className}ServiceImpl.java'
                         file: serviceImpl.java
                         iter: tables
+              - name: controller
+                files:
+                  - name: '${it.name.className}Controller.java'
+                    file: controller.java
+                    iter: tables
       - name: resources
         files:
           - name: mappers

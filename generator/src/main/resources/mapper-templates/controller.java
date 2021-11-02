@@ -1,7 +1,5 @@
 package ${package};
 
-import io.mybatis.service.BaseService;
-
 import ${project.attrs.basePackage}.model.${it.name.className};
 import ${project.attrs.basePackage}.service.${it.name.className}Service;
 
@@ -25,7 +23,7 @@ public class ${it.name.className}Controller {
 
   @RequestMapping(method = RequestMethod.GET)
   public List<${it.name.className}> ${it.name.fieldName.s}(${it.name.className} ${it.name.fieldName}) {
-    return null;
+    return ${it.name.fieldName}Service.findList(${it.name.fieldName});
   }
 
 }

@@ -6,10 +6,8 @@
     <#if column.pk>
     <id property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
     <#else>
-    <result property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/>
-    <#if column.comment?has_content><!-- ${column.comment} -->
-  </#if>
-</#if>
+    <result property="${column.name.fieldName}" column="${column.name}" jdbcType="${column.jdbcType}"/><#if column.comment?has_content><!-- ${column.comment} --></#if>
+    </#if>
     </#list>
   </resultMap>
 </mapper>
