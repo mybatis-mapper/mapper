@@ -183,3 +183,15 @@ Assert.assertEquals(1, userMapper.deleteByPrimaryKey(user.getId()));
 上面的示例只是简单的使用了 MyBatis Mapper，还有很多开箱即用的功能没有涉及，
 建议在上述示例运行成功后，继续查看本项目其他模块的详细文档，熟悉各部分文档后，
 在使用 MyBatis Mapper 时会更得心应手，随心所欲。
+
+## 2. 示例项目
+
+项目地址: https://github.com/mybatis-mapper/mybatis-mapper-example-springboot
+
+项目目前包含 3 个分支，分别为：
+
+- master 简单集成
+- baseid 简单封装，所有表都使用名为 id，类型为 bigint 的自增主键
+- shardingsphere 分库分表，支持分库分表的代码生成，每个表有不同的id
+
+通过示例项目可以结合代码生成器自动生成大部分代码，可以用于测试和学习 mybatis-mapper 中的功能。
