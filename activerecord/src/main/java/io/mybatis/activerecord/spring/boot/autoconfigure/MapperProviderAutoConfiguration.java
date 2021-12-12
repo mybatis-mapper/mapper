@@ -18,7 +18,7 @@ package io.mybatis.activerecord.spring.boot.autoconfigure;
 
 import io.mybatis.activerecord.spring.MapperProvider;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,12 +53,19 @@ public class MapperProviderAutoConfiguration {
    * 自动注册为默认的 Mapper 提供者
    * <p>
    * 当使用多数据源时，需要通过 {@link org.springframework.context.annotation.Primary} 注解指定主要的默认的 {@link MapperProvider}
-   *
-   * @param mapperProvider
    */
-  @Autowired
-  public void registerDefaultSpringMapperRegistry(MapperProvider mapperProvider) {
-    mapperProvider.registerAsDefault();
+  @Configuration
+  public static class AutoRegisterConfiguration implements InitializingBean {
+    private final MapperProvider mapperProvider;
+
+    public AutoRegisterConfiguration(MapperProvider mapperProvider) {
+      this.mapperProvider = mapperProvider;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+      mapperProvider.registerAsDefault();
+    }
   }
 
 }
