@@ -59,21 +59,21 @@
   </modules>
 
   <properties>
-    <revision>1.0.4</revision>
+    <revision>1.1.0</revision>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Dfile.encoding=UTF-8</argLine>
 
-    <provider.version>1.0.2</provider.version>
+    <provider.version>1.1.0</provider.version>
 
-    <mybatis.version>3.5.7</mybatis.version>
+    <mybatis.version>3.5.9</mybatis.version>
     <mybatis-spring.version>2.0.6</mybatis-spring.version>
-    <mybatis-spring-boot.version>2.2.0</mybatis-spring-boot.version>
+    <mybatis-spring-boot.version>2.2.1</mybatis-spring-boot.version>
 
-    <springframework.version>5.3.13</springframework.version>
-    <springboot.version>2.6.1</springboot.version>
+    <springframework.version>5.3.14</springframework.version>
+    <springboot.version>2.6.2</springboot.version>
 
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.13</junit.version>
