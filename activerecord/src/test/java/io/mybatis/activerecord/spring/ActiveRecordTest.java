@@ -15,7 +15,7 @@
  */
 package io.mybatis.activerecord.spring;
 
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
 import org.apache.ibatis.logging.LogFactory;
 import org.junit.AfterClass;
@@ -46,13 +46,13 @@ public class ActiveRecordTest {
   public void shouldReturnMapper() {
     RoleMapper roleMapper = (RoleMapper) context.getBean("roleMapper");
     Assert.assertNotNull(roleMapper);
-    Mapper<Role, Integer> roleMapper2 = new Role().baseMapper();
+    BaseMapper<Role, Integer> roleMapper2 = new Role().baseMapper();
     Assert.assertNotNull(roleMapper2);
     Assert.assertTrue(roleMapper2 instanceof RoleMapper);
 
     UserMapper userMapper = (UserMapper) context.getBean("userMapper");
     Assert.assertNotNull(userMapper);
-    Mapper<User, Integer> userMapper2 = new User().baseMapper();
+    BaseMapper<User, Integer> userMapper2 = new User().baseMapper();
     Assert.assertNotNull(userMapper2);
     Assert.assertTrue((Object) userMapper2 instanceof UserMapper);
   }

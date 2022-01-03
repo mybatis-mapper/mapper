@@ -16,7 +16,7 @@
 
 package io.mybatis.activerecord;
 
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
 
 import java.io.Serializable;
@@ -29,7 +29,7 @@ import java.util.List;
  * @param <I> 主键类型
  * @author liuzh
  */
-public interface ExampleRecord<T, I extends Serializable> extends MapperRecord<T, I, Mapper<T, I>> {
+public interface ExampleRecord<T, I extends Serializable> extends MapperRecord<T, I, BaseMapper<T, I>> {
   /**
    * 获取 Example 对象
    *

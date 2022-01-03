@@ -21,7 +21,7 @@ import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.Options;
 
-public interface UserMapper extends BaseMapper<User>, UserMarker {
+public interface UserMapper extends CustomMapper<User>, UserMarker {
   /**
    * 保存实体，默认主键自增，并且名称为 id
    * <p>

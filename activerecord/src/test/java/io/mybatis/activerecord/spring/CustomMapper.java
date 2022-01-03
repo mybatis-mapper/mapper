@@ -17,6 +17,6 @@ package io.mybatis.activerecord.spring;
 
 import io.mybatis.mapper.Mapper;
 
-public interface BaseMapper<T> extends Mapper<T, Long> {
+public interface CustomMapper<T> extends Mapper<T, Long> {
 
 }

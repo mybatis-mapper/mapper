@@ -16,7 +16,7 @@
 
 package io.mybatis.activerecord.spring;
 
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.provider.EntityClassFinder;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.ApplicationContext;
@@ -35,19 +35,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <M> 实体对应的 Mapper
  * @author liuzh
  */
-public class MapperProvider<T, I extends Serializable, M extends Mapper<T, I>> implements ApplicationListener<ContextRefreshedEvent> {
+public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I>> implements ApplicationListener<ContextRefreshedEvent> {
   /**
    * Spring 上下文
    */
-  protected static ApplicationContext          applicationContext;
+  protected static ApplicationContext              applicationContext;
   /**
    * 缓存默认注入的实例
    */
-  protected        Map<Class<?>, Mapper<T, I>> modelMapper = new ConcurrentHashMap<>();
+  protected        Map<Class<?>, BaseMapper<T, I>> modelMapper = new ConcurrentHashMap<>();
   /**
    * 必须使用线程安全的 {@link SqlSessionTemplate}
    */
-  protected        SqlSessionTemplate          sqlSessionTemplate;
+  protected        SqlSessionTemplate              sqlSessionTemplate;
 
   /**
    * 构造方法，必须使用线程安全的 {@link SqlSessionTemplate}
@@ -63,7 +63,7 @@ public class MapperProvider<T, I extends Serializable, M extends Mapper<T, I>> i
    *
    * @return 默认实例
    */
-  public static <T, I extends Serializable, M extends Mapper<T, I>> MapperProvider<T, I, M> getDefaultInstance() {
+  public static <T, I extends Serializable, M extends BaseMapper<T, I>> MapperProvider<T, I, M> getDefaultInstance() {
     return MapperProviderInstance.getINSTANCE();
   }
 
@@ -72,7 +72,7 @@ public class MapperProvider<T, I extends Serializable, M extends Mapper<T, I>> i
    *
    * @return 默认实例
    */
-  public static <T, I extends Serializable, M extends Mapper<T, I>> MapperProvider<T, I, M> getInstance(String instanceName) {
+  public static <T, I extends Serializable, M extends BaseMapper<T, I>> MapperProvider<T, I, M> getInstance(String instanceName) {
     return (MapperProvider<T, I, M>) applicationContext.getBean(instanceName);
   }
 
@@ -91,10 +91,10 @@ public class MapperProvider<T, I extends Serializable, M extends Mapper<T, I>> i
    * @param mapper Mapper 实例
    */
   public void addMapper(Class<?> type, Object mapper) {
-    if (type != null && Mapper.class.isAssignableFrom(type)) {
+    if (type != null && BaseMapper.class.isAssignableFrom(type)) {
       EntityClassFinder.find(type, null).ifPresent(clazz -> {
         if (mapper != null) {
-          modelMapper.put(clazz, (Mapper<T, I>) mapper);
+          modelMapper.put(clazz, (BaseMapper<T, I>) mapper);
         }
       });
     }
@@ -123,14 +123,14 @@ public class MapperProvider<T, I extends Serializable, M extends Mapper<T, I>> i
   private static class MapperProviderInstance {
     public static MapperProvider INSTANCE;
 
-    private static <T, I extends Serializable, M extends Mapper<T, I>> MapperProvider<T, I, M> getINSTANCE() {
+    private static <T, I extends Serializable, M extends BaseMapper<T, I>> MapperProvider<T, I, M> getINSTANCE() {
       if (INSTANCE == null) {
         throw new NullPointerException("MapperProvider default instance not found");
       }
       return INSTANCE;
     }
 
-    private static <T, I extends Serializable, M extends Mapper<T, I>> void setINSTANCE(MapperProvider<T, I, M> INSTANCE) {
+    private static <T, I extends Serializable, M extends BaseMapper<T, I>> void setINSTANCE(MapperProvider<T, I, M> INSTANCE) {
       MapperProviderInstance.INSTANCE = INSTANCE;
     }
   }

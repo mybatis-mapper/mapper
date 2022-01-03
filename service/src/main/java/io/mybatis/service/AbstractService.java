@@ -17,7 +17,7 @@
 package io.mybatis.service;
 
 import io.mybatis.common.util.Assert;
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
@@ -27,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.Serializable;
 import java.util.List;
 
-import static io.mybatis.common.core.Code.*;
+import static io.mybatis.common.core.Code.DELETE_FAILURE;
+import static io.mybatis.common.core.Code.SAVE_FAILURE;
+import static io.mybatis.common.core.Code.UPDATE_FAILURE;
 
 /**
  * 基础方法实现，推荐自己的实现类继承该类
@@ -50,7 +52,7 @@ import static io.mybatis.common.core.Code.*;
  * @param <M> Mapper类型
  * @author liuzh
  */
-public abstract class AbstractService<T, I extends Serializable, M extends Mapper<T, I>>
+public abstract class AbstractService<T, I extends Serializable, M extends BaseMapper<T, I>>
     implements BaseService<T, I> {
 
   protected M baseMapper;

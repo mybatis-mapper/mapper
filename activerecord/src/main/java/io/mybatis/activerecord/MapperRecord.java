@@ -17,7 +17,7 @@
 package io.mybatis.activerecord;
 
 import io.mybatis.activerecord.spring.MapperProvider;
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.provider.EntityInfoMapper;
 
 import java.io.Serializable;
@@ -30,7 +30,7 @@ import java.io.Serializable;
  * @param <M> 实体对应的 Mapper
  * @author liuzh
  */
-public interface MapperRecord<T, I extends Serializable, M extends Mapper<T, I>> extends EntityInfoMapper<T> {
+public interface MapperRecord<T, I extends Serializable, M extends BaseMapper<T, I>> extends EntityInfoMapper<T> {
 
   /**
    * 通用 Mapper

@@ -17,7 +17,7 @@
 package io.mybatis.activerecord;
 
 import io.mybatis.common.util.Assert;
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 import io.mybatis.provider.EntityTable;
@@ -25,7 +25,9 @@ import io.mybatis.provider.EntityTable;
 import java.io.Serializable;
 import java.util.List;
 
-import static io.mybatis.common.core.Code.*;
+import static io.mybatis.common.core.Code.DELETE_FAILURE;
+import static io.mybatis.common.core.Code.SAVE_FAILURE;
+import static io.mybatis.common.core.Code.UPDATE_FAILURE;
 
 /**
  * 建议将继承该抽象类的实现类的作用范围控制在 Service 层，不能超出范围，其它层使用时转换为 VO 或 DTO 后使用
@@ -34,7 +36,7 @@ import static io.mybatis.common.core.Code.*;
  * @param <I> 主键类型
  * @author liuzh
  */
-public interface EntityRecord<T, I extends Serializable> extends MapperRecord<T, I, Mapper<T, I>> {
+public interface EntityRecord<T, I extends Serializable> extends MapperRecord<T, I, BaseMapper<T, I>> {
 
   /**
    * 保存（所有字段）

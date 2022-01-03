@@ -17,7 +17,7 @@
 package io.mybatis.activerecord.spring;
 
 import io.mybatis.activerecord.ActiveRecord;
-import io.mybatis.mapper.Mapper;
+import io.mybatis.mapper.BaseMapper;
 import io.mybatis.provider.Entity;
 
 @Entity.Table
@@ -39,8 +39,8 @@ public class BaseId<T extends BaseId> implements ActiveRecord<T, Integer> {
   }
 
   @Override
-  public Mapper<T, Integer> baseMapper() {
+  public BaseMapper<T, Integer> baseMapper() {
     //获取指定数据源的实例
-    return MapperProvider.<T, Integer, Mapper<T, Integer>>getInstance("mapperProviderUser").baseMapper(entityClass());
+    return MapperProvider.<T, Integer, BaseMapper<T, Integer>>getInstance("mapperProviderUser").baseMapper(entityClass());
   }
 }
