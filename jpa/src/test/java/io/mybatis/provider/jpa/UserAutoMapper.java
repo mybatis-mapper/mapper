@@ -16,25 +16,14 @@
 
 package io.mybatis.provider.jpa;
 
-import io.mybatis.provider.defaults.GenericEntityClassFinder;
+import io.mybatis.provider.Caching;
+import org.apache.ibatis.annotations.Lang;
+import org.apache.ibatis.annotations.SelectProvider;
 
-import javax.persistence.Table;
+public interface UserAutoMapper {
 
-/**
- * 支持识别带有 @javax.persistence.Table 的实体类或者不带任何注解的POJO
- *
- * @author liuzh
- */
-public class JpaEntityClassFinder extends GenericEntityClassFinder {
+  @Lang(Caching.class)
+  @SelectProvider(type = BaseProvider.class, method = "getById")
+  UserAuto getById(Long id);
 
-  @Override
-  public boolean isEntityClass(Class<?> clazz) {
-    //带注解或不是简单类型和枚举的都算实体
-    return clazz.isAnnotationPresent(Table.class) || (!SimpleTypeUtil.isSimpleType(clazz) && !clazz.isEnum());
-  }
-
-  @Override
-  public int getOrder() {
-    return super.getOrder() + 100;
-  }
 }
