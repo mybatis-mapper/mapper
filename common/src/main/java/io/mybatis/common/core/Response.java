@@ -21,93 +21,95 @@ import io.mybatis.common.util.I18n;
 
 /**
  * 响应结果
+ *
+ * @author liuzh
  */
 public class Response<T extends Response> {
-  public static final String  RESPONSE_BUNDLE = "mybatis_common_response";
-  /**
-   * 执行是否成功
-   */
-  protected           boolean success;
-  /**
-   * 响应码
-   */
-  protected           String  code;
-  /**
-   * 响应信息
-   */
-  protected           String  message;
+    public static final String RESPONSE_BUNDLE = "mybatis_common_response";
+    /**
+     * 执行是否成功
+     */
+    protected boolean success;
+    /**
+     * 响应码
+     */
+    protected String code;
+    /**
+     * 响应信息
+     */
+    protected String message;
 
-  public static Response ok() {
-    Response response = new Response();
-    response.success = true;
-    response.code = Code.SUCCESS.getCode();
-    return response;
-  }
+    public static Response ok() {
+        Response response = new Response();
+        response.success = true;
+        response.code = Code.SUCCESS.getCode();
+        return response;
+    }
 
-  public static Response error() {
-    return error(Code.UNKONWN);
-  }
+    public static Response error() {
+        return error(Code.UNKONWN);
+    }
 
-  public static Response error(String code) {
-    return error(code, I18n.message(RESPONSE_BUNDLE, code));
-  }
+    public static Response error(String code) {
+        return error(code, I18n.message(RESPONSE_BUNDLE, code));
+    }
 
-  public static Response error(Throwable t) {
-    return error(Code.UNKONWN.getCode(), t.getMessage());
-  }
+    public static Response error(Throwable t) {
+        return error(Code.UNKONWN.getCode(), t.getMessage());
+    }
 
-  public static Response error(ServiceException e) {
-    return error(e.getCode());
-  }
+    public static Response error(ServiceException e) {
+        return error(e.getCode());
+    }
 
-  public static Response error(String code, String message) {
-    Response response = new Response();
-    response.success = false;
-    response.code = code;
-    response.message = message;
-    return response;
-  }
+    public static Response error(String code, String message) {
+        Response response = new Response();
+        response.success = false;
+        response.code = code;
+        response.message = message;
+        return response;
+    }
 
-  public static Response error(Code code) {
-    return error(code.getCode(), code.getMessage());
-  }
+    public static Response error(Code code) {
+        return error(code.getCode(), code.getMessage());
+    }
 
-  public T code(String code) {
-    this.code = code;
-    return (T) this;
-  }
+    public T code(String code) {
+        this.code = code;
+        return (T) this;
+    }
 
-  public T message(String message) {
-    this.message = message;
-    return (T) this;
-  }
+    public T message(String message) {
+        this.message = message;
+        return (T) this;
+    }
 
-  public T success(boolean success) {
-    this.success = success;
-    return (T) this;
-  }
+    public T success(boolean success) {
+        this.success = success;
+        return (T) this;
+    }
 
-  public boolean isSuccess() {
-    return success;
-  }
+    public boolean isSuccess() {
+        return success;
+    }
 
-  public void setSuccess(boolean success) {
-    this.success = success;
-  }
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public String getMessage() {
+        return message;
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
