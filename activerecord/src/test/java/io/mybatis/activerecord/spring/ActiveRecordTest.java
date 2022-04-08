@@ -17,7 +17,6 @@ package io.mybatis.activerecord.spring;
 
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
-import org.apache.ibatis.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -33,7 +32,6 @@ public class ActiveRecordTest {
 
   @BeforeClass
   public static void init() {
-    LogFactory.useLog4JLogging();
     context = new ClassPathXmlApplicationContext("classpath:io/mybatis/activerecord/spring/spring.xml");
   }
 
