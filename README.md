@@ -1,4 +1,5 @@
 ![logo](logo.png)
+
 # MyBatis Mapper
 
 基于 **mybatis-mapper/provider**( [gitee](https://gitee.com/mybatis-mapper/provider)
@@ -22,7 +23,8 @@
 ### 1.2 系统要求
 
 MyBatis Mapper 要求 MyBatis 最低版本为
-3.5.1，推荐使用最新版本 <a href="https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis"><img src="https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg"/></a>。
+3.5.1，推荐使用最新版本 <a href="https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis"><img src="https://maven-badges.herokuapp.com/maven-central/org.mybatis/mybatis/badge.svg"/></a>
+。
 
 和 MyBatis 框架一样，最低需要 Java 8。
 
@@ -32,6 +34,7 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 <CodeGroupItem title="Maven" active>
 
 ```xml
+
 <dependencies>
   <dependency>
     <groupId>io.mybatis</groupId>
@@ -58,11 +61,11 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 
 ```groovy
 dependencies {
-  compile("io.mybatis:mybatis-mapper:1.2.0")
-  // 使用 Service 层封装时
-  compile("io.mybatis:mybatis-service:1.2.0")
-  // 使用 ActiveRecord 模式时
-  compile("io.mybatis:mybatis-activerecord:1.2.0")
+    compile("io.mybatis:mybatis-mapper:1.2.0")
+    // 使用 Service 层封装时
+    compile("io.mybatis:mybatis-service:1.2.0")
+    // 使用 ActiveRecord 模式时
+    compile("io.mybatis:mybatis-activerecord:1.2.0")
 }
 ```
 
@@ -71,12 +74,12 @@ dependencies {
 
 ### 1.4 快速设置
 
-MyBatis Mapper 的基本原理是将实体类映射为数据库中的表和字段信息，因此实体类需要通过注解配置基本的元数据，配置好实体后，
-只需要创建一个继承基础接口的 Mapper 接口就可以开始使用了。
+MyBatis Mapper 的基本原理是将实体类映射为数据库中的表和字段信息，因此实体类需要通过注解配置基本的元数据，配置好实体后， 只需要创建一个继承基础接口的 Mapper 接口就可以开始使用了。
 
 #### 1.4.1 实体类配置
 
 假设有一个表：
+
 ```sql
 create table user
 (
@@ -85,7 +88,9 @@ create table user
     sex  VARCHAR(2)
 );
 ```
+
 对应的实体类：
+
 ```java
 import io.mybatis.provider.Entity;
 
@@ -102,11 +107,11 @@ public class User {
 }
 ```
 
-实体类上 **必须添加** `@Entity.Table` 注解指定实体类对应的表名，建议明确指定表名，不提供表名的时候，使用类名作为表名。
-所有属于表中列的字段，**必须添加** `@Entity.Column` 注解，不指定列名时，使用字段名（不做任何转换），通过 `id=true` 可以标记字段为主键。
+实体类上 **必须添加** `@Entity.Table` 注解指定实体类对应的表名，建议明确指定表名，不提供表名的时候，使用类名作为表名。 所有属于表中列的字段，**必须添加** `@Entity.Column`
+注解，不指定列名时，使用字段名（不做任何转换），通过 `id=true` 可以标记字段为主键。
 
->`@Entity` 中包含的这两个注解提供了大量的配置属性，想要使用更多的配置，参考下面 **3. @Entity 注解** 的内容，
->下面是一个简单示例：
+> `@Entity` 中包含的这两个注解提供了大量的配置属性，想要使用更多的配置，参考下面 **3. @Entity 注解** 的内容，
+> 下面是一个简单示例：
 >```java
 >@Entity.Table(value = "sys_user", remark = "系统用户", autoResultMap = true)
 >public class User {
@@ -121,12 +126,14 @@ public class User {
 #### 1.4.2 Mapper接口定义
 
 有了 `User` 实体后，直接创建一个继承了 `Mapper` 的接口即可：
+
 ```java
 //io.mybatis.mapper.Mapper
 public interface UserMapper extends Mapper<User, Long> {
-  
+
 }
 ```
+
 这个接口只要被 MyBatis 扫描到即可直接使用。
 
 > 下面是几种常见的扫描配置：
@@ -165,24 +172,45 @@ public interface UserMapper extends Mapper<User, Long> {
 #### 1.4.3 使用
 
 定义好接口后，就可以获取 `UserMapper` 使用，下面是简单示例：
+
 ```java
-User user = new User();
-user.setUserName("测试");
-userMapper.insert(user);
+User user=new User();
+    user.setUserName("测试");
+    userMapper.insert(user);
 //保存后自增id回写，不为空
-Assert.assertNotNull(user.getId());
+    Assert.assertNotNull(user.getId());
 //根据id查询
-user = userMapper.selectByPrimaryKey(user.getId());
+    user=userMapper.selectByPrimaryKey(user.getId());
 //删除
-Assert.assertEquals(1, userMapper.deleteByPrimaryKey(user.getId()));
+    Assert.assertEquals(1,userMapper.deleteByPrimaryKey(user.getId()));
 ```
 
-看到这里，可以发现除了 MyBatis 自身的配置外，MyBatis Mapper 只需要配置实体类注解，
-创建对应的 Mapper 接口就可以直接使用，没有任何繁琐的配置。
+看到这里，可以发现除了 MyBatis 自身的配置外，MyBatis Mapper 只需要配置实体类注解， 创建对应的 Mapper 接口就可以直接使用，没有任何繁琐的配置。
 
-上面的示例只是简单的使用了 MyBatis Mapper，还有很多开箱即用的功能没有涉及，
-建议在上述示例运行成功后，继续查看本项目其他模块的详细文档，熟悉各部分文档后，
-在使用 MyBatis Mapper 时会更得心应手，随心所欲。
+上面的示例只是简单的使用了 MyBatis Mapper，还有很多开箱即用的功能没有涉及， 建议在上述示例运行成功后，继续查看本项目其他模块的详细文档，熟悉各部分文档后， 在使用 MyBatis Mapper 时会更得心应手，随心所欲。
+
+### 1.4.4 wrapper 用法
+
+在 1.2.0 版本之后，针对 Example 封装了一个 ExampleWrapper，可以通过链式调用方便的使用 Example 方法。
+
+```java
+mapper.wrapper()
+    .eq(User::getSex,"女")
+    .or(c->c.gt(User::getId,40),c->c.lt(User::getId,10))
+    .or()
+    .startsWith(User::getUserName,"张").list();
+```
+
+对应的 SQL 如下：
+
+```sql
+SELECT id, name AS userName, sex
+FROM user
+WHERE (sex = ? AND ((id > ?) OR (id < ?)))
+   OR (name LIKE ?)
+```
+
+详细的介绍可以查看 [1.2.0 更新日志](https://mapper.mybatis.io/releases/1.2.0.html)。
 
 ## 2. 示例项目
 
