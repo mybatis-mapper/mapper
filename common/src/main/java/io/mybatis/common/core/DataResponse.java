@@ -16,35 +16,41 @@
 
 package io.mybatis.common.core;
 
+/**
+ * 返回单个值
+ *
+ * @param <T> 值类型
+ * @author liuzh
+ */
 public class DataResponse<T> extends Response<DataResponse> {
-  /**
-   * 单个数据对象
-   */
-  private T data;
+    /**
+     * 单个数据对象
+     */
+    private T data;
 
-  public static <T> DataResponse<T> ok(T data) {
-    return ok(data, null);
-  }
+    public static <T> DataResponse<T> ok(T data) {
+        return ok(data, null);
+    }
 
-  public static <T> DataResponse<T> ok(T data, String message) {
-    DataResponse<T> response = new DataResponse<>();
-    response.success = true;
-    response.code = Code.SUCCESS.getCode();
-    response.data = data;
-    response.message = message;
-    return response;
-  }
+    public static <T> DataResponse<T> ok(T data, String message) {
+        DataResponse<T> response = new DataResponse<>();
+        response.success = true;
+        response.code = Code.SUCCESS.getCode();
+        response.data = data;
+        response.message = message;
+        return response;
+    }
 
-  public DataResponse<T> data(T data) {
-    this.data = data;
-    return this;
-  }
+    public DataResponse<T> data(T data) {
+        this.data = data;
+        return this;
+    }
 
-  public T getData() {
-    return data;
-  }
+    public T getData() {
+        return data;
+    }
 
-  public void setData(T data) {
-    this.data = data;
-  }
+    public void setData(T data) {
+        this.data = data;
+    }
 }

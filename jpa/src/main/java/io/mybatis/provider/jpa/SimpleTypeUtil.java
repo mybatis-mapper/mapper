@@ -35,19 +35,22 @@ import java.util.Set;
 
 /**
  * 参考 org.apache.ibatis.type.SimpleTypeRegistry
+ *
+ * @author Clinton Begin
+ * @author liuzh
  */
 public class SimpleTypeUtil {
-  public static final  String[]      JAVA8_DATE_TIME = {
-      "java.time.Instant",
-      "java.time.LocalDateTime",
-      "java.time.LocalDate",
-      "java.time.LocalTime",
-      "java.time.OffsetDateTime",
-      "java.time.OffsetTime",
-      "java.time.ZonedDateTime",
-      "java.time.Year",
-      "java.time.Month",
-      "java.time.YearMonth"
+  public static final String[] JAVA8_DATE_TIME = {
+          "java.time.Instant",
+          "java.time.LocalDateTime",
+          "java.time.LocalDate",
+          "java.time.LocalTime",
+          "java.time.OffsetDateTime",
+          "java.time.OffsetTime",
+          "java.time.ZonedDateTime",
+          "java.time.Year",
+          "java.time.Month",
+          "java.time.YearMonth"
   };
   private static final Set<Class<?>> SIMPLE_TYPE_SET = new HashSet<Class<?>>();
 
@@ -130,7 +133,7 @@ public class SimpleTypeUtil {
     }
   }
 
-  /*
+  /**
    * Tells us if the class passed in is a known common type
    *
    * @param clazz The class to check
