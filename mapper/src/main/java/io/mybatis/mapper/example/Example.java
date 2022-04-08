@@ -46,6 +46,10 @@ public class Example<T> {
    */
   protected String            selectColumns;
   /**
+   * 指定查询列，不带 column As Alias 别名
+   */
+  protected String            simpleSelectColumns;
+  /**
    * 起始 SQL，添加到 SQL 前，注意防止 SQL 注入
    */
   protected String            startSql;
@@ -87,6 +91,7 @@ public class Example<T> {
 
   /**
    * 创建一个 or条件片段（不追加到当前Example）
+   *
    * @return 条件
    */
   public OrCriteria<T> orPart() {
@@ -118,6 +123,7 @@ public class Example<T> {
     orderByClause = null;
     distinct = false;
     selectColumns = null;
+    simpleSelectColumns = null;
     startSql = null;
     endSql = null;
   }
@@ -127,30 +133,43 @@ public class Example<T> {
    *
    * @param fns 方法引用
    */
-  public Example<T> selectColumns(Fn<T, Object>... fns) {
+  @SafeVarargs
+  public final Example<T> selectColumns(Fn<T, Object>... fns) {
     if (selectColumns == null) {
       selectColumns = "";
     }
+    if (simpleSelectColumns == null) {
+      simpleSelectColumns = "";
+    }
+    StringBuilder sb = new StringBuilder(selectColumns);
+    StringBuilder simple = new StringBuilder(selectColumns);
     for (Fn<T, Object> fn : fns) {
       EntityColumn entityColumn = fn.toEntityColumn();
       String column = entityColumn.column();
       String field = entityColumn.field().getName();
-      if (selectColumns.length() != 0) {
-        selectColumns += ",";
+      if (sb.length() != 0) {
+        sb.append(",");
+      }
+      if (simple.length() != 0) {
+        simple.append(",");
       }
       //fix 如果有设置 autoResultMap 就不能有 AS
       if (column.equals(field) || entityColumn.entityTable().useResultMaps()) {
-        selectColumns += column;
+        sb.append(column);
+        simple.append(column);
       } else {
         Matcher matcher = DELIMITER.matcher(column);
         //eg: mysql `order` == field order | sqlserver [order] == field order
+        simple.append(column);
         if (matcher.find() && field.equals(matcher.group(1))) {
-          selectColumns += column;
+          sb.append(column);
         } else {
-          selectColumns += column + " AS " + field;
+          sb.append(column).append(" AS ").append(field);
         }
       }
     }
+    selectColumns = sb.toString();
+    simpleSelectColumns = simple.toString();
     return this;
   }
 
@@ -164,12 +183,32 @@ public class Example<T> {
   }
 
   /**
+   * 获取查询列，不带 column As Alias 别名
+   *
+   * @return 查询列
+   */
+  public String getSimpleSelectColumns() {
+    return simpleSelectColumns;
+  }
+
+  /**
    * 指定查询列
    *
    * @param selectColumns 查询列
    */
-  public void setSelectColumns(String selectColumns) {
+  public Example<T> setSelectColumns(String selectColumns) {
     this.selectColumns = selectColumns;
+    return this;
+  }
+
+  /**
+   * 设置简单查询列，不能带别名
+   *
+   * @param simpleSelectColumns 简单查询列
+   */
+  public Example<T> setSimpleSelectColumns(String simpleSelectColumns) {
+    this.simpleSelectColumns = simpleSelectColumns;
+    return this;
   }
 
   /**
@@ -186,8 +225,9 @@ public class Example<T> {
    *
    * @param startSql 起始 SQL，添加到 SQL 前，注意防止 SQL 注入
    */
-  public void setStartSql(String startSql) {
+  public Example<T> setStartSql(String startSql) {
     this.startSql = startSql;
+    return this;
   }
 
   /**
@@ -204,8 +244,9 @@ public class Example<T> {
    *
    * @param endSql 结尾 SQL，添加到 SQL 最后，注意防止 SQL 注入
    */
-  public void setEndSql(String endSql) {
+  public Example<T> setEndSql(String endSql) {
     this.endSql = endSql;
+    return this;
   }
 
   /**
@@ -231,7 +272,8 @@ public class Example<T> {
    * @param fns 排序列的方法引用
    * @return Example
    */
-  public Example<T> orderByAsc(Fn<T, Object>... fns) {
+  @SafeVarargs
+  public final Example<T> orderByAsc(Fn<T, Object>... fns) {
     if (fns != null && fns.length > 0) {
       for (int i = 0; i < fns.length; i++) {
         orderBy(fns[i], Order.ASC);
@@ -246,7 +288,8 @@ public class Example<T> {
    * @param fns 排序列的方法引用
    * @return Example
    */
-  public Example<T> orderByDesc(Fn<T, Object>... fns) {
+  @SafeVarargs
+  public final Example<T> orderByDesc(Fn<T, Object>... fns) {
     if (fns != null && fns.length > 0) {
       for (int i = 0; i < fns.length; i++) {
         orderBy(fns[i], Order.DESC);
@@ -269,8 +312,9 @@ public class Example<T> {
    *
    * @param orderByClause 排序列
    */
-  public void setOrderByClause(String orderByClause) {
+  public Example<T> setOrderByClause(String orderByClause) {
     this.orderByClause = orderByClause;
+    return this;
   }
 
   /**
@@ -315,8 +359,9 @@ public class Example<T> {
    *
    * @param distinct true启用，false不使用
    */
-  public void setDistinct(boolean distinct) {
+  public Example<T> setDistinct(boolean distinct) {
     this.distinct = distinct;
+    return this;
   }
 
   /**
@@ -406,11 +451,13 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    @SuppressWarnings("rawtypes")
     public Criteria<T> andIn(Fn<T, Object> fn, Iterable values) {
       addCriterion(column(fn) + " IN", values);
       return (Criteria<T>) this;
     }
 
+    @SuppressWarnings("rawtypes")
     public Criteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
       addCriterion(column(fn) + " NOT IN", values);
       return (Criteria<T>) this;
@@ -455,7 +502,6 @@ public class Example<T> {
      * 手写条件
      *
      * @param condition 例如 "length(countryname)<5"
-     * @return
      */
     public Criteria<T> andCondition(String condition) {
       addCriterion(condition);
@@ -467,7 +513,6 @@ public class Example<T> {
      *
      * @param condition 例如 "length(countryname)="
      * @param value     例如 5
-     * @return
      */
     public Criteria<T> andCondition(String condition, Object value) {
       criteria.add(new Criterion(condition, value));
@@ -499,13 +544,13 @@ public class Example<T> {
 
     @Override
     @Deprecated
-    public final OrCriteria<T> andOr(OrCriteria<T> orCriteria1, OrCriteria<T> orCriteria2, OrCriteria<T>... orCriterias){
+    public final OrCriteria<T> andOr(OrCriteria<T> orCriteria1, OrCriteria<T> orCriteria2, OrCriteria<T>... orCriterias) {
       throw new UnsupportedOperationException("Currently does not support nested [OR] operations.");
     }
 
     @Override
     @Deprecated
-    public final OrCriteria<T> andOr(List<OrCriteria<T>> orCriteriaList){
+    public final OrCriteria<T> andOr(List<OrCriteria<T>> orCriteriaList) {
       throw new UnsupportedOperationException("Currently does not support nested [OR] operations.");
     }
 
@@ -558,12 +603,14 @@ public class Example<T> {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public OrCriteria<T> andIn(Fn<T, Object> fn, Iterable values) {
       super.andIn(fn, values);
       return this;
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public OrCriteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
       super.andNotIn(fn, values);
       return this;
@@ -601,6 +648,216 @@ public class Example<T> {
 
     @Override
     public OrCriteria<T> andCondition(String condition, Object value) {
+      super.andCondition(condition, value);
+      return this;
+    }
+
+    /**
+     * 指定字段为 null
+     *
+     * @param fn 字段对应的 get 方法引用
+     */
+    public OrCriteria<T> isNull(Fn<T, Object> fn) {
+      super.andIsNull(fn);
+      return this;
+    }
+
+    /**
+     * 指定字段不为 null
+     *
+     * @param fn 字段对应的 get 方法引用
+     */
+    public OrCriteria<T> isNotNull(Fn<T, Object> fn) {
+      super.andIsNotNull(fn);
+      return this;
+    }
+
+    /**
+     * 字段 = 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> eq(Fn<T, Object> fn, Object value) {
+      super.andEqualTo(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 != 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> ne(Fn<T, Object> fn, Object value) {
+      super.andNotEqualTo(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 > 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> gt(Fn<T, Object> fn, Object value) {
+      super.andGreaterThan(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 >= 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> ge(Fn<T, Object> fn, Object value) {
+      super.andGreaterThanOrEqualTo(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 < 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> lt(Fn<T, Object> fn, Object value) {
+      super.andLessThan(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 <= 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值
+     */
+    public OrCriteria<T> le(Fn<T, Object> fn, Object value) {
+      super.andLessThanOrEqualTo(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 in (值集合)
+     *
+     * @param fn     字段对应的 get 方法引用
+     * @param values 值集合
+     */
+    @SuppressWarnings("rawtypes")
+    public OrCriteria<T> in(Fn<T, Object> fn, Iterable values) {
+      super.andIn(fn, values);
+      return this;
+    }
+
+    /**
+     * 字段 not in (值集合)
+     *
+     * @param fn     字段对应的 get 方法引用
+     * @param values 值集合
+     */
+    @SuppressWarnings("rawtypes")
+    public OrCriteria<T> notIn(Fn<T, Object> fn, Iterable values) {
+      super.andNotIn(fn, values);
+      return this;
+    }
+
+    /**
+     * 字段 between value1 and value 2
+     *
+     * @param fn     字段对应的 get 方法引用
+     * @param value1 值1
+     * @param value2 值2
+     */
+    public OrCriteria<T> between(Fn<T, Object> fn, Object value1, Object value2) {
+      super.andBetween(fn, value1, value2);
+      return this;
+    }
+
+    /**
+     * 字段 not between value1 and value 2
+     *
+     * @param fn     字段对应的 get 方法引用
+     * @param value1 值1
+     * @param value2 值2
+     */
+    public OrCriteria<T> notBetween(Fn<T, Object> fn, Object value1, Object value2) {
+      super.andNotBetween(fn, value1, value2);
+      return this;
+    }
+
+    /**
+     * 字段 like %值%
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值，两侧自动添加 %
+     */
+    public OrCriteria<T> contains(Fn<T, Object> fn, String value) {
+      super.andLike(fn, "%" + value + "%");
+      return this;
+    }
+
+    /**
+     * 字段 like 值%，匹配 value 为前缀的值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值，右侧自动添加 %
+     */
+    public OrCriteria<T> startsWith(Fn<T, Object> fn, String value) {
+      super.andLike(fn, value + "%");
+      return this;
+    }
+
+    /**
+     * 字段 like %值，匹配 value 为后缀的值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值，左侧自动添加 %
+     */
+    public OrCriteria<T> endsWith(Fn<T, Object> fn, String value) {
+      super.andLike(fn, "%" + value);
+      return this;
+    }
+
+    /**
+     * 字段 like 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值，需要指定 '%'(多个), '_'(单个) 模糊匹配
+     */
+    public OrCriteria<T> like(Fn<T, Object> fn, String value) {
+      super.andLike(fn, value);
+      return this;
+    }
+
+    /**
+     * 字段 not like 值
+     *
+     * @param fn    字段对应的 get 方法引用
+     * @param value 值，需要指定 % 模糊匹配
+     */
+    public OrCriteria<T> notLike(Fn<T, Object> fn, String value) {
+      super.andNotLike(fn, value);
+      return this;
+    }
+
+    /**
+     * 添加任意条件，条件一定是后端使用的，需要自己防止 SQL 注入
+     *
+     * @param condition 任意条件，例如 "length(countryname)<5"
+     */
+    public OrCriteria<T> anyCondition(String condition) {
+      super.andCondition(condition);
+      return this;
+    }
+
+    /**
+     * 手写左边条件，右边用value值
+     *
+     * @param condition 例如 "length(countryname)="
+     * @param value     例如 5
+     */
+    public OrCriteria<T> anyCondition(String condition, Object value) {
       super.andCondition(condition, value);
       return this;
     }
@@ -691,10 +948,10 @@ public class Example<T> {
     public boolean isOrValue() {
       if (orValue && this.value instanceof Collection) {
         return ((Collection<?>) this.value)
-                .stream()
-                .filter(item -> item instanceof OrCriteria)
-                .map(OrCriteria.class::cast)
-                .anyMatch(GeneratedCriteria::isValid);
+            .stream()
+            .filter(item -> item instanceof OrCriteria)
+            .map(OrCriteria.class::cast)
+            .anyMatch(GeneratedCriteria::isValid);
       }
       return false;
     }

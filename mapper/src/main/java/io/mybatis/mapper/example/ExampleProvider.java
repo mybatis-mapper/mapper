@@ -191,7 +191,7 @@ public class ExampleProvider {
             + "SELECT "
             + ifTest("distinct", () -> "distinct ")
             + ifTest("selectColumns != null and selectColumns != ''", () -> "${selectColumns}")
-            + ifTest("selectColumns == null or selectColumns == ''", () -> entity.baseColumnAsPropertyList())
+            + ifTest("selectColumns == null or selectColumns == ''", entity::baseColumnAsPropertyList)
             + " FROM " + entity.table()
             + ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE)
             + ifTest("orderByClause != null", () -> " ORDER BY ${orderByClause}")
@@ -214,8 +214,8 @@ public class ExampleProvider {
         return ifTest("startSql != null and startSql != ''", () -> "${startSql}")
             + "SELECT COUNT("
             + ifTest("distinct", () -> "distinct ")
-            + ifTest("selectColumns != null and selectColumns != ''", () -> "${selectColumns}")
-            + ifTest("selectColumns == null or selectColumns == ''", () -> "*")
+            + ifTest("simpleSelectColumns != null and simpleSelectColumns != ''", () -> "${simpleSelectColumns}")
+            + ifTest("simpleSelectColumns == null or simpleSelectColumns == ''", () -> "*")
             + ") FROM "
             + entity.table()
             + ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE)
