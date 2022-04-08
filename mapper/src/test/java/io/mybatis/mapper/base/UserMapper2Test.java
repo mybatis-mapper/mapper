@@ -19,6 +19,7 @@ package io.mybatis.mapper.base;
 import io.mybatis.mapper.BaseMapperTest;
 import io.mybatis.mapper.UserMapper2;
 import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.mapper.model.User;
 import org.apache.ibatis.session.SqlSession;
@@ -124,18 +125,64 @@ public class UserMapper2Test extends BaseMapperTest {
   }
 
   @Test
-  public void testOrCondition(){
-    try(SqlSession sqlSession = getSqlSession()){
+  public void testOrCondition() {
+    try (SqlSession sqlSession = getSqlSession()) {
       UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
       Example<User> example = mapper.example();
       example.createCriteria()
-              .andEqualTo(User::getSex,"男")
-              .andOr(example.orPart()
-                              .andLike(User::getUserName,"杨%"),
-                      example.orPart()
-                              .andLike(User::getUserName,"俞%")
-                              .andLike(User::getUserName,"%舟"));
-      Assert.assertEquals(2,mapper.countByExample(example));
+          .andEqualTo(User::getSex, "男")
+          .andOr(example.orPart()
+                  .andLike(User::getUserName, "杨%"),
+              example.orPart()
+                  .andLike(User::getUserName, "俞%")
+                  .andLike(User::getUserName, "%舟"));
+      Assert.assertEquals(2, mapper.countByExample(example));
+    }
+  }
+
+  @Test
+  public void testExampleWrapper() {
+    try (SqlSession sqlSession = getSqlSession()) {
+      UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
+      long count = mapper.wrapper().eq(User::getSex, "男")
+          .or(
+              c -> c.andLike(User::getUserName, "杨%")
+          ).count();
+      Assert.assertEquals(1, count);
+
+      count = mapper.wrapper().eq(User::getSex, "男")
+          .or(
+              c -> c.andLike(User::getUserName, "杨%"),
+              c -> c.andLike(User::getUserName, "俞%").andLike(User::getUserName, "%舟")
+          ).count();
+      Assert.assertEquals(2, count);
+
+      List<User> list = mapper.wrapper()
+          .or(
+              c -> c.andLike(User::getUserName, "杨%"),
+              c -> c.andLike(User::getUserName, "俞%").andLike(User::getUserName, "%舟")
+          ).list();
+      Assert.assertEquals(3, list.size());
+
+      List<User> users = mapper.wrapper()
+          .select(User::getUserName, User::getSex)
+          .or(c -> c.startsWith(User::getUserName, "杨"),
+              c -> c.eq(User::getSex, "男"))
+          .or()
+          .gt(User::getId, 1L)
+          .le(User::getId, 16L)
+          .eq(User::getSex, "女").list();
+
+      ExampleWrapper<User, Long> wrapper = mapper.wrapper()
+          .gt(User::getId, 50L)
+          .or()
+          .le(User::getId, 5L)
+          .or()
+          .eq(User::getSex, "女");
+      users = wrapper.top(5);
+      Assert.assertEquals(5, users.size());
+      count = wrapper.select(User::getSex).distinct().count();
+      Assert.assertEquals(2, count);
     }
   }
 }

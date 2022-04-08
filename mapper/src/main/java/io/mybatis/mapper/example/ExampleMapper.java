@@ -17,7 +17,12 @@
 package io.mybatis.mapper.example;
 
 import io.mybatis.provider.Caching;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.Lang;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 import java.util.Optional;
@@ -102,39 +107,13 @@ public interface ExampleMapper<T, E> {
   @SelectProvider(type = ExampleProvider.class, method = "countByExample")
   long countByExample(E example);
 
-  /* 下面的方法不需要额外的实现，算是默认方法的示例，不直接提供此类方法 */
-  /*  *//**
+  /**
    * 根据 Example 条件批量查询
    *
    * @param example   条件
    * @param rowBounds 分页信息
    * @return 实体列表
-   *//*
+   */
   List<T> selectByExample(E example, RowBounds rowBounds);
-
-  *//**
-   * 根据查询条件获取第一个结果
-   *
-   * @param example 条件
-   * @return 实体
-   *//*
-  default Optional<T> selectFirstByExample(E example) {
-    List<T> entities = selectByExample(example, new RowBounds(0, 1));
-    if (entities.size() == 1) {
-      return Optional.of(entities.get(0));
-    }
-    return Optional.empty();
-  }
-
-  *//**
-   * 根据查询条件获取指定的前几个对象
-   *
-   * @param example 条件
-   * @param n       指定的个数
-   * @return 实体
-   *//*
-  default List<T> selectTopNByExample(E example, int n) {
-    return selectByExample(example, new RowBounds(0, n));
-  }*/
 
 }
