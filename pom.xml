@@ -66,7 +66,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Dfile.encoding=UTF-8</argLine>
 
-    <provider.version>1.1.0</provider.version>
+    <provider.version>1.1.1</provider.version>
 
     <mybatis.version>3.5.9</mybatis.version>
     <mybatis-spring.version>2.0.7</mybatis-spring.version>
@@ -77,7 +77,6 @@
 
     <logback.version>1.2.11</logback.version>
     <hsqldb.version>2.5.2</hsqldb.version>
-    <log4j.version>1.2.17</log4j.version>
     <junit.version>4.13</junit.version>
   </properties>
 
