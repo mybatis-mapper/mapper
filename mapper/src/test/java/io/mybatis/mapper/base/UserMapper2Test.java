@@ -144,26 +144,20 @@ public class UserMapper2Test extends BaseMapperTest {
   public void testExampleWrapper() {
     try (SqlSession sqlSession = getSqlSession()) {
       UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
+      //查询 "sex=男 or name like '杨%' 的数量
       long count = mapper.wrapper().eq(User::getSex, "男")
           .or(
-              c -> c.andLike(User::getUserName, "杨%")
+              c -> c.startsWith(User::getUserName, "杨")
           ).count();
       Assert.assertEquals(1, count);
-
+      //查询 "sex=男 or (name like '杨%' or (name like '俞%' and name like '%舟')) 的数量
       count = mapper.wrapper().eq(User::getSex, "男")
           .or(
-              c -> c.andLike(User::getUserName, "杨%"),
-              c -> c.andLike(User::getUserName, "俞%").andLike(User::getUserName, "%舟")
+              c -> c.startsWith(User::getUserName, "杨"),
+              c -> c.startsWith(User::getUserName, "俞").endsWith(User::getUserName, "舟")
           ).count();
       Assert.assertEquals(2, count);
-
-      List<User> list = mapper.wrapper()
-          .or(
-              c -> c.andLike(User::getUserName, "杨%"),
-              c -> c.andLike(User::getUserName, "俞%").andLike(User::getUserName, "%舟")
-          ).list();
-      Assert.assertEquals(3, list.size());
-
+      //查询 name 和 sex 列，条件为 (name like '杨%' or sex = '男') or id > 1 and id <= 16 and sex = '女' 的数据
       List<User> users = mapper.wrapper()
           .select(User::getUserName, User::getSex)
           .or(c -> c.startsWith(User::getUserName, "杨"),
@@ -173,24 +167,35 @@ public class UserMapper2Test extends BaseMapperTest {
           .le(User::getId, 16L)
           .eq(User::getSex, "女").list();
 
+      //构建的wrapper可以多次使用
+      //查询条件为 id > 50 or id <= 5 or sex = '女'
       ExampleWrapper<User, Long> wrapper = mapper.wrapper()
           .gt(User::getId, 50L)
           .or()
           .le(User::getId, 5L)
           .or()
           .eq(User::getSex, "女");
+      //使用当前条件获取前5条数据
       users = wrapper.top(5);
       Assert.assertEquals(5, users.size());
+      //追加条件后查询数量
       count = wrapper.select(User::getSex).distinct().count();
       Assert.assertEquals(2, count);
 
+      //根据条件"name=张无忌"，更新名字和性别
       Assert.assertEquals(1, mapper.wrapper()
           .set(User::getUserName, "弓长无忌")
           .set(User::getSex, "M")
           .eq(User::getUserName, "张无忌").update());
-
+      //根据条件"sex=M"查询数量
       Assert.assertEquals(1, mapper.wrapper().eq(User::getSex, "M").count());
 
+      mapper.wrapper()
+          .eq(User::getSex, "女")
+          .or(c -> c.gt(User::getId, 40), c -> c.lt(User::getId, 10))
+          .or()
+          .startsWith(User::getUserName, "张")
+          .orderByAsc(User::getId).list();
     }
   }
 }
