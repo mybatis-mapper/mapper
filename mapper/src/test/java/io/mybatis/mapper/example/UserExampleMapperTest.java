@@ -162,6 +162,23 @@ public class UserExampleMapperTest extends BaseMapperTest {
     }
   }
 
+  @Test
+  public void testUpdateByExampleSetValues() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      Example<User> example = new Example();
+      example.createCriteria().andEqualTo(User::getId, 1L);
+      example.set(User::getUserName, "男主角").set(User::getSex, "M");
+
+      Assert.assertEquals(1, exampleMapper.updateByExampleSetValues(example));
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
+
   @Test(expected = PersistenceException.class)
   public void testUpdateByExampleEmpty() {
     SqlSession sqlSession = getSqlSession();

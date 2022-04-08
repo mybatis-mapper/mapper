@@ -1,5 +1,6 @@
 package io.mybatis.mapper.example;
 
+import io.mybatis.common.util.Assert;
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.fn.Fn;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -120,6 +121,27 @@ public class ExampleWrapper<T, I extends Serializable> {
    */
   public ExampleWrapper<T, I> distinct() {
     this.example.setDistinct(true);
+    return this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
+   * @param setSql "column = value"
+   */
+  public ExampleWrapper<T, I> set(String setSql) {
+    this.example.set(setSql);
+    return this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
+   * @param fn    字段
+   * @param value 值
+   */
+  public ExampleWrapper<T, I> set(Fn<T, Object> fn, Object value) {
+    this.example.set(fn, value);
     return this;
   }
 
@@ -354,7 +376,15 @@ public class ExampleWrapper<T, I extends Serializable> {
   }
 
   /**
-   * 将符合当前查询条件的数据更新为提供的值
+   * 将符合当前查询条件的数据更新为 {@link #set(String)} 和 {@link #set(Fn, Object)} 设置的值
+   */
+  public int update() {
+    Assert.notEmpty(example.getSetValues(), "必须通过 set 方法设置更新的列和值");
+    return baseMapper.updateByExampleSetValues(example);
+  }
+
+  /**
+   * 将符合当前查询条件的数据更新为提供的值, {@link #set(String)} 和 {@link #set(Fn, Object)} 设置的值无效
    *
    * @param t 要更新的值
    */
