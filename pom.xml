@@ -59,7 +59,7 @@
   </modules>
 
   <properties>
-    <revision>1.1.0</revision>
+    <revision>1.2.0-SNAPSHOT</revision>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -69,12 +69,14 @@
     <provider.version>1.1.0</provider.version>
 
     <mybatis.version>3.5.9</mybatis.version>
-    <mybatis-spring.version>2.0.6</mybatis-spring.version>
-    <mybatis-spring-boot.version>2.2.1</mybatis-spring-boot.version>
+    <mybatis-spring.version>2.0.7</mybatis-spring.version>
+    <mybatis-spring-boot.version>2.2.2</mybatis-spring-boot.version>
 
-    <springframework.version>5.3.14</springframework.version>
-    <springboot.version>2.6.2</springboot.version>
+    <springframework.version>5.3.18</springframework.version>
+    <springboot.version>2.6.6</springboot.version>
 
+    <logback.version>1.2.11</logback.version>
+    <hsqldb.version>2.5.2</hsqldb.version>
     <log4j.version>1.2.17</log4j.version>
     <junit.version>4.13</junit.version>
   </properties>
@@ -107,9 +109,15 @@
       </dependency>
 
       <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>${hsqldb.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

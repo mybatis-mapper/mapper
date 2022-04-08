@@ -20,7 +20,7 @@
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
   <settings>
-    <setting name="logImpl" value="LOG4J"/>
+    <setting name="logImpl" value="SLF4J"/>
     <setting name="cacheEnabled" value="true"/>
     <setting name="mapUnderscoreToCamelCase" value="true"/>
     <setting name="aggressiveLazyLoading" value="false"/>
