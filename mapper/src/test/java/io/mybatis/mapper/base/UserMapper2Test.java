@@ -183,6 +183,14 @@ public class UserMapper2Test extends BaseMapperTest {
       Assert.assertEquals(5, users.size());
       count = wrapper.select(User::getSex).distinct().count();
       Assert.assertEquals(2, count);
+
+      Assert.assertEquals(1, mapper.wrapper()
+          .set(User::getUserName, "弓长无忌")
+          .set(User::getSex, "M")
+          .eq(User::getUserName, "张无忌").update());
+
+      Assert.assertEquals(1, mapper.wrapper().eq(User::getSex, "M").count());
+
     }
   }
 }

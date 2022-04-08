@@ -28,6 +28,20 @@ import java.util.stream.Collectors;
  * @author liuzh
  */
 public class ExampleProvider {
+  // @formatter:off
+  private static final String EXAMPLE_SET_CLAUSE_INNER_WHEN =
+          "<set>" +
+          "  <foreach collection=\"example.setValues\" item=\"setValue\">\n" +
+          "    <choose>\n" +
+          "      <when test=\"setValue.noValue\">\n" +
+          "        ${setValue.condition},\n" +
+          "      </when>\n" +
+          "      <when test=\"setValue.singleValue\">\n" +
+          "        ${setValue.condition} = #{setValue.value},\n" +
+          "      </when>\n" +
+          "    </choose>\n" +
+          "  </foreach>\n" +
+          "</set>";
 
   private static final String EXAMPLE_WHERE_CLAUSE_INNER_WHEN =
           "            <when test=\"criterion.noValue\">\n" +
@@ -107,6 +121,7 @@ public class ExampleProvider {
       "    </if>\n" +
       "  </foreach>\n" +
       "</where>\n";
+  // @formatter:on
 
   /**
    * 根据 Example 删除
@@ -121,7 +136,7 @@ public class ExampleProvider {
             + util.parameterNotNull("Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
             + (entity.getProp("deleteByExample.allowEmpty", true) ?
-                  "" : util.variableIsFalse("_parameter.isEmpty()", "Example Criteria cannot be empty"))
+            "" : util.variableIsFalse("_parameter.isEmpty()", "Example Criteria cannot be empty"))
             + EXAMPLE_WHERE_CLAUSE
             + util.ifTest("endSql != null and endSql != ''", () -> "${endSql}"));
   }
@@ -144,7 +159,31 @@ public class ExampleProvider {
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
             + (entity.getProp("updateByExample.allowEmpty", true) ?
-                  "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
+            "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
+            + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
+            + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
+      }
+    });
+  }
+
+  /**
+   * 根据 Example 条件批量更新实体信息
+   *
+   * @param providerContext 上下文
+   * @return cacheKey
+   */
+  public static String updateByExampleSetValues(ProviderContext providerContext) {
+    return SqlScript.caching(providerContext, new SqlScript() {
+      @Override
+      public String getSql(EntityTable entity) {
+        return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
+            + variableNotEmpty("example.setValues", "Example setValues cannot be empty")
+            + "UPDATE " + entity.table()
+            + EXAMPLE_SET_CLAUSE_INNER_WHEN
+            + variableNotNull("example", "Example cannot be null")
+            //是否允许空条件，默认允许，允许时不检查查询条件
+            + (entity.getProp("updateByExample.allowEmpty", true) ?
+            "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
       }
@@ -170,7 +209,7 @@ public class ExampleProvider {
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
             + (entity.getProp("updateByExampleSelective.allowEmpty", true) ?
-                  "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
+            "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
       }

@@ -61,12 +61,17 @@ public class Example<T> {
    * 多组条件通过 OR 连接
    */
   protected List<Criteria<T>> oredCriteria;
+  /**
+   * 设置 update 时的 set 字段
+   */
+  protected List<Criterion>   setValues;
 
   /**
    * 默认构造方法，不允许Example查询条件为空，不能操作全库
    */
   public Example() {
     oredCriteria = new ArrayList<>();
+    setValues = new ArrayList<>();
   }
 
   /**
@@ -120,6 +125,7 @@ public class Example<T> {
    */
   public void clear() {
     oredCriteria.clear();
+    setValues.clear();
     orderByClause = null;
     distinct = false;
     selectColumns = null;
@@ -327,6 +333,13 @@ public class Example<T> {
   }
 
   /**
+   * 获取 set 值
+   */
+  public List<Criterion> getSetValues() {
+    return setValues;
+  }
+
+  /**
    * 查询条件是否为空
    *
    * @return
@@ -361,6 +374,27 @@ public class Example<T> {
    */
   public Example<T> setDistinct(boolean distinct) {
     this.distinct = distinct;
+    return this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
+   * @param setSql "column = value"
+   */
+  public Example<T> set(String setSql) {
+    this.setValues.add(new Criterion(setSql));
+    return this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
+   * @param fn    字段
+   * @param value 值
+   */
+  public Example<T> set(Fn<T, Object> fn, Object value) {
+    this.setValues.add(new Criterion(fn.toColumn(), value));
     return this;
   }
 

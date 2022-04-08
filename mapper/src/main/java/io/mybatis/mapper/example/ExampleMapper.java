@@ -17,11 +17,7 @@
 package io.mybatis.mapper.example;
 
 import io.mybatis.provider.Caching;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
@@ -65,6 +61,16 @@ public interface ExampleMapper<T, E> {
   @Lang(Caching.class)
   @UpdateProvider(type = ExampleProvider.class, method = "updateByExample")
   int updateByExample(@Param("entity") T entity, @Param("example") E example);
+
+  /**
+   * 根据 Example 条件和 setValue 值更新字段
+   *
+   * @param example 条件
+   * @return 大于等于1成功，0失败
+   */
+  @Lang(Caching.class)
+  @UpdateProvider(type = ExampleProvider.class, method = "updateByExampleSetValues")
+  int updateByExampleSetValues(@Param("example") E example);
 
   /**
    * 根据 Example 条件批量更新实体不为空的字段
