@@ -689,6 +689,16 @@ public class Example<T> {
     /**
      * 指定字段为 null
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     */
+    public OrCriteria<T> isNull(boolean useCondition, Fn<T, Object> fn) {
+      return useCondition ? isNull(fn) : this;
+    }
+
+    /**
+     * 指定字段为 null
+     *
      * @param fn 字段对应的 get 方法引用
      */
     public OrCriteria<T> isNull(Fn<T, Object> fn) {
@@ -699,11 +709,32 @@ public class Example<T> {
     /**
      * 指定字段不为 null
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     */
+    public OrCriteria<T> isNotNull(boolean useCondition, Fn<T, Object> fn) {
+      return useCondition ? isNotNull(fn) : this;
+    }
+
+    /**
+     * 指定字段不为 null
+     *
      * @param fn 字段对应的 get 方法引用
      */
     public OrCriteria<T> isNotNull(Fn<T, Object> fn) {
       super.andIsNotNull(fn);
       return this;
+    }
+
+    /**
+     * 字段 = 值
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> eq(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? eq(fn, value) : this;
     }
 
     /**
@@ -720,6 +751,17 @@ public class Example<T> {
     /**
      * 字段 != 值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> ne(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? ne(fn, value) : this;
+    }
+
+    /**
+     * 字段 != 值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值
      */
@@ -731,12 +773,35 @@ public class Example<T> {
     /**
      * 字段 > 值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> gt(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? gt(fn, value) : this;
+    }
+
+
+    /**
+     * 字段 > 值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值
      */
     public OrCriteria<T> gt(Fn<T, Object> fn, Object value) {
       super.andGreaterThan(fn, value);
       return this;
+    }
+
+    /**
+     * 字段 >= 值
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> ge(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? ge(fn, value) : this;
     }
 
     /**
@@ -753,6 +818,18 @@ public class Example<T> {
     /**
      * 字段 < 值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> lt(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? lt(fn, value) : this;
+    }
+
+
+    /**
+     * 字段 < 值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值
      */
@@ -764,12 +841,35 @@ public class Example<T> {
     /**
      * 字段 <= 值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值
+     */
+    public OrCriteria<T> le(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? le(fn, value) : this;
+    }
+
+    /**
+     * 字段 <= 值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值
      */
     public OrCriteria<T> le(Fn<T, Object> fn, Object value) {
       super.andLessThanOrEqualTo(fn, value);
       return this;
+    }
+
+    /**
+     * 字段 in (值集合)
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param values       值集合
+     */
+    @SuppressWarnings("rawtypes")
+    public OrCriteria<T> in(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+      return useCondition ? in(fn, values) : this;
     }
 
     /**
@@ -787,6 +887,18 @@ public class Example<T> {
     /**
      * 字段 not in (值集合)
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param values       值集合
+     */
+    @SuppressWarnings("rawtypes")
+    public OrCriteria<T> notIn(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+      return useCondition ? notIn(fn, values) : this;
+    }
+
+    /**
+     * 字段 not in (值集合)
+     *
      * @param fn     字段对应的 get 方法引用
      * @param values 值集合
      */
@@ -794,6 +906,18 @@ public class Example<T> {
     public OrCriteria<T> notIn(Fn<T, Object> fn, Iterable values) {
       super.andNotIn(fn, values);
       return this;
+    }
+
+    /**
+     * 字段 between value1 and value 2
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value1       值1
+     * @param value2       值2
+     */
+    public OrCriteria<T> between(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+      return useCondition ? between(fn, value1, value2) : this;
     }
 
     /**
@@ -811,6 +935,19 @@ public class Example<T> {
     /**
      * 字段 not between value1 and value 2
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value1       值1
+     * @param value2       值2
+     */
+    public OrCriteria<T> notBetween(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+      return useCondition ? notBetween(fn, value1, value2) : this;
+    }
+
+
+    /**
+     * 字段 not between value1 and value 2
+     *
      * @param fn     字段对应的 get 方法引用
      * @param value1 值1
      * @param value2 值2
@@ -818,6 +955,17 @@ public class Example<T> {
     public OrCriteria<T> notBetween(Fn<T, Object> fn, Object value1, Object value2) {
       super.andNotBetween(fn, value1, value2);
       return this;
+    }
+
+    /**
+     * 字段 like %值%
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值，两侧自动添加 %
+     */
+    public OrCriteria<T> contains(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? contains(fn, value) : this;
     }
 
     /**
@@ -834,12 +982,34 @@ public class Example<T> {
     /**
      * 字段 like 值%，匹配 value 为前缀的值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值，右侧自动添加 %
+     */
+    public OrCriteria<T> startsWith(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? startsWith(fn, value) : this;
+    }
+
+    /**
+     * 字段 like 值%，匹配 value 为前缀的值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值，右侧自动添加 %
      */
     public OrCriteria<T> startsWith(Fn<T, Object> fn, String value) {
       super.andLike(fn, value + "%");
       return this;
+    }
+
+    /**
+     * 字段 like %值，匹配 value 为后缀的值
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值，左侧自动添加 %
+     */
+    public OrCriteria<T> endsWith(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? endsWith(fn, value) : this;
     }
 
     /**
@@ -856,12 +1026,34 @@ public class Example<T> {
     /**
      * 字段 like 值
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值，需要指定 '%'(多个), '_'(单个) 模糊匹配
+     */
+    public OrCriteria<T> like(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? like(fn, value) : this;
+    }
+
+    /**
+     * 字段 like 值
+     *
      * @param fn    字段对应的 get 方法引用
      * @param value 值，需要指定 '%'(多个), '_'(单个) 模糊匹配
      */
     public OrCriteria<T> like(Fn<T, Object> fn, String value) {
       super.andLike(fn, value);
       return this;
+    }
+
+    /**
+     * 字段 not like 值
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param fn           字段对应的 get 方法引用
+     * @param value        值，需要指定 % 模糊匹配
+     */
+    public OrCriteria<T> notLike(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? notLike(fn, value) : this;
     }
 
     /**
@@ -878,11 +1070,32 @@ public class Example<T> {
     /**
      * 添加任意条件，条件一定是后端使用的，需要自己防止 SQL 注入
      *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param condition    任意条件，例如 "length(countryname)<5"
+     */
+    public OrCriteria<T> anyCondition(boolean useCondition, String condition) {
+      return useCondition ? anyCondition(condition) : this;
+    }
+
+    /**
+     * 添加任意条件，条件一定是后端使用的，需要自己防止 SQL 注入
+     *
      * @param condition 任意条件，例如 "length(countryname)<5"
      */
     public OrCriteria<T> anyCondition(String condition) {
       super.andCondition(condition);
       return this;
+    }
+
+    /**
+     * 手写左边条件，右边用value值
+     *
+     * @param useCondition 表达式条件, true 使用，false 不使用
+     * @param condition    例如 "length(countryname)="
+     * @param value        例如 5
+     */
+    public OrCriteria<T> anyCondition(boolean useCondition, String condition, Object value) {
+      return useCondition ? anyCondition(condition, value) : this;
     }
 
     /**

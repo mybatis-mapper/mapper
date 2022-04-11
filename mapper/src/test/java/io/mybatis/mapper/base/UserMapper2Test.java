@@ -196,6 +196,13 @@ public class UserMapper2Test extends BaseMapperTest {
           .or()
           .startsWith(User::getUserName, "张")
           .orderByAsc(User::getId).list();
+
+      mapper.wrapper()
+          .eq(false, User::getSex, "女")
+          .or(c -> c.gt(User::getId, 40), c -> c.lt(false, User::getId, 10))
+          .or()
+          .startsWith(User::getUserName, "张")
+          .orderByAsc(User::getId).list();
     }
   }
 }

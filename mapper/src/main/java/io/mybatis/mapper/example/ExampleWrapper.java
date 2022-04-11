@@ -127,11 +127,32 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 设置更新字段和值
    *
+   * @param useSet 表达式条件, true 使用，false 不使用
+   * @param setSql "column = value"
+   */
+  public ExampleWrapper<T, I> set(boolean useSet, String setSql) {
+    return useSet ? set(setSql) : this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
    * @param setSql "column = value"
    */
   public ExampleWrapper<T, I> set(String setSql) {
     this.example.set(setSql);
     return this;
+  }
+
+  /**
+   * 设置更新字段和值
+   *
+   * @param useSet 表达式条件, true 使用，false 不使用
+   * @param fn     字段
+   * @param value  值
+   */
+  public ExampleWrapper<T, I> set(boolean useSet, Fn<T, Object> fn, Object value) {
+    return useSet ? set(fn, value) : this;
   }
 
   /**
@@ -148,6 +169,16 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 指定字段为 null
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   */
+  public ExampleWrapper<T, I> isNull(boolean useCondition, Fn<T, Object> fn) {
+    return useCondition ? isNull(fn) : this;
+  }
+
+  /**
+   * 指定字段为 null
+   *
    * @param fn 字段对应的 get 方法引用
    */
   public ExampleWrapper<T, I> isNull(Fn<T, Object> fn) {
@@ -158,11 +189,32 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 指定字段不为 null
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   */
+  public ExampleWrapper<T, I> isNotNull(boolean useCondition, Fn<T, Object> fn) {
+    return useCondition ? isNotNull(fn) : this;
+  }
+
+  /**
+   * 指定字段不为 null
+   *
    * @param fn 字段对应的 get 方法引用
    */
   public ExampleWrapper<T, I> isNotNull(Fn<T, Object> fn) {
     this.current.addCriterion(fn.toColumn() + " IS NOT NULL");
     return this;
+  }
+
+  /**
+   * 字段 = 值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> eq(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? eq(fn, value) : this;
   }
 
   /**
@@ -179,12 +231,34 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 != 值
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> ne(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? ne(fn, value) : this;
+  }
+
+  /**
+   * 字段 != 值
+   *
    * @param fn    字段对应的 get 方法引用
    * @param value 值
    */
   public ExampleWrapper<T, I> ne(Fn<T, Object> fn, Object value) {
     this.current.addCriterion(fn.toColumn() + " <>", value);
     return this;
+  }
+
+  /**
+   * 字段 > 值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> gt(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? gt(fn, value) : this;
   }
 
   /**
@@ -201,12 +275,34 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 >= 值
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> ge(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? ge(fn, value) : this;
+  }
+
+  /**
+   * 字段 >= 值
+   *
    * @param fn    字段对应的 get 方法引用
    * @param value 值
    */
   public ExampleWrapper<T, I> ge(Fn<T, Object> fn, Object value) {
     this.current.addCriterion(fn.toColumn() + " >=", value);
     return this;
+  }
+
+  /**
+   * 字段 < 值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> lt(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? lt(fn, value) : this;
   }
 
   /**
@@ -223,12 +319,35 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 <= 值
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值
+   */
+  public ExampleWrapper<T, I> le(boolean useCondition, Fn<T, Object> fn, Object value) {
+    return useCondition ? le(fn, value) : this;
+  }
+
+  /**
+   * 字段 <= 值
+   *
    * @param fn    字段对应的 get 方法引用
    * @param value 值
    */
   public ExampleWrapper<T, I> le(Fn<T, Object> fn, Object value) {
     this.current.addCriterion(fn.toColumn() + " <=", value);
     return this;
+  }
+
+  /**
+   * 字段 in (值集合)
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param values       值集合
+   */
+  @SuppressWarnings("rawtypes")
+  public ExampleWrapper<T, I> in(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+    return useCondition ? in(fn, values) : this;
   }
 
   /**
@@ -246,6 +365,18 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 not in (值集合)
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param values       值集合
+   */
+  @SuppressWarnings("rawtypes")
+  public ExampleWrapper<T, I> notIn(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+    return useCondition ? notIn(fn, values) : this;
+  }
+
+  /**
+   * 字段 not in (值集合)
+   *
    * @param fn     字段对应的 get 方法引用
    * @param values 值集合
    */
@@ -253,6 +384,18 @@ public class ExampleWrapper<T, I extends Serializable> {
   public ExampleWrapper<T, I> notIn(Fn<T, Object> fn, Iterable values) {
     this.current.addCriterion(fn.toColumn() + " NOT IN", values);
     return this;
+  }
+
+  /**
+   * 字段 between value1 and value 2
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value1       值1
+   * @param value2       值2
+   */
+  public ExampleWrapper<T, I> between(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+    return useCondition ? between(fn, value1, value2) : this;
   }
 
   /**
@@ -270,6 +413,18 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 not between value1 and value 2
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value1       值1
+   * @param value2       值2
+   */
+  public ExampleWrapper<T, I> notBetween(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+    return useCondition ? notBetween(fn, value1, value2) : this;
+  }
+
+  /**
+   * 字段 not between value1 and value 2
+   *
    * @param fn     字段对应的 get 方法引用
    * @param value1 值1
    * @param value2 值2
@@ -277,6 +432,17 @@ public class ExampleWrapper<T, I extends Serializable> {
   public ExampleWrapper<T, I> notBetween(Fn<T, Object> fn, Object value1, Object value2) {
     this.current.addCriterion(fn.toColumn() + " NOT BETWEEN", value1, value2);
     return this;
+  }
+
+  /**
+   * 字段 like %值%
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值，两侧自动添加 %
+   */
+  public ExampleWrapper<T, I> contains(boolean useCondition, Fn<T, Object> fn, String value) {
+    return useCondition ? contains(fn, value) : this;
   }
 
   /**
@@ -293,12 +459,34 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 like 值%，匹配 value 为前缀的值
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值，右侧自动添加 %
+   */
+  public ExampleWrapper<T, I> startsWith(boolean useCondition, Fn<T, Object> fn, String value) {
+    return useCondition ? startsWith(fn, value) : this;
+  }
+
+  /**
+   * 字段 like 值%，匹配 value 为前缀的值
+   *
    * @param fn    字段对应的 get 方法引用
    * @param value 值，右侧自动添加 %
    */
   public ExampleWrapper<T, I> startsWith(Fn<T, Object> fn, String value) {
     this.current.addCriterion(fn.toColumn() + "  LIKE", value + "%");
     return this;
+  }
+
+  /**
+   * 字段 like %值，匹配 value 为后缀的值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值，左侧自动添加 %
+   */
+  public ExampleWrapper<T, I> endsWith(boolean useCondition, Fn<T, Object> fn, String value) {
+    return useCondition ? endsWith(fn, value) : this;
   }
 
   /**
@@ -315,12 +503,34 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 字段 like 值
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值，需要指定 '%'(多个), '_'(单个) 模糊匹配
+   */
+  public ExampleWrapper<T, I> like(boolean useCondition, Fn<T, Object> fn, String value) {
+    return useCondition ? like(fn, value) : this;
+  }
+
+  /**
+   * 字段 like 值
+   *
    * @param fn    字段对应的 get 方法引用
    * @param value 值，需要指定 '%'(多个), '_'(单个) 模糊匹配
    */
   public ExampleWrapper<T, I> like(Fn<T, Object> fn, String value) {
     this.current.addCriterion(fn.toColumn() + "  LIKE", value);
     return this;
+  }
+
+  /**
+   * 字段 not like 值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param fn           字段对应的 get 方法引用
+   * @param value        值，需要指定 % 模糊匹配
+   */
+  public ExampleWrapper<T, I> notLike(boolean useCondition, Fn<T, Object> fn, String value) {
+    return useCondition ? notLike(fn, value) : this;
   }
 
   /**
@@ -337,11 +547,32 @@ public class ExampleWrapper<T, I extends Serializable> {
   /**
    * 添加任意条件，条件一定是后端使用的，需要自己防止 SQL 注入
    *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param condition    任意条件，例如 "length(countryname)<5"
+   */
+  public ExampleWrapper<T, I> anyCondition(boolean useCondition, String condition) {
+    return useCondition ? anyCondition(condition) : this;
+  }
+
+  /**
+   * 添加任意条件，条件一定是后端使用的，需要自己防止 SQL 注入
+   *
    * @param condition 任意条件，例如 "length(countryname)<5"
    */
   public ExampleWrapper<T, I> anyCondition(String condition) {
     this.current.andCondition(condition);
     return this;
+  }
+
+  /**
+   * 手写左边条件，右边用value值
+   *
+   * @param useCondition 表达式条件, true 使用，false 不使用
+   * @param condition    例如 "length(countryname)="
+   * @param value        例如 5
+   */
+  public ExampleWrapper<T, I> anyCondition(boolean useCondition, String condition, Object value) {
+    return useCondition ? anyCondition(condition, value) : this;
   }
 
   /**
