@@ -92,7 +92,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   default Reflections.ClassField toClassField() {
     if (!FN_CLASS_FIELD_MAP.containsKey(this)) {
       synchronized (this) {
-        if(!FN_CLASS_FIELD_MAP.containsKey(this)) {
+        if (!FN_CLASS_FIELD_MAP.containsKey(this)) {
           FN_CLASS_FIELD_MAP.put(this, Reflections.fnToFieldName(this));
         }
       }
@@ -110,10 +110,14 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
       synchronized (this) {
         if (!FN_COLUMN_MAP.containsKey(this)) {
           Reflections.ClassField classField = toClassField();
-          EntityColumn entityColumn = EntityFactory.create(classField.getClazz()).columns().stream()
-            .filter(column -> column.property().equals(classField.getField())).findFirst()
-            .orElseThrow(() -> new RuntimeException(classField.getField()
-              + " does not mark database column field annotations, unable to obtain column information"));
+          List<EntityColumn> columns = EntityFactory.create(classField.getClazz()).columns();
+          EntityColumn entityColumn = columns.stream()
+              // 先区分大小写匹配字段
+              .filter(column -> column.property().equals(classField.getField())).findFirst()
+              // 如果不存在，再忽略大小写进行匹配
+              .orElseGet(() -> columns.stream().filter(column -> column.property().equalsIgnoreCase(classField.getField()))
+                  .findFirst().orElseThrow(() -> new RuntimeException(classField.getField()
+                      + " does not mark database column field annotations, unable to obtain column information")));
           FN_COLUMN_MAP.put(this, entityColumn);
         }
       }
