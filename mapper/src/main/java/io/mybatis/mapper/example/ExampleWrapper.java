@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -90,6 +91,36 @@ public class ExampleWrapper<T, I extends Serializable> {
   public ExampleWrapper<T, I> orderBy(Fn<T, Object> fn, Example.Order order) {
     this.example.orderBy(fn, order);
     return this;
+  }
+
+  /**
+   * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
+   * @param orderByCondition 排序字符串（不会覆盖已有的排序内容）
+   * @return Example
+   */
+  public ExampleWrapper<T, I> orderBy(String orderByCondition) {
+    this.example.orderBy(orderByCondition);
+    return this;
+  }
+
+  /**
+   * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
+   * @param orderByCondition 排序字符串构造方法,比如通过数组集合循环拼接等
+   * @return Example
+   */
+  public ExampleWrapper<T, I> orderBy(Supplier<String> orderByCondition) {
+    this.example.orderBy(orderByCondition);
+    return this;
+  }
+
+  /**
+   * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
+   * @param useOrderBy 条件表达式，true使用，false不使用 字符串排序
+   * @param orderByCondition 排序字符串构造方法，比如通过数组集合循环拼接等
+   * @return Example
+   */
+  public ExampleWrapper<T, I> orderBy(boolean useOrderBy, Supplier<String> orderByCondition) {
+    return useOrderBy ? this.orderBy(orderByCondition) : this;
   }
 
   /**

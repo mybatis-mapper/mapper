@@ -19,11 +19,11 @@ package io.mybatis.mapper.example;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.mybatis.provider.EntityTable.DELIMITER;
 
@@ -270,6 +270,42 @@ public class Example<T> {
     }
     orderByClause += fn.toColumn() + " " + order;
     return this;
+  }
+
+  /**
+   * 用于一些非常规的排序 或 简单的字符串形式的排序 <br>
+   * 本方法 和 example.setOrderByClause 方法的区别是 <strong>本方法不会覆盖已有的排序内容</strong> <br>
+   * eg：  ORDER BY status = 5 DESC  即将 status = 5 的放在最前面<br>
+   * 此时入参为：<pre><code>example.orderBy("status = 5 DESC")</code></pre>
+   * @param orderByCondition 字符串排序表达式
+   * @return Example
+   */
+  public Example<T> orderBy(String orderByCondition) {
+    if (orderByCondition != null && orderByCondition.length() > 0) {
+      if (orderByClause == null) {
+        orderByClause = "";
+      } else {
+        orderByClause += ", ";
+      }
+      orderByClause += orderByCondition;
+    }
+    return this;
+  }
+
+
+  /**
+   * 用于一些特殊的非常规的排序，排序字符串需要通过一些函数或者方法来构造出来<br>
+   * eg：  ORDER BY FIELD(id,3,1,2) 即将 id 按照 3，1，2 的顺序排序<br>
+   * 此时入参为：<pre><code>example.orderBy(()-> {
+   * return Stream.of(3,1,2)
+   *              .map(Objects::toString)
+   *              .collect(Collectors.joining("," , "FIELD( id ," , ")"));
+   * })</code></pre>
+   * @param orderByCondition 字符串排序表达式
+   * @return Example
+   */
+  public Example<T> orderBy(Supplier<String> orderByCondition) {
+    return orderBy(orderByCondition.get());
   }
 
   /**
