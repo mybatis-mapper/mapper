@@ -30,7 +30,7 @@ public class JpaEntityClassFinder extends GenericEntityClassFinder {
   @Override
   public boolean isEntityClass(Class<?> clazz) {
     //带注解或不是简单类型和枚举的都算实体
-    return clazz.isAnnotationPresent(Table.class) || (!SimpleTypeUtil.isSimpleType(clazz) && !clazz.isEnum());
+    return clazz.isAnnotationPresent(Table.class) || (!clazz.isPrimitive() && !SimpleTypeUtil.isSimpleType(clazz) && !clazz.isEnum());
   }
 
   @Override
