@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.mybatis</groupId>
+  <artifactId>mybatis-bom</artifactId>
+  <version>1.2.2</version>
+  <packaging>pom</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>MyBatis Mapper (Bill of Materials) | 依赖版本管理</description>
+
+  <properties>
+    <!--
+    All dependencies listed in this pom will have version same as the version of this pom.
+    -->
+    <mapper.version>${project.version}</mapper.version>
+    <!-- 通用方法核心 -->
+    <provider.version>1.1.1</provider.version>
+  </properties>
+
+  <!-- 依赖管理 -->
+  <dependencyManagement>
+    <dependencies>
+      <!-- 版本号不统一&项目并不在一起，是否放在此处声明 -->
+      <dependency>
+        <groupId>io.mybatis</groupId>
+        <artifactId>mybatis-provider</artifactId>
+        <version>${provider.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-common</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-mapper</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-service</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-activerecord</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-generator</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-jpa</artifactId>
+        <version>${mapper.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>
