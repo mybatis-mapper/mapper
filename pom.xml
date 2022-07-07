@@ -50,6 +50,7 @@
   </scm>
 
   <modules>
+    <module>bom</module>
     <module>mapper</module>
     <module>service</module>
     <module>activerecord</module>
@@ -83,9 +84,11 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>io.mybatis</groupId>
-        <artifactId>mybatis-provider</artifactId>
-        <version>${provider.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mybatis-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <dependency>
