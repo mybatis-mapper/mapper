@@ -45,7 +45,7 @@ public interface SumMapper<T> {
       return SqlScript.caching(providerContext, new SqlScript() {
         @Override
         public String getSql(EntityTable entity) {
-          return "SELECT SUM(${column.toColumn()}) FROM " + entity.table()
+          return "SELECT SUM(${column.toColumn()}) FROM " + entity.tableName("entity.")
               + ifTest("entity != null", () ->
               where(() ->
                   entity.whereColumns().stream().map(column ->

@@ -156,11 +156,15 @@ public class ExampleWrapper<T, I extends Serializable> {
   }
 
   /**
-   * 设置更新字段和值
+   * 设置自定义表名
    *
-   * @param useSet 表达式条件, true 使用，false 不使用
-   * @param setSql "column = value"
+   * @param table
    */
+  public ExampleWrapper<T, I> dynamicTableVar(String table) {
+    this.example.dynamicTableVar(table);
+    return this;
+  }
+
   public ExampleWrapper<T, I> set(boolean useSet, String setSql) {
     return useSet ? set(setSql) : this;
   }

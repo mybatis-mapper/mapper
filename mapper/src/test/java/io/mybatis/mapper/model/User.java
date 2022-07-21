@@ -22,8 +22,10 @@ import io.mybatis.provider.Entity;
   props = {
     @Entity.Prop(name = "deleteByExample.allowEmpty", value = "false", type = Boolean.class),
     @Entity.Prop(name = "updateByExample.allowEmpty", value = "false", type = Boolean.class),
-    @Entity.Prop(name = "updateByExampleSelective.allowEmpty", value = "false", type = Boolean.class)
-  }
+    @Entity.Prop(name = "updateByExampleSelective.allowEmpty", value = "false", type = Boolean.class),
+    @Entity.Prop(name = "dynamicTable", value = "user${suffix}", type = String.class),
+    @Entity.Prop(name = "dynamicTable.return", value = "true", type = Boolean.class)
+    }
 )
 public class User {
   @Entity.Column(id = true)
@@ -32,6 +34,9 @@ public class User {
   private String userName;
   @Entity.Column
   private String sex;
+
+  @Entity.Transient
+  private String suffix;
 
   public Long getId() {
     return id;
@@ -55,6 +60,14 @@ public class User {
 
   public void setSex(String sex) {
     this.sex = sex;
+  }
+
+  public String getSuffix() {
+    return suffix;
+  }
+
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
   }
 
   @Override

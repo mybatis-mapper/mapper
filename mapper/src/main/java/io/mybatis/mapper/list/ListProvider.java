@@ -41,7 +41,7 @@ public class ListProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "INSERT INTO " + entity.table()
+        return "INSERT INTO " + entity.tableName("entityList[0].")
             + "(" + entity.insertColumnList() + ")"
             + " VALUES "
             + foreach("entityList", "entity", ",", () ->

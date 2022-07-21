@@ -39,7 +39,7 @@ public class FnProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName("entity.")
             + set(() ->
             entity.updateColumns().stream().map(column ->
                 choose(() ->
@@ -65,7 +65,8 @@ public class FnProvider {
         return "SELECT "
             + choose(() -> whenTest("fns != null and fns.isNotEmpty()", () -> "${fns.baseColumnAsPropertyList()}")
             + otherwise(() -> entity.baseColumnAsPropertyList()))
-            + " FROM " + entity.table()
+            + (entity.getProp("dynamicTable.return", true) ? entity.dynamicTableNameVarReturn("entity.") : "")
+            + " FROM " + entity.tableName("entity.")
             + ifParameterNotNull(() ->
             where(() ->
                 entity.whereColumns().stream().map(column ->

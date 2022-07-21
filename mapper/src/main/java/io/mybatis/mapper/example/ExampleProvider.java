@@ -132,7 +132,9 @@ public class ExampleProvider {
   public static String deleteByExample(ProviderContext providerContext) {
     return SqlScript.caching(providerContext, (entity, util) ->
         util.ifTest("startSql != null and startSql != ''", () -> "${startSql}")
-            + "DELETE FROM " + entity.table()
+            + "DELETE FROM "
+            + util.choose(() -> util.whenTest("dynamicTableVar != null and dynamicTableVar != ''", ()-> entity.tableName("dynamicTableVar"))
+            + util.otherwise(entity::table))
             + util.parameterNotNull("Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
             + (entity.getProp("deleteByExample.allowEmpty", true) ?
@@ -152,7 +154,9 @@ public class ExampleProvider {
       @Override
       public String getSql(EntityTable entity) {
         return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
-            + "UPDATE " + entity.table()
+            + "UPDATE "
+            + choose(() -> whenTest("example.dynamicTableVar != null and example.dynamicTableVar != ''", ()-> entity.tableName("example.dynamicTableVar"))
+            + otherwise(()-> entity.tableName("entity.")))
             + set(() -> entity.updateColumns().stream().map(
             column -> column.columnEqualsProperty("entity.")).collect(Collectors.joining(",")))
             //TODO 测试
@@ -178,7 +182,9 @@ public class ExampleProvider {
       public String getSql(EntityTable entity) {
         return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
             + variableNotEmpty("example.setValues", "Example setValues cannot be empty")
-            + "UPDATE " + entity.table()
+            + "UPDATE "
+            + choose(() -> whenTest("example.dynamicTableVar != null and example.dynamicTableVar != ''", ()->entity.tableName("example.dynamicTableVar"))
+            + otherwise(entity::table))
             + EXAMPLE_SET_CLAUSE_INNER_WHEN
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
@@ -201,7 +207,9 @@ public class ExampleProvider {
       @Override
       public String getSql(EntityTable entity) {
         return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
-            + "UPDATE " + entity.table()
+            + "UPDATE "
+            + choose(() -> whenTest("example.dynamicTableVar != null and example.dynamicTableVar != ''", ()-> entity.tableName("example.dynamicTableVar"))
+            + otherwise(()-> entity.tableName("entity.")))
             + set(() -> entity.updateColumns().stream().map(
             column -> ifTest(column.notNullTest("entity."),
                 () -> column.columnEqualsProperty("entity.") + ",")).collect(Collectors.joining(LF)))
@@ -231,7 +239,10 @@ public class ExampleProvider {
             + ifTest("distinct", () -> "distinct ")
             + ifTest("selectColumns != null and selectColumns != ''", () -> "${selectColumns}")
             + ifTest("selectColumns == null or selectColumns == ''", entity::baseColumnAsPropertyList)
-            + " FROM " + entity.table()
+            + ifTest("dynamicTableVar != null and dynamicTableVar != ''", ()-> (entity.getProp("dynamicTable.return", true) ? entity.dynamicTableNameVarReturn("dynamicTableVar") : ""))
+            + " FROM "
+            + choose(() -> whenTest("dynamicTableVar != null and dynamicTableVar != ''", ()->entity.tableName("dynamicTableVar"))
+            + otherwise(entity::table))
             + ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE)
             + ifTest("orderByClause != null", () -> " ORDER BY ${orderByClause}")
             + ifTest("orderByClause == null", () -> entity.orderByColumn().orElse(""))
@@ -256,7 +267,8 @@ public class ExampleProvider {
             + ifTest("simpleSelectColumns != null and simpleSelectColumns != ''", () -> "${simpleSelectColumns}")
             + ifTest("simpleSelectColumns == null or simpleSelectColumns == ''", () -> "*")
             + ") FROM "
-            + entity.table()
+            + choose(() -> whenTest("dynamicTableVar != null and dynamicTableVar != ''", ()->entity.tableName("dynamicTableVar"))
+            + otherwise(entity::table))
             + ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE)
             + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
       }

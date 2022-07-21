@@ -66,6 +66,12 @@ public class Example<T> {
    */
   protected List<Criterion>   setValues;
 
+
+  /**
+   * 设置dynamic变量
+   */
+  protected String  dynamicTableVar;
+
   /**
    * 默认构造方法，不允许Example查询条件为空，不能操作全库
    */
@@ -215,6 +221,23 @@ public class Example<T> {
   public Example<T> setSimpleSelectColumns(String simpleSelectColumns) {
     this.simpleSelectColumns = simpleSelectColumns;
     return this;
+  }
+
+  /**
+   * 设置自定义表名 结合Entity.Prop中的dynamicTable 会替换掉其中的变量
+   *
+   * @param dynamicTableVar 设置动态表名变量
+   */
+  public void dynamicTableVar(String dynamicTableVar) {
+    this.dynamicTableVar = dynamicTableVar;
+  }
+
+  /**
+   * 获取自定义表名
+   * @return
+   */
+  public String getDynamicTableVar() {
+    return dynamicTableVar;
   }
 
   /**
