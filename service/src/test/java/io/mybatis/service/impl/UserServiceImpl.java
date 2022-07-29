@@ -16,13 +16,12 @@
 
 package io.mybatis.service.impl;
 
-import io.mybatis.service.AbstractService;
 import io.mybatis.service.UserService;
 import io.mybatis.service.mapper.UserMapper;
 import io.mybatis.service.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl extends AbstractService<User, Integer, UserMapper> implements UserService {
+public class UserServiceImpl extends BaseIdService<User, UserMapper> implements UserService {
 
 }

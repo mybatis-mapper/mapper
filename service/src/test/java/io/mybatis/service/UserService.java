@@ -18,9 +18,13 @@ package io.mybatis.service;
 
 import io.mybatis.service.model.User;
 
+import java.util.List;
+
 /**
  * 暴露所有通用方法
  */
 public interface UserService extends MyBaseService<User> {
+
+  int deleteByIdList(List<Integer> ids);
 
 }

@@ -24,8 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ServiceTest {
@@ -178,6 +180,21 @@ public class ServiceTest {
     Assert.assertEquals(3, userService.findList(user).size());
     user.setName("admin");
     Assert.assertTrue(userService.findOne(user) != null);
+
+    List<Integer> ids = new ArrayList<>();
+    user = new User();
+    userService.save(user);
+    ids.add(user.getId());
+    user = new User();
+    userService.save(user);
+    ids.add(user.getId());
+
+    // issues #52
+    List<User> users = ids.stream().map(userService::findById).collect(Collectors.toList());
+    users.forEach(u -> Assert.assertNotNull(u.getId()));
+
+    // issues #50
+    Assert.assertEquals(2, userService.deleteByIdList(ids));
   }
 
   @Test
