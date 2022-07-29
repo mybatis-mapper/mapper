@@ -1,4 +1,5 @@
 drop table user if exists;
+drop table user_auto if exists;
 
 create table user
 (

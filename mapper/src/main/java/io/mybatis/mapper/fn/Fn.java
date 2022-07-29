@@ -63,7 +63,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
     Set<String> columnNameSet = Arrays.stream(columnNames).collect(Collectors.toSet());
     List<EntityColumn> columns = entityTable.columns().stream()
         .filter(column -> columnNameSet.contains(column.property())).collect(Collectors.toList());
-    return new Fns<>(entityClass, entityTable.table(), columns);
+    return new Fns<>(entityClass, entityTable.tableName(), columns);
   }
 
   /**
@@ -157,7 +157,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
         this.columns.add(fns[i].toEntityColumn());
         if (i == 0) {
           EntityTable entityTable = this.columns.get(i).entityTable();
-          this.table = entityTable.table();
+          this.table = entityTable.tableName();
           this.entityClass = entityTable.entityClass();
           this.resultMap = entityTable.resultMap();
           this.autoResultMap = entityTable.autoResultMap();

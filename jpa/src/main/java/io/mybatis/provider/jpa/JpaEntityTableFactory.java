@@ -18,6 +18,7 @@ package io.mybatis.provider.jpa;
 
 import io.mybatis.provider.EntityTable;
 import io.mybatis.provider.EntityTableFactory;
+import io.mybatis.provider.Style;
 import io.mybatis.provider.util.Utils;
 
 import javax.persistence.Table;
@@ -42,7 +43,7 @@ public class JpaEntityTableFactory implements EntityTableFactory {
       }
     } else if (Utils.isEmpty(entityTable.table())) {
       //没有设置表名时，默认类名转下划线
-      entityTable.table(Utils.convertEntityClass(entityClass));
+      entityTable.table(Style.getDefaultStyle().tableName(entityClass));
     }
     return entityTable;
   }

@@ -47,7 +47,7 @@ public class EntityProvider {
    * @return cacheKey
    */
   public static String insert(ProviderContext providerContext) {
-    return SqlScript.caching(providerContext, entity -> "INSERT INTO " + entity.table()
+    return SqlScript.caching(providerContext, entity -> "INSERT INTO " + entity.tableName()
         + "(" + entity.insertColumnList() + ")"
         + " VALUES (" + entity.insertColumns().stream()
         .map(EntityColumn::variables).collect(Collectors.joining(",")) + ")");
@@ -63,7 +63,7 @@ public class EntityProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "INSERT INTO " + entity.table()
+        return "INSERT INTO " + entity.tableName()
             + trimSuffixOverrides("(", ")", ",", () ->
             entity.insertColumns().stream().map(column ->
                 ifTest(column.notNullTest(), () -> column.column() + ",")
@@ -83,7 +83,7 @@ public class EntityProvider {
    * @return cacheKey
    */
   public static String deleteByPrimaryKey(ProviderContext providerContext) {
-    return SqlScript.caching(providerContext, entity -> "DELETE FROM " + entity.table()
+    return SqlScript.caching(providerContext, entity -> "DELETE FROM " + entity.tableName()
         + " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
   }
 
@@ -97,7 +97,7 @@ public class EntityProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "DELETE FROM " + entity.table()
+        return "DELETE FROM " + entity.tableName()
             + parameterNotNull("Parameter cannot be null")
             + where(() ->
             entity.columns().stream().map(column ->
@@ -117,7 +117,7 @@ public class EntityProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + " SET " + entity.updateColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(","))
             + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
       }
@@ -134,7 +134,7 @@ public class EntityProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + set(() ->
             entity.updateColumns().stream().map(column ->
                 ifTest(column.notNullTest(), () -> column.columnEqualsProperty() + ",")
@@ -155,7 +155,7 @@ public class EntityProvider {
       @Override
       public String getSql(EntityTable entity) {
         return "SELECT " + entity.baseColumnAsPropertyList()
-            + " FROM " + entity.table()
+            + " FROM " + entity.tableName()
             + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
       }
     });
@@ -172,7 +172,7 @@ public class EntityProvider {
       @Override
       public String getSql(EntityTable entity) {
         return "SELECT " + entity.baseColumnAsPropertyList()
-            + " FROM " + entity.table()
+            + " FROM " + entity.tableName()
             + ifParameterNotNull(() ->
             where(() ->
                 entity.whereColumns().stream().map(column ->
@@ -196,7 +196,7 @@ public class EntityProvider {
     return SqlScript.caching(providerContext, new SqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "SELECT COUNT(*)  FROM " + entity.table() + LF
+        return "SELECT COUNT(*)  FROM " + entity.tableName() + LF
             + ifParameterNotNull(() ->
             where(() ->
                 entity.whereColumns().stream().map(column ->

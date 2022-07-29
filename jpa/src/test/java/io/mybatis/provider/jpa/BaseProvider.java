@@ -28,19 +28,19 @@ public class BaseProvider {
 
   public static String getById(ProviderContext providerContext) {
     return SqlScript.caching(providerContext, entity ->
-        "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.table() +
+        "SELECT " + entity.baseColumnAsPropertyList() + " FROM " + entity.tableName() +
             " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
   }
 
   public static String deleteById(ProviderContext providerContext) {
     return SqlScript.caching(providerContext, entity ->
-        "DELETE FROM " + entity.table() +
+        "DELETE FROM " + entity.tableName() +
             " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
   }
 
   public static String insertSelective(ProviderContext providerContext) {
     return SqlScript.caching(providerContext, (entity, util) ->
-        "INSERT INTO " + entity.table()
+        "INSERT INTO " + entity.tableName()
             + util.trimSuffixOverrides("(", ")", ",", () ->
             entity.insertColumns().stream().map(column ->
                 util.ifTest(column.notNullTest(), () -> column.column() + ",")

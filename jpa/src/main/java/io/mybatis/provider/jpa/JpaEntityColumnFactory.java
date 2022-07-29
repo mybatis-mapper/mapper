@@ -16,11 +16,7 @@
 
 package io.mybatis.provider.jpa;
 
-import io.mybatis.provider.EntityColumn;
-import io.mybatis.provider.EntityColumnFactory;
-import io.mybatis.provider.EntityField;
-import io.mybatis.provider.EntityTable;
-import io.mybatis.provider.util.Utils;
+import io.mybatis.provider.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -44,7 +40,7 @@ public class JpaEntityColumnFactory implements EntityColumnFactory {
       return Optional.empty();
     } else if (!optionalEntityColumns.isPresent()) {
       //没有 @Transient 注解的字段都认为是表字段，不自动排除字段，字段名默认驼峰转下划线
-      optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(Utils.convertEntityField(field))));
+      optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(Style.getDefaultStyle().columnName(entityTable, field))));
     }
     if (optionalEntityColumns.isPresent()) {
       List<EntityColumn> entityColumns = optionalEntityColumns.get();
