@@ -19,7 +19,9 @@ package io.mybatis.activerecord.spring;
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.provider.EntityClassFinder;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -35,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <M> 实体对应的 Mapper
  * @author liuzh
  */
-public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I>> implements ApplicationListener<ContextRefreshedEvent> {
+public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I>> implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
   /**
    * Spring 上下文
    */
@@ -77,8 +79,16 @@ public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I
   }
 
   @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    MapperProvider.applicationContext = applicationContext;
+  }
+
+  @Override
   public void onApplicationEvent(ContextRefreshedEvent event) {
-    MapperProvider.applicationContext = event.getApplicationContext();
+    this.initMapper();
+  }
+
+  protected void initMapper() {
     this.sqlSessionTemplate.getConfiguration().getMapperRegistry().getMappers().forEach(mapper -> {
       addMapper(mapper, this.sqlSessionTemplate.getMapper(mapper));
     });
@@ -91,9 +101,9 @@ public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I
    * @param mapper Mapper 实例
    */
   public void addMapper(Class<?> type, Object mapper) {
-    if (type != null && BaseMapper.class.isAssignableFrom(type)) {
+    if (type != null && mapper != null && BaseMapper.class.isAssignableFrom(type)) {
       EntityClassFinder.find(type, null).ifPresent(clazz -> {
-        if (mapper != null) {
+        if (!modelMapper.containsKey(clazz)) {
           modelMapper.put(clazz, (BaseMapper<T, I>) mapper);
         }
       });
@@ -107,6 +117,13 @@ public class MapperProvider<T, I extends Serializable, M extends BaseMapper<T, I
    * @return Mapper 接口
    */
   public M baseMapper(Class<T> modelClass) {
+    if (!modelMapper.containsKey(modelClass)) {
+      synchronized (this) {
+        if (!modelMapper.containsKey(modelClass)) {
+          this.initMapper();
+        }
+      }
+    }
     if (modelMapper.containsKey(modelClass)) {
       return (M) modelMapper.get(modelClass);
     }

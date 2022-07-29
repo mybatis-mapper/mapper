@@ -18,9 +18,11 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans.xsd
-       					http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"
+       					http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       					http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
        default-lazy-init="false">
 
   <jdbc:embedded-database id="dataSourceRole">
@@ -30,6 +32,10 @@
   <jdbc:embedded-database id="dataSourceUser">
     <jdbc:script location="classpath:io/mybatis/activerecord/spring/database-schema-user.sql"/>
   </jdbc:embedded-database>
+
+  <task:scheduler id="myScheduler"/>
+
+  <bean id="systemTask" class="io.mybatis.activerecord.spring.SystemTask"/>
 
   <bean id="sqlSessionFactoryRole" class="org.mybatis.spring.SqlSessionFactoryBean">
     <property name="dataSource" ref="dataSourceRole"/>
@@ -76,4 +82,8 @@
     <property name="markerInterface" value="io.mybatis.activerecord.spring.UserMarker"/>
     <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryUser"/>
   </bean>
+
+  <task:scheduled-tasks scheduler="myScheduler">
+    <task:scheduled ref="systemTask" method="run" fixed-delay="5000"/>
+  </task:scheduled-tasks>
 </beans>
