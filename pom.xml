@@ -84,13 +84,11 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>mybatis-bom</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>io.mybatis</groupId>
+        <artifactId>mybatis-provider</artifactId>
+        <version>${provider.version}</version>
       </dependency>
-
+      
       <dependency>
         <groupId>org.mybatis</groupId>
         <artifactId>mybatis</artifactId>

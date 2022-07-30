@@ -31,6 +31,7 @@
     <dependency>
       <groupId>io.mybatis</groupId>
       <artifactId>mybatis-mapper</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mybatis</groupId>
