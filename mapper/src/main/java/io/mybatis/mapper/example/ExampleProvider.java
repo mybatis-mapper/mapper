@@ -135,7 +135,7 @@ public class ExampleProvider {
             + "DELETE FROM " + entity.tableName()
             + util.parameterNotNull("Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
-            + (entity.getProp("deleteByExample.allowEmpty", true) ?
+            + (entity.getPropBoolean("deleteByExample.allowEmpty", true) ?
             "" : util.variableIsFalse("_parameter.isEmpty()", "Example Criteria cannot be empty"))
             + EXAMPLE_WHERE_CLAUSE
             + util.ifTest("endSql != null and endSql != ''", () -> "${endSql}"));
@@ -158,7 +158,7 @@ public class ExampleProvider {
             //TODO 测试
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
-            + (entity.getProp("updateByExample.allowEmpty", true) ?
+            + (entity.getPropBoolean("updateByExample.allowEmpty", true) ?
             "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
@@ -182,7 +182,7 @@ public class ExampleProvider {
             + EXAMPLE_SET_CLAUSE_INNER_WHEN
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
-            + (entity.getProp("updateByExample.allowEmpty", true) ?
+            + (entity.getPropBoolean("updateByExample.allowEmpty", true) ?
             "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
@@ -208,7 +208,7 @@ public class ExampleProvider {
             //TODO 测试
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
-            + (entity.getProp("updateByExampleSelective.allowEmpty", true) ?
+            + (entity.getPropBoolean("updateByExampleSelective.allowEmpty", true) ?
             "" : variableIsFalse("example.isEmpty()", "Example Criteria cannot be empty"))
             + UPDATE_BY_EXAMPLE_WHERE_CLAUSE
             + ifTest("example.endSql != null and example.endSql != ''", () -> "${example.endSql}");
