@@ -60,14 +60,14 @@
   </modules>
 
   <properties>
-    <revision>2.0.0-SNAPSHOT</revision>
+    <revision>2.0.0</revision>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Dfile.encoding=UTF-8</argLine>
 
-    <provider.version>2.1.1-SNAPSHOT</provider.version>
+    <provider.version>2.1.1</provider.version>
 
     <mybatis.version>3.5.10</mybatis.version>
     <mybatis-spring.version>2.0.7</mybatis-spring.version>
@@ -88,7 +88,7 @@
         <artifactId>mybatis-provider</artifactId>
         <version>${provider.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.mybatis</groupId>
         <artifactId>mybatis</artifactId>
