@@ -19,6 +19,7 @@ package io.mybatis.service;
 import io.mybatis.mapper.fn.Fn;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -119,7 +120,7 @@ public interface EntityService<T, I extends Serializable> {
    * @param <F>            字段值类型
    * @return 删除数据的条数
    */
-  <F> int deleteByFieldList(Fn<T, F> field, List<F> fieldValueList);
+  <F> int deleteByFieldList(Fn<T, F> field, Collection<F> fieldValueList);
 
   /**
    * 根据指定的主键查询
@@ -153,7 +154,7 @@ public interface EntityService<T, I extends Serializable> {
    * @param <F>            字段值类型
    * @return 实体集合
    */
-  <F> List<T> findByFieldList(Fn<T, F> field, List<F> fieldValueList);
+  <F> List<T> findByFieldList(Fn<T, F> field, Collection<F> fieldValueList);
 
   /**
    * 查询全部

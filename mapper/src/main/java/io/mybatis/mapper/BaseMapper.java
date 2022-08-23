@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.UpdateProvider;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public interface BaseMapper<T, I extends Serializable>
    * @param <F>            字段类型
    * @return 实体列表
    */
-  default <F> List<T> selectByFieldList(Fn<T, F> field, List<F> fieldValueList) {
+  default <F> List<T> selectByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     Example<T> example = new Example<>();
     example.createCriteria().andIn((Fn<T, Object>) field, fieldValueList);
     return selectByExample(example);
@@ -71,7 +72,7 @@ public interface BaseMapper<T, I extends Serializable>
    * @param <F>            字段类型
    * @return 实体列表
    */
-  default <F> int deleteByFieldList(Fn<T, F> field, List<F> fieldValueList) {
+  default <F> int deleteByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     Example<T> example = new Example<>();
     example.createCriteria().andIn((Fn<T, Object>) field, fieldValueList);
     return deleteByExample(example);

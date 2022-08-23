@@ -19,17 +19,17 @@ package io.mybatis.service;
 import io.mybatis.common.util.Assert;
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 import io.mybatis.provider.EntityTable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
-import static io.mybatis.common.core.Code.DELETE_FAILURE;
-import static io.mybatis.common.core.Code.SAVE_FAILURE;
-import static io.mybatis.common.core.Code.UPDATE_FAILURE;
+import static io.mybatis.common.core.Code.*;
 
 /**
  * 基础方法实现，推荐自己的实现类继承该类
@@ -60,6 +60,10 @@ public abstract class AbstractService<T, I extends Serializable, M extends BaseM
   @Autowired
   public void setBaseMapper(M baseMapper) {
     this.baseMapper = baseMapper;
+  }
+
+  public ExampleWrapper<T, I> wrapper() {
+    return baseMapper.wrapper();
   }
 
   @Override
@@ -131,7 +135,7 @@ public abstract class AbstractService<T, I extends Serializable, M extends BaseM
   }
 
   @Override
-  public <F> int deleteByFieldList(Fn<T, F> field, List<F> fieldValueList) {
+  public <F> int deleteByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     return baseMapper.deleteByFieldList(field, fieldValueList);
   }
 
@@ -177,7 +181,7 @@ public abstract class AbstractService<T, I extends Serializable, M extends BaseM
    * @return 实体集合
    */
   @Override
-  public <F> List<T> findByFieldList(Fn<T, F> field, List<F> fieldValueList) {
+  public <F> List<T> findByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     return baseMapper.selectByFieldList(field, fieldValueList);
   }
 
