@@ -19,7 +19,7 @@ package io.mybatis.service;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.service.model.Role;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface RoleService {
 
@@ -64,7 +64,7 @@ public interface RoleService {
    * @param <F>            字段值类型
    * @return 删除数据的条数
    */
-  <F> int deleteByFieldList(Fn<Role, F> field, List<F> fieldValueList);
+  <F> int deleteByFieldList(Fn<Role, F> field, Collection<F> fieldValueList);
 
   /**
    * 根据指定的主键查询
