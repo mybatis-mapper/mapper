@@ -19,11 +19,12 @@ package io.mybatis.mapper.example;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.mybatis.provider.EntityTable.DELIMITER;
 
@@ -189,15 +190,6 @@ public class Example<T> {
   }
 
   /**
-   * 获取查询列，不带 column As Alias 别名
-   *
-   * @return 查询列
-   */
-  public String getSimpleSelectColumns() {
-    return simpleSelectColumns;
-  }
-
-  /**
    * 指定查询列
    *
    * @param selectColumns 查询列
@@ -205,6 +197,15 @@ public class Example<T> {
   public Example<T> setSelectColumns(String selectColumns) {
     this.selectColumns = selectColumns;
     return this;
+  }
+
+  /**
+   * 获取查询列，不带 column As Alias 别名
+   *
+   * @return 查询列
+   */
+  public String getSimpleSelectColumns() {
+    return simpleSelectColumns;
   }
 
   /**
@@ -277,6 +278,7 @@ public class Example<T> {
    * 本方法 和 example.setOrderByClause 方法的区别是 <strong>本方法不会覆盖已有的排序内容</strong> <br>
    * eg：  ORDER BY status = 5 DESC  即将 status = 5 的放在最前面<br>
    * 此时入参为：<pre><code>example.orderBy("status = 5 DESC")</code></pre>
+   *
    * @param orderByCondition 字符串排序表达式
    * @return Example
    */
@@ -301,6 +303,7 @@ public class Example<T> {
    *              .map(Objects::toString)
    *              .collect(Collectors.joining("," , "FIELD( id ," , ")"));
    * })</code></pre>
+   *
    * @param orderByCondition 字符串排序表达式
    * @return Example
    */

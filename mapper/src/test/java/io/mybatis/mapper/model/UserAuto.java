@@ -28,11 +28,44 @@ import java.sql.SQLException;
 @Entity.Table(value = "user_auto", autoResultMap = true)
 public class UserAuto {
   @Entity.Column(id = true)
-  private Long   id;
+  private Long    id;
   @Entity.Column("user_name")
-  private String name;
+  private String  name;
   @Entity.Column(typeHandler = AddressTypeHandler.class)
   private Address address;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public void setAddress(Address address) {
+    this.address = address;
+  }
+
+  @Override
+  public String toString() {
+    return "UserAuto{" +
+        "id=" + id +
+        ", name='" + name + '\'' +
+        ", address=" + address +
+        '}';
+  }
 
   public static class Address {
     private String sheng;
@@ -91,38 +124,5 @@ public class UserAuto {
       String string = cs.getString(columnIndex);
       return string == null ? null : valueToAddress(string);
     }
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Address getAddress() {
-    return address;
-  }
-
-  public void setAddress(Address address) {
-    this.address = address;
-  }
-
-  @Override
-  public String toString() {
-    return "UserAuto{" +
-      "id=" + id +
-      ", name='" + name + '\'' +
-      ", address=" + address +
-      '}';
   }
 }

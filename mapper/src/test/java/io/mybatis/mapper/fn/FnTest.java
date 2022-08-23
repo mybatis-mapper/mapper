@@ -35,6 +35,23 @@ public class FnTest {
     Assert.assertEquals("is_admin", ((Fn<UserIs, Object>) UserIs::isAdmin).toColumn());
   }
 
+  @Test
+  public void testExtends() {
+    Assert.assertEquals("id", ((Fn<SysUser, Object>) SysUser::getId).toField());
+    Assert.assertEquals("id", ((Fn<SysUser, Object>) SysUser::getId).toColumn());
+    Assert.assertEquals("whenCreate", ((Fn<SysUser, Object>) SysUser::getWhenCreate).toField());
+    Assert.assertEquals("when_create", ((Fn<SysUser, Object>) SysUser::getWhenCreate).toColumn());
+    Assert.assertEquals("userName", ((Fn<SysUser, Object>) SysUser::getUserName).toField());
+    Assert.assertEquals("name", ((Fn<SysUser, Object>) SysUser::getUserName).toColumn());
+
+    Assert.assertEquals("id", ((Fn<SysRole, Object>) SysRole::getId).toField());
+    Assert.assertEquals("id", ((Fn<SysRole, Object>) SysRole::getId).toColumn());
+    Assert.assertEquals("whenCreate", ((Fn<SysRole, Object>) SysRole::getWhenCreate).toField());
+    Assert.assertEquals("when_create", ((Fn<SysRole, Object>) SysRole::getWhenCreate).toColumn());
+    Assert.assertEquals("roleName", ((Fn<SysRole, Object>) SysRole::getRoleName).toField());
+    Assert.assertEquals("name", ((Fn<SysRole, Object>) SysRole::getRoleName).toColumn());
+  }
+
   public static class BaseId {
     @Entity.Column(id = true)
     private Long id;
@@ -87,23 +104,6 @@ public class FnTest {
     public void setRoleName(String roleName) {
       this.roleName = roleName;
     }
-  }
-
-  @Test
-  public void testExtends() {
-    Assert.assertEquals("id", ((Fn<SysUser, Object>) SysUser::getId).toField());
-    Assert.assertEquals("id", ((Fn<SysUser, Object>) SysUser::getId).toColumn());
-    Assert.assertEquals("whenCreate", ((Fn<SysUser, Object>) SysUser::getWhenCreate).toField());
-    Assert.assertEquals("when_create", ((Fn<SysUser, Object>) SysUser::getWhenCreate).toColumn());
-    Assert.assertEquals("userName", ((Fn<SysUser, Object>) SysUser::getUserName).toField());
-    Assert.assertEquals("name", ((Fn<SysUser, Object>) SysUser::getUserName).toColumn());
-
-    Assert.assertEquals("id", ((Fn<SysRole, Object>) SysRole::getId).toField());
-    Assert.assertEquals("id", ((Fn<SysRole, Object>) SysRole::getId).toColumn());
-    Assert.assertEquals("whenCreate", ((Fn<SysRole, Object>) SysRole::getWhenCreate).toField());
-    Assert.assertEquals("when_create", ((Fn<SysRole, Object>) SysRole::getWhenCreate).toColumn());
-    Assert.assertEquals("roleName", ((Fn<SysRole, Object>) SysRole::getRoleName).toField());
-    Assert.assertEquals("name", ((Fn<SysRole, Object>) SysRole::getRoleName).toColumn());
   }
 
 

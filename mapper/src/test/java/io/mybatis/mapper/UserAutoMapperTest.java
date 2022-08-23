@@ -16,12 +16,9 @@
 
 package io.mybatis.mapper;
 
-import io.mybatis.mapper.base.EntityMapper;
 import io.mybatis.mapper.example.Example;
 import io.mybatis.mapper.fn.Fn;
-import io.mybatis.mapper.model.User;
 import io.mybatis.mapper.model.UserAuto;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;

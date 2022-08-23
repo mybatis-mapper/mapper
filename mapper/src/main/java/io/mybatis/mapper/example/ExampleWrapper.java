@@ -95,6 +95,7 @@ public class ExampleWrapper<T, I extends Serializable> {
 
   /**
    * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
+   *
    * @param orderByCondition 排序字符串（不会覆盖已有的排序内容）
    * @return Example
    */
@@ -105,6 +106,7 @@ public class ExampleWrapper<T, I extends Serializable> {
 
   /**
    * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
+   *
    * @param orderByCondition 排序字符串构造方法,比如通过数组集合循环拼接等
    * @return Example
    */
@@ -115,7 +117,8 @@ public class ExampleWrapper<T, I extends Serializable> {
 
   /**
    * 支持使用字符串形式来设置 order by，用以支持一些特殊的排序方案
-   * @param useOrderBy 条件表达式，true使用，false不使用 字符串排序
+   *
+   * @param useOrderBy       条件表达式，true使用，false不使用 字符串排序
    * @param orderByCondition 排序字符串构造方法，比如通过数组集合循环拼接等
    * @return Example
    */

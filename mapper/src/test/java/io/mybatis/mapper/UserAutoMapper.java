@@ -31,12 +31,12 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectKey;
 
 public interface UserAutoMapper extends
-  EntityMapper<UserAuto, Long>,
-  CursorMapper<UserAuto, Example<UserAuto>>,
-  FnMapper<UserAuto>,
-  ExampleMapper<UserAuto, Example<UserAuto>>,
-  ListMapper<UserAuto>,
-  SumMapper<UserAuto> {
+    EntityMapper<UserAuto, Long>,
+    CursorMapper<UserAuto, Example<UserAuto>>,
+    FnMapper<UserAuto>,
+    ExampleMapper<UserAuto, Example<UserAuto>>,
+    ListMapper<UserAuto>,
+    SumMapper<UserAuto> {
 
   @Override
   @Lang(Caching.class)

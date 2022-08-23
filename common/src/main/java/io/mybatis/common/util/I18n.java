@@ -31,20 +31,6 @@ import java.util.ResourceBundle;
 public class I18n {
 
   /**
-   * 语言包
-   */
-  public interface Language {
-    /**
-     * 获取对应语言的文本
-     *
-     * @param key
-     * @param args
-     * @return
-     */
-    String message(String key, Object... args);
-  }
-
-  /**
    * 获取对应语言的文本，当资源文件或key不存在时，直接返回 {@code MessageFormat.format(key, args)}
    *
    * @param locale     语言
@@ -98,6 +84,20 @@ public class I18n {
    */
   public static Language language(String bundleName) {
     return language(Locale.getDefault(), bundleName);
+  }
+
+  /**
+   * 语言包
+   */
+  public interface Language {
+    /**
+     * 获取对应语言的文本
+     *
+     * @param key
+     * @param args
+     * @return
+     */
+    String message(String key, Object... args);
   }
 
 }

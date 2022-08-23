@@ -25,9 +25,7 @@ import io.mybatis.provider.EntityTable;
 import java.io.Serializable;
 import java.util.List;
 
-import static io.mybatis.common.core.Code.DELETE_FAILURE;
-import static io.mybatis.common.core.Code.SAVE_FAILURE;
-import static io.mybatis.common.core.Code.UPDATE_FAILURE;
+import static io.mybatis.common.core.Code.*;
 
 /**
  * 建议将继承该抽象类的实现类的作用范围控制在 Service 层，不能超出范围，其它层使用时转换为 VO 或 DTO 后使用

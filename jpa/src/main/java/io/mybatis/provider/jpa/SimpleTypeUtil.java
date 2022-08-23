@@ -40,17 +40,17 @@ import java.util.Set;
  * @author liuzh
  */
 public class SimpleTypeUtil {
-  public static final String[] JAVA8_DATE_TIME = {
-          "java.time.Instant",
-          "java.time.LocalDateTime",
-          "java.time.LocalDate",
-          "java.time.LocalTime",
-          "java.time.OffsetDateTime",
-          "java.time.OffsetTime",
-          "java.time.ZonedDateTime",
-          "java.time.Year",
-          "java.time.Month",
-          "java.time.YearMonth"
+  public static final  String[]      JAVA8_DATE_TIME = {
+      "java.time.Instant",
+      "java.time.LocalDateTime",
+      "java.time.LocalDate",
+      "java.time.LocalTime",
+      "java.time.OffsetDateTime",
+      "java.time.OffsetTime",
+      "java.time.ZonedDateTime",
+      "java.time.Year",
+      "java.time.Month",
+      "java.time.YearMonth"
   };
   private static final Set<Class<?>> SIMPLE_TYPE_SET = new HashSet<Class<?>>();
 

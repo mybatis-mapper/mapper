@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @author liuzh
  */
 public class Reflections {
-  private static final Pattern GET_PATTERN = Pattern.compile("^get[A-Z].*");
+  private static final Pattern GET_PATTERN                = Pattern.compile("^get[A-Z].*");
   private static final Pattern IS_PATTERN                 = Pattern.compile("^is[A-Z].*");
   private static final Pattern INSTANTIATED_CLASS_PATTERN = Pattern.compile("\\(L(?<cls>.+);\\).+");
 
