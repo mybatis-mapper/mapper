@@ -48,7 +48,28 @@ public class UserIdsListMapperTest extends BaseMapperTest {
       sqlSession.close();
     }
   }
+  @Test
+  public void testUpdateList() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      UserIdsMapper insertListMapper = sqlSession.getMapper(UserIdsMapper.class);
+      List<UserIds> users = new ArrayList<>(10);
+      for (int i = 0; i < 2; i++) {
+        UserIds user = new UserIds();
+        user.setId1(2L);
+        user.setId2((long) i);
+        user.setName("测试" + i);
+        users.add(user);
+      }
+      Assert.assertEquals(2, insertListMapper.insertList(users));
 
+      Assert.assertEquals(2, insertListMapper.updateList(users));
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
 }
 
 

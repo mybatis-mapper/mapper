@@ -16,6 +16,7 @@
 
 package io.mybatis.mapper.list;
 
+import io.mybatis.provider.EntityColumn;
 import io.mybatis.provider.EntityTable;
 import io.mybatis.provider.SqlScript;
 import org.apache.ibatis.annotations.Param;
@@ -47,6 +48,57 @@ public class ListProvider {
             + foreach("entityList", "entity", ",", () ->
             trimSuffixOverrides("(", ")", ",", () ->
                 entity.insertColumns().stream().map(column -> column.variables("entity.")).collect(Collectors.joining(","))));
+      }
+    });
+  }
+
+  /**
+   *
+   *     update cus_address
+   *     <trim prefix="set" suffixOverrides=",">
+   *       <trim prefix="cus_id = case" suffix="end,">
+   *         <foreach collection="list" index="index" item="item">
+   *           when address_id = #{item.addressId,jdbcType=BIGINT} then #{item.cusId,jdbcType=BIGINT}
+   *         </foreach>
+   *       </trim>
+   *     </trim>
+   *     where address_id in
+   *     <foreach close=")" collection="list" item="item" open="(" separator=", ">
+   *       #{item.addressId,jdbcType=BIGINT}
+   *     </foreach>
+   *
+   *
+   * @param providerContext
+   * @param entityList
+   * @return
+   */
+
+  public static String updateList(ProviderContext providerContext, @Param("entityList") List<?> entityList) {
+    if (entityList == null || entityList.size() == 0) {
+      throw new NullPointerException("Parameter cannot be empty");
+    }
+    return SqlScript.caching(providerContext, new SqlScript() {
+      @Override
+      public String getSql(EntityTable entity) {
+        List<EntityColumn> idColumns = entity.idColumns();
+        EntityColumn entityColumn = idColumns.get(0);
+        return "UPDATE "
+                + entity.tableName()
+                + trimSuffixOverrides( "SET"," ",",",()->
+
+                  entity.insertColumns().stream().map(column->
+                    trimSuffixOverrides(column.column()+" = case ","end, ","",()->
+                                    foreach("entityList", "entity", ",", () ->
+                                            trimSuffixOverrides(" ", " ", " ", () ->
+                                                    "when "+entityColumn.columnEqualsProperty("entity.")+" then "+column.variables("entity.")
+                    ))
+                            )
+                  ).collect(Collectors.joining(","))
+                )
+                + where(()->foreach("entityList","entity",()->
+                        entityColumn.columnAsProperty("entity.")
+                ));
+
       }
     });
   }
