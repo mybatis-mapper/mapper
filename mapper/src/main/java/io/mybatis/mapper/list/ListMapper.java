@@ -20,6 +20,7 @@ import io.mybatis.provider.Caching;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.UpdateProvider;
 
 import java.util.List;
 
@@ -41,4 +42,22 @@ public interface ListMapper<T> {
   @InsertProvider(type = ListProvider.class, method = "insertList")
   int insertList(@Param("entityList") List<? extends T> entityList);
 
+  /**
+   * 批量更新,仅支持单主键
+   * @author dengsd
+   * @date 2022/9/27 11:49
+   */
+  @Lang(Caching.class)
+  @UpdateProvider(type = ListProvider.class, method = "updateList")
+  int updateList(@Param("entityList") List<? extends T> entityList);
+
+
+  /**
+   * 批量更新,仅支持单主键
+   * @author dengsd
+   * @date 2022/9/27 11:49
+   */
+  @Lang(Caching.class)
+  @UpdateProvider(type = ListProvider.class, method = "updateListSelective")
+  int updateListSelective(@Param("entityList") List<? extends T> entityList);
 }
