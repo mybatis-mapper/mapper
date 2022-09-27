@@ -68,19 +68,19 @@ public class ListProvider {
         String sql = "UPDATE "
             + entity.tableName()
             + trimSuffixOverrides("SET", " ", ",", () -> entity.normalColumns().stream().map(column ->
-            trimSuffixOverrides(column.column() + " = CASE ", "end, ", "", () ->
-                foreach("entityList", "entity", " ", () ->
-                    "WHEN ( " +
-                        idColumns.stream().map(id-> id.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND "))
-                        + ") THEN " + column.variables("entity.")
+                trimSuffixOverrides(column.column() + " = CASE ", "end, ", "", () ->
+                    foreach("entityList", "entity", " ", () ->
+                        "WHEN ( " +
+                            idColumns.stream().map(id -> id.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND "))
+                            + ") THEN " + column.variables("entity.")
 
-                )
-            ))
+                    )
+                ))
             .collect(Collectors.joining("")))
             + where(() ->
-            idColumns.stream().map(id->
-                    id.column() + " in " +  foreach("entityList", "entity", ",","(",")", () -> id.variables("entity."))
-                ).collect(Collectors.joining(" AND "))
+            idColumns.stream().map(id ->
+                id.column() + " in " + foreach("entityList", "entity", ",", "(", ")", () -> id.variables("entity."))
+            ).collect(Collectors.joining(" AND "))
 
         );
         return sql;
@@ -91,6 +91,7 @@ public class ListProvider {
 
   /**
    * 单主键，非空更新
+   *
    * @param providerContext
    * @param entityList
    * @return String
@@ -103,26 +104,27 @@ public class ListProvider {
       @Override
       public String getSql(EntityTable entity) {
         List<EntityColumn> idColumns = entity.idColumns();
-        EntityColumn entityColumn = idColumns.get(0);
         String sql = "UPDATE "
             + entity.tableName()
-            + trimSuffixOverrides("SET", " ", ",", () -> entity.updateColumns().stream().map(column ->
+            + trimSuffixOverrides("SET", " ", ",", () -> entity.normalColumns().stream().map(column ->
                 trimSuffixOverrides(column.column() + " = CASE ", "end, ", "", () ->
                     foreach("entityList", "entity", " ", () ->
-                        choose(()-> whenTest(column.notNullTest("entity."),
-
-                            ()-> "WHEN ( " +
-                                idColumns.stream().map(id-> id.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND "))
+                        choose(() -> whenTest(column.notNullTest("entity."),
+                            () -> "WHEN ( " +
+                                idColumns.stream().map(id -> id.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND "))
                                 + ") THEN " + column.variables("entity.")
-
                         ) +
-                            otherwise(()->"WHEN " + entityColumn.columnEqualsProperty("entity.") + " THEN " + column.column()))
+                            otherwise(() ->
+                                "WHEN ( " +
+                                    idColumns.stream().map(id -> id.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND "))
+                                    +
+                                    " ) THEN " + column.column()))
                     )))
             .collect(Collectors.joining("")))
 
-            +  where(() ->
-            idColumns.stream().map(id->
-                id.column() + " in " +  foreach("entityList", "entity", ",","(",")", () -> id.variables("entity."))
+            + where(() ->
+            idColumns.stream().map(id ->
+                id.column() + " in " + foreach("entityList", "entity", ",", "(", ")", () -> id.variables("entity."))
             ).collect(Collectors.joining(" AND "))
 
         );
