@@ -18,9 +18,9 @@ package io.mybatis.mapper;
 
 import io.mybatis.mapper.base.EntityMapper;
 import io.mybatis.mapper.list.ListMapper;
-import io.mybatis.mapper.model.BatchUpdate;
+import io.mybatis.mapper.model.UserIds;
 
 
-public interface TestBatchUpdateMapper extends ListMapper<BatchUpdate>, EntityMapper<BatchUpdate,Long> {
+public interface TestBatchUpdateMapper extends ListMapper<UserIds>, EntityMapper<UserIds,UserIds> {
 
 }
