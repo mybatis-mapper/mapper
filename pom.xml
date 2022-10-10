@@ -189,9 +189,6 @@
         <configuration>
           <updatePomFile>true</updatePomFile>
           <flattenMode>resolveCiFriendliesOnly</flattenMode>
-          <pomElements>
-            <dependencies>expand</dependencies>
-          </pomElements>
         </configuration>
         <executions>
           <execution>
