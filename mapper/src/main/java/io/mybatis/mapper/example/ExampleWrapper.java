@@ -67,6 +67,15 @@ public class ExampleWrapper<T, I extends Serializable> {
   }
 
   /**
+   * 清除条件，可重用
+   */
+  public ExampleWrapper<T, I> clear() {
+    this.example.clear();
+    this.current = example.createCriteria();
+    return this;
+  }
+
+  /**
    * 指定查询列
    *
    * @param fns 方法引用
