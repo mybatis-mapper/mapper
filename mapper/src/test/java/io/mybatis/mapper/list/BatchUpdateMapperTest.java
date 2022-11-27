@@ -16,58 +16,17 @@
 
 package io.mybatis.mapper.list;
 
+import io.mybatis.mapper.H2BaseMapperTest;
 import io.mybatis.mapper.TestBatchUpdateMapper;
 import io.mybatis.mapper.model.UserIds;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BatchUpdateMapperTest {
-
-  private static SqlSessionFactory sqlSessionFactory;
-
-  @BeforeClass
-  public static void init() {
-    if (sqlSessionFactory == null) {
-      try {
-        Reader reader = Resources.getResourceAsReader("mybatis-batch-config.xml");
-        sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-        reader.close();
-        //创建数据库
-        SqlSession session = null;
-        try {
-          session = sqlSessionFactory.openSession();
-          Connection conn = session.getConnection();
-          reader = Resources.getResourceAsReader("testdb.sql");
-          ScriptRunner runner = new ScriptRunner(conn);
-          runner.setLogWriter(null);
-          runner.runScript(reader);
-          reader.close();
-        } finally {
-          if (session != null) {
-            session.close();
-          }
-        }
-      } catch (IOException ignore) {
-        ignore.printStackTrace();
-      }
-    }
-  }
-
-  public SqlSession getSqlSession() {
-    return sqlSessionFactory.openSession();
-  }
+public class BatchUpdateMapperTest extends H2BaseMapperTest {
 
   @Test
   public void testUpdateList() {
@@ -113,7 +72,7 @@ public class BatchUpdateMapperTest {
 
       Assert.assertEquals(3, batchUpdateUserIdsMapper.updateListSelective(users));
       UserIds afterData = batchUpdateUserIdsMapper.selectByPrimaryKey(user3).get();
-      Assert.assertEquals(beforeData.getName(),afterData.getName());
+      Assert.assertEquals(beforeData.getName(), afterData.getName());
       sqlSession.rollback();
     } finally {
       //不要忘记关闭sqlSession

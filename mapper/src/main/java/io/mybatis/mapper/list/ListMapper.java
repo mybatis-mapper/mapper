@@ -43,7 +43,8 @@ public interface ListMapper<T> {
   int insertList(@Param("entityList") List<? extends T> entityList);
 
   /**
-   * 批量更新,仅支持单主键
+   * 批量更新
+   *
    * @author dengsd
    * @date 2022/9/27 11:49
    */
@@ -53,7 +54,8 @@ public interface ListMapper<T> {
 
 
   /**
-   * 批量更新,仅支持单主键
+   * 批量更新
+   *
    * @author dengsd
    * @date 2022/9/27 11:49
    */

@@ -53,7 +53,7 @@ public class ListProvider {
   }
 
   /**
-   * 单主键批量更新
+   * 批量更新
    */
 
   public static String updateList(ProviderContext providerContext, @Param("entityList") List<?> entityList) {
@@ -64,10 +64,9 @@ public class ListProvider {
       @Override
       public String getSql(EntityTable entity) {
         List<EntityColumn> idColumns = entity.idColumns();
-//        EntityColumn entityColumn = idColumns.get(0);
         String sql = "UPDATE "
             + entity.tableName()
-            + trimSuffixOverrides("SET", " ", ",", () -> entity.normalColumns().stream().map(column ->
+            + trimSuffixOverrides("SET", " ", ",", () -> entity.updateColumns().stream().map(column ->
                 trimSuffixOverrides(column.column() + " = CASE ", "end, ", "", () ->
                     foreach("entityList", "entity", " ", () ->
                         "WHEN ( " +
@@ -78,19 +77,17 @@ public class ListProvider {
                 ))
             .collect(Collectors.joining("")))
             + where(() ->
-            idColumns.stream().map(id ->
-                id.column() + " in " + foreach("entityList", "entity", ",", "(", ")", () -> id.variables("entity."))
-            ).collect(Collectors.joining(" AND "))
-
+            "(" + idColumns.stream().map(EntityColumn::column).collect(Collectors.joining(",")) + ") in " +
+                " (" + foreach("entityList", "entity", "),(", "(", ")",
+                () -> idColumns.stream().map(id -> id.variables("entity.")).collect(Collectors.joining(","))) + ")"
         );
         return sql;
-
       }
     });
   }
 
   /**
-   * 单主键，非空更新
+   * 非空更新
    *
    * @param providerContext
    * @param entityList
@@ -106,7 +103,7 @@ public class ListProvider {
         List<EntityColumn> idColumns = entity.idColumns();
         String sql = "UPDATE "
             + entity.tableName()
-            + trimSuffixOverrides("SET", " ", ",", () -> entity.normalColumns().stream().map(column ->
+            + trimSuffixOverrides("SET", " ", ",", () -> entity.updateColumns().stream().map(column ->
                 trimSuffixOverrides(column.column() + " = CASE ", "end, ", "", () ->
                     foreach("entityList", "entity", " ", () ->
                         choose(() -> whenTest(column.notNullTest("entity."),
@@ -123,9 +120,9 @@ public class ListProvider {
             .collect(Collectors.joining("")))
 
             + where(() ->
-            idColumns.stream().map(id ->
-                id.column() + " in " + foreach("entityList", "entity", ",", "(", ")", () -> id.variables("entity."))
-            ).collect(Collectors.joining(" AND "))
+            "(" + idColumns.stream().map(EntityColumn::column).collect(Collectors.joining(",")) + ") in " +
+                " (" + foreach("entityList", "entity", "),(", "(", ")",
+                () -> idColumns.stream().map(id -> id.variables("entity.")).collect(Collectors.joining(","))) + ")"
 
         );
         return sql;

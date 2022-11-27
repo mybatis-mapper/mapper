@@ -34,21 +34,22 @@
     <typeHandler handler="io.mybatis.mapper.model.UserAuto$AddressTypeHandler"
                  javaType="io.mybatis.mapper.model.UserAuto$Address"/>
   </typeHandlers>
-<!--  <plugins>-->
-<!--   自定义打印完整sql 插件 -->
-<!--    <plugin interceptor="io.mybatis.mapper.MyBatisLogInterceptor">-->
-<!--    </plugin>-->
-<!--  </plugins>-->
+  <!--  <plugins>-->
+  <!--   自定义打印完整sql 插件 -->
+  <!--    <plugin interceptor="io.mybatis.mapper.MyBatisLogInterceptor">-->
+  <!--    </plugin>-->
+  <!--  </plugins>-->
   <environments default="development">
     <environment id="development">
       <transactionManager type="JDBC">
         <property name="" value=""/>
       </transactionManager>
       <dataSource type="UNPOOLED">
-        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://192.168.97.141:3306/deng1?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=true&amp;serverTimezone=GMT%2B8"/>
-        <property name="username" value="root"/>
-        <property name="password" value="root"/>
+        <property name="driver" value="org.h2.Driver"/>
+        <property name="url"
+                  value="jdbc:h2:~/test;NON_KEYWORDS=USER"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
       </dataSource>
     </environment>
   </environments>

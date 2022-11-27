@@ -37,6 +37,7 @@
       <artifactId>mybatis-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -50,8 +51,8 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
     </dependency>
   </dependencies>
 
