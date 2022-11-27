@@ -18,13 +18,12 @@ package io.mybatis.mapper.example;
 
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
+import io.mybatis.provider.EntityTable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import static io.mybatis.provider.EntityTable.DELIMITER;
 
@@ -136,22 +135,30 @@ public class Example<T> {
   }
 
   /**
-   * 指定查询列
+   * 指定查询列，多次调用会覆盖，设置时会清除 {@link #excludeColumns}
    *
    * @param fns 方法引用
    */
   @SafeVarargs
   public final Example<T> selectColumns(Fn<T, Object>... fns) {
-    if (selectColumns == null) {
-      selectColumns = "";
+    selectColumns = "";
+    simpleSelectColumns = "";
+    if (fns == null || fns.length == 0) {
+      return this;
     }
-    if (simpleSelectColumns == null) {
-      simpleSelectColumns = "";
-    }
-    StringBuilder sb = new StringBuilder(selectColumns);
-    StringBuilder simple = new StringBuilder(selectColumns);
-    for (Fn<T, Object> fn : fns) {
-      EntityColumn entityColumn = fn.toEntityColumn();
+    selectColumns(Arrays.stream(fns).map(Fn::toEntityColumn).collect(Collectors.toList()));
+    return this;
+  }
+
+  /**
+   * 指定查询列，多次调用会覆盖，设置时会清除 {@link #excludeColumns}
+   *
+   * @param columns 查询列
+   */
+  private void selectColumns(List<EntityColumn> columns) {
+    StringBuilder sb = new StringBuilder(columns.size() * 16);
+    StringBuilder simple = new StringBuilder(columns.size() * 16);
+    for (EntityColumn entityColumn : columns) {
       String column = entityColumn.column();
       String field = entityColumn.field().getName();
       if (sb.length() != 0) {
@@ -177,6 +184,26 @@ public class Example<T> {
     }
     selectColumns = sb.toString();
     simpleSelectColumns = simple.toString();
+  }
+
+  /**
+   * 排除指定的查询列，设置时会清除 {@link #selectColumns}
+   *
+   * @param fns 方法引用
+   */
+  public final Example<T> excludeColumns(Fn<T, Object>... fns) {
+    selectColumns = "";
+    simpleSelectColumns = "";
+    if (fns == null || fns.length == 0) {
+      return this;
+    }
+    //获取对应的实体类
+    EntityTable table = fns[0].toEntityColumn().entityTable();
+    //排除列
+    Set<String> excludeColumnSet = Arrays.stream(fns).map(Fn::toColumn).collect(Collectors.toSet());
+    //设置
+    selectColumns(table.selectColumns().stream()
+        .filter(c -> !excludeColumnSet.contains(c.column())).collect(Collectors.toList()));
     return this;
   }
 

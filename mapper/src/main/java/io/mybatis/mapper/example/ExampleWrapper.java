@@ -87,6 +87,17 @@ public class ExampleWrapper<T, I extends Serializable> {
   }
 
   /**
+   * 排除指定查询列
+   *
+   * @param fns 方法引用
+   */
+  @SafeVarargs
+  public final ExampleWrapper<T, I> exclude(Fn<T, Object>... fns) {
+    this.example.excludeColumns(fns);
+    return this;
+  }
+
+  /**
    * 设置起始 SQL
    *
    * @param startSql 起始 SQL，添加到 SQL 前，注意防止 SQL 注入

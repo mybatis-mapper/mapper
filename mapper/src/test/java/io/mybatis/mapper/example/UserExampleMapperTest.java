@@ -55,6 +55,10 @@ public class UserExampleMapperTest extends BaseMapperTest {
       example.clear();
       example.setStartSql("select * from (");
       example.setEndSql(") tmp limit 1");
+      //设置查询id
+      example.selectColumns(User::getId);
+      //设置排除id，会覆盖前面的配置
+      example.excludeColumns(User::getId);
       example.createCriteria().andEqualTo(User::getSex, "女");
       user = exampleMapper.selectOneByExample(example);
       Assert.assertTrue(user.isPresent());
