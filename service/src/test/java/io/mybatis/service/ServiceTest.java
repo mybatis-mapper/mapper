@@ -180,9 +180,14 @@ public class ServiceTest {
     Assert.assertEquals(3, userService.findList(user).size());
     user.setName("admin");
     Assert.assertTrue(userService.findOne(user) != null);
+  }
+
+  @Test
+  public void testIssues50() {
+    UserService userService = context.getBean(UserService.class);
 
     List<Integer> ids = new ArrayList<>();
-    user = new User();
+    User user = new User();
     userService.save(user);
     ids.add(user.getId());
     user = new User();

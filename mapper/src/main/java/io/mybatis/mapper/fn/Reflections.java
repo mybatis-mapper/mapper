@@ -38,6 +38,15 @@ public class Reflections {
 
   public static ClassField fnToFieldName(Fn fn) {
     try {
+      Class<?> clazz = null;
+      if (fn instanceof Fn.FnImpl) {
+        clazz = ((Fn.FnImpl<?, ?>) fn).entityClass;
+        fn = ((Fn.FnImpl<?, ?>) fn).fn;
+        //避免嵌套多次的情况
+        while (fn instanceof Fn.FnImpl) {
+          fn = ((Fn.FnImpl<?, ?>) fn).fn;
+        }
+      }
       Method method = fn.getClass().getDeclaredMethod("writeReplace");
       method.setAccessible(Boolean.TRUE);
       SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fn);
@@ -48,15 +57,17 @@ public class Reflections {
         getter = getter.substring(2);
       }
       String field = Introspector.decapitalize(getter);
-      //主要是这里  serializedLambda.getInstantiatedMethodType()
-      Matcher matcher = INSTANTIATED_CLASS_PATTERN.matcher(serializedLambda.getInstantiatedMethodType());
-      String implClass;
-      if (matcher.find()) {
-        implClass = matcher.group("cls").replaceAll("/", "\\.");
-      } else {
-        implClass = serializedLambda.getImplClass().replaceAll("/", "\\.");
+      if (clazz == null) {
+        //主要是这里  serializedLambda.getInstantiatedMethodType()
+        Matcher matcher = INSTANTIATED_CLASS_PATTERN.matcher(serializedLambda.getInstantiatedMethodType());
+        String implClass;
+        if (matcher.find()) {
+          implClass = matcher.group("cls").replaceAll("/", "\\.");
+        } else {
+          implClass = serializedLambda.getImplClass().replaceAll("/", "\\.");
+        }
+        clazz = Class.forName(implClass);
       }
-      Class<?> clazz = Class.forName(implClass);
       return new ClassField(clazz, field);
     } catch (ReflectiveOperationException e) {
       throw new RuntimeException(e);

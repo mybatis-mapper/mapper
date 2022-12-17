@@ -42,13 +42,24 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   Map<Fn, Reflections.ClassField> FN_CLASS_FIELD_MAP = new HashMap<>();
 
   /**
+   * 指定字段集合的虚拟表，当通过基类或者泛型基类获取字段时，需要设置字段所属的实体类
+   *
+   * @param entityClass 当使用基类获取泛型时，需要指定实体类类型
+   * @param fns         指定字段
+   * @return 虚拟表
+   */
+  static <E> Fns<E> of(Class<E> entityClass, Fn<E, Object>... fns) {
+    return new Fns<>(entityClass, fns);
+  }
+
+  /**
    * 指定字段集合的虚拟表
    *
    * @param fns 指定字段
    * @return 虚拟表
    */
   static <E> Fns<E> of(Fn<E, Object>... fns) {
-    return new Fns<>(fns);
+    return of(null, fns);
   }
 
   /**
@@ -64,6 +75,17 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
     List<EntityColumn> columns = entityTable.columns().stream()
         .filter(column -> columnNameSet.contains(column.property())).collect(Collectors.toList());
     return new Fns<>(entityClass, entityTable.tableName(), columns);
+  }
+
+  /**
+   * 当前字段所属的实体类，当实体存在继承关系时
+   * 父类的方法引用无法获取字段所属的实体类，需要通过该方法指定
+   *
+   * @param entityClass 指定实体类
+   * @return 带有指定实体类的 Fn
+   */
+  default Fn<T, R> in(Class<?> entityClass) {
+    return new FnImpl<>(this, entityClass);
   }
 
   /**
@@ -126,6 +148,26 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   }
 
   /**
+   * 带有指定类型的方法引用
+   */
+  class FnImpl<T, R> implements Fn<T, R> {
+
+    final Fn<T, R> fn;
+    final Class<?> entityClass;
+
+    public FnImpl(Fn<T, R> fn, Class<?> entityClass) {
+      this.fn = fn;
+      this.entityClass = entityClass;
+    }
+
+    @Override
+    public R apply(T t) {
+      return fn.apply(t);
+    }
+
+  }
+
+  /**
    * 字段数组，用于获取字段对应的所有字段名和列名，当前对象相当于一个部分字段的虚拟表
    *
    * @param <E> 实体类型
@@ -150,14 +192,19 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
      *
      * @param fns 字段数组
      */
-    private Fns(Fn<E, Object>... fns) {
-      super(null);
+    private Fns(Class<E> entityClass, Fn<E, Object>... fns) {
+      super(entityClass);
       this.columns = new ArrayList<>(fns.length);
       for (int i = 0; i < fns.length; i++) {
-        this.columns.add(fns[i].toEntityColumn());
+        if (entityClass != null) {
+          this.columns.add(fns[i].in(entityClass).toEntityColumn());
+        } else {
+          this.columns.add(fns[i].toEntityColumn());
+        }
         if (i == 0) {
           EntityTable entityTable = this.columns.get(i).entityTable();
           this.table = entityTable.tableName();
+          this.style = entityTable.style();
           this.entityClass = entityTable.entityClass();
           this.resultMap = entityTable.resultMap();
           this.autoResultMap = entityTable.autoResultMap();

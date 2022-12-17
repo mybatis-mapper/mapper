@@ -74,7 +74,7 @@ public interface BaseMapper<T, I extends Serializable>
    */
   default <F> List<T> selectByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     Example<T> example = new Example<>();
-    example.createCriteria().andIn((Fn<T, Object>) field, fieldValueList);
+    example.createCriteria().andIn((Fn<T, Object>) field.in(entityClass()), fieldValueList);
     return selectByExample(example);
   }
 
@@ -90,7 +90,7 @@ public interface BaseMapper<T, I extends Serializable>
    */
   default <F> int deleteByFieldList(Fn<T, F> field, Collection<F> fieldValueList) {
     Example<T> example = new Example<>();
-    example.createCriteria().andIn((Fn<T, Object>) field, fieldValueList);
+    example.createCriteria().andIn((Fn<T, Object>) field.in(entityClass()), fieldValueList);
     return deleteByExample(example);
   }
 
