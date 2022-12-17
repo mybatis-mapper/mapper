@@ -35,11 +35,11 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   /**
    * 缓存方法引用和对应的列信息
    */
-  Map<Fn, EntityColumn>           FN_COLUMN_MAP      = new HashMap<>();
+  Map<Fn<?, ?>, EntityColumn>           FN_COLUMN_MAP      = new HashMap<>();
   /**
    * 缓存方法引用和对应的字段信息
    */
-  Map<Fn, Reflections.ClassField> FN_CLASS_FIELD_MAP = new HashMap<>();
+  Map<Fn<?, ?>, Reflections.ClassField> FN_CLASS_FIELD_MAP = new HashMap<>();
 
   /**
    * 指定字段集合的虚拟表，当通过基类或者泛型基类获取字段时，需要设置字段所属的实体类
@@ -48,6 +48,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
    * @param fns         指定字段
    * @return 虚拟表
    */
+  @SafeVarargs
   static <E> Fns<E> of(Class<E> entityClass, Fn<E, Object>... fns) {
     return new Fns<>(entityClass, fns);
   }
@@ -58,6 +59,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
    * @param fns 指定字段
    * @return 虚拟表
    */
+  @SafeVarargs
   static <E> Fns<E> of(Fn<E, Object>... fns) {
     return of(null, fns);
   }
@@ -72,9 +74,38 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   static <E> Fns<E> of(Class<E> entityClass, String... columnNames) {
     EntityTable entityTable = EntityFactory.create(entityClass);
     Set<String> columnNameSet = Arrays.stream(columnNames).collect(Collectors.toSet());
-    List<EntityColumn> columns = entityTable.columns().stream()
-        .filter(column -> columnNameSet.contains(column.property())).collect(Collectors.toList());
+    List<EntityColumn> columns = entityTable.columns().stream().filter(column -> columnNameSet.contains(column.property())).collect(Collectors.toList());
     return new Fns<>(entityClass, entityTable.tableName(), columns);
+  }
+
+  /**
+   * 指定类中字段名
+   *
+   * @param entityClass 字段所属实体类
+   * @param field       实体类中的字段名
+   */
+  static <T> Fn<T, Object> field(Class<T> entityClass, Fn<T, Object> field) {
+    return field.in(entityClass);
+  }
+
+  /**
+   * 通过字符串形式指定（类中）字段名
+   *
+   * @param entityClass 字段所属实体类
+   * @param field       实体类中的字段名
+   */
+  static <T> Fn<T, Object> field(Class<T> entityClass, String field) {
+    return new FnName<>(entityClass, field);
+  }
+
+  /**
+   * 通过字符串形式指定（表中的）列名
+   *
+   * @param entityClass 字段所属实体类
+   * @param column      实体类对应表中的列名
+   */
+  static <T> Fn<T, Object> column(Class<T> entityClass, String column) {
+    return new FnName<>(entityClass, column, true);
   }
 
   /**
@@ -137,9 +168,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
               // 先区分大小写匹配字段
               .filter(column -> column.property().equals(classField.getField())).findFirst()
               // 如果不存在，再忽略大小写进行匹配
-              .orElseGet(() -> columns.stream().filter(column -> column.property().equalsIgnoreCase(classField.getField()))
-                  .findFirst().orElseThrow(() -> new RuntimeException(classField.getField()
-                      + " does not mark database column field annotations, unable to obtain column information")));
+              .orElseGet(() -> columns.stream().filter(classField).findFirst().orElseThrow(() -> new RuntimeException(classField.getField() + " does not mark database column field annotations, unable to obtain column information")));
           FN_COLUMN_MAP.put(this, entityColumn);
         }
       }
@@ -168,6 +197,38 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   }
 
   /**
+   * 间接支持直接指定字段名或列名，避免只能通过方法引用使用
+   */
+  class FnName<T, R> implements Fn<T, R> {
+    final Class<?> entityClass;
+    final String   name;
+    /**
+     * false代表name为字段，true代表name值为列
+     */
+    final boolean  column;
+
+    public FnName(Class<?> entityClass, String name, boolean column) {
+      this.entityClass = entityClass;
+      this.name = name;
+      this.column = column;
+    }
+
+    public FnName(Class<?> entityClass, String name) {
+      this(entityClass, name, false);
+    }
+
+    @Override
+    public Fn<T, R> in(Class<?> entityClass) {
+      return new FnName<>(entityClass, this.name, this.column);
+    }
+
+    @Override
+    public R apply(Object o) {
+      return null;
+    }
+  }
+
+  /**
    * 字段数组，用于获取字段对应的所有字段名和列名，当前对象相当于一个部分字段的虚拟表
    *
    * @param <E> 实体类型
@@ -192,6 +253,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
      *
      * @param fns 字段数组
      */
+    @SafeVarargs
     private Fns(Class<E> entityClass, Fn<E, Object>... fns) {
       super(entityClass);
       this.columns = new ArrayList<>(fns.length);

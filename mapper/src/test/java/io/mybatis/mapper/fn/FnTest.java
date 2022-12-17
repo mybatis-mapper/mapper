@@ -33,6 +33,10 @@ public class FnTest {
     Assert.assertEquals("name", ((Fn<User, Object>) User::getUserName).toColumn());
     Assert.assertEquals("admin", ((Fn<UserIs, Object>) UserIs::isAdmin).toField());
     Assert.assertEquals("is_admin", ((Fn<UserIs, Object>) UserIs::isAdmin).toColumn());
+
+    Assert.assertEquals("is_admin", Fn.field(UserIs.class, UserIs::isAdmin).toColumn());
+    Assert.assertEquals("is_admin", Fn.field(UserIs.class, "admin").toColumn());
+    Assert.assertEquals("is_admin", Fn.column(UserIs.class, "is_admin").toColumn());
   }
 
   @Test
@@ -50,6 +54,11 @@ public class FnTest {
     Assert.assertEquals("when_create", ((Fn<SysRole, Object>) SysRole::getWhenCreate).toColumn());
     Assert.assertEquals("roleName", ((Fn<SysRole, Object>) SysRole::getRoleName).toField());
     Assert.assertEquals("name", ((Fn<SysRole, Object>) SysRole::getRoleName).toColumn());
+
+
+    Assert.assertEquals("when_create", Fn.field(SysRole.class, BaseEntity::getWhenCreate).toColumn());
+    Assert.assertEquals("when_create", Fn.field(SysRole.class, "whenCreate").toColumn());
+    Assert.assertEquals("when_create", Fn.column(SysRole.class, "when_create").toColumn());
   }
 
   public static class BaseId {

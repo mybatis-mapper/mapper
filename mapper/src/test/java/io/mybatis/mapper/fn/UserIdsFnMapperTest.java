@@ -76,6 +76,20 @@ public class UserIdsFnMapperTest extends BaseMapperTest {
         Assert.assertNull(u.getId2());
         Assert.assertNotNull(u.getName());
       });
+
+      users = mapper.selectColumns(user, Fn.of(UserIds::getId1, UserIds::getName));
+      users.forEach(u -> {
+        Assert.assertNotNull(u.getId1());
+        Assert.assertNull(u.getId2());
+        Assert.assertNotNull(u.getName());
+      });
+
+      users = mapper.selectColumns(user, Fn.of(UserIds.class, "id1", "name"));
+      users.forEach(u -> {
+        Assert.assertNotNull(u.getId1());
+        Assert.assertNull(u.getId2());
+        Assert.assertNotNull(u.getName());
+      });
     } finally {
       //不要忘记关闭sqlSession
       sqlSession.close();

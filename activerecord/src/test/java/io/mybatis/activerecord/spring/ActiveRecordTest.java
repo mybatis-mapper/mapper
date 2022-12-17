@@ -17,6 +17,7 @@ package io.mybatis.activerecord.spring;
 
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.fn.Fn;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -162,9 +163,33 @@ public class ActiveRecordTest {
   @Test
   public void testUserExample() {
     User user = new User();
+    user.save();
+
     Example<User> example = user.example();
-    example.createCriteria().andEqualTo(User::getId, 2);
+    example.createCriteria().andEqualTo(User::getId, user.getId());
     Assert.assertEquals(1, user.delete(example));
+
+    user.setRoleId(99);
+    user.setId(null);
+    user.save();
+    example = user.example();
+    example.createCriteria().andEqualTo(Fn.field(User.class, User::getRoleId), user.getRoleId());
+    Assert.assertEquals(1, user.delete(example));
+
+    user.setRoleId(99);
+    user.setId(null);
+    user.save();
+    example = user.example();
+    example.createCriteria().andEqualTo(Fn.field(User.class, "roleId"), user.getRoleId());
+    Assert.assertEquals(1, user.delete(example));
+
+    user.setRoleId(99);
+    user.setId(null);
+    user.save();
+    example = user.example();
+    example.createCriteria().andEqualTo(Fn.column(User.class, "role_id"), user.getRoleId());
+    Assert.assertEquals(1, user.delete(example));
+
     String name = "example";
     int count = 5;
     user = new User(name);
