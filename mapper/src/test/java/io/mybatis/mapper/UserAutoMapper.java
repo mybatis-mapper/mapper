@@ -27,7 +27,6 @@ import io.mybatis.mapper.model.UserAuto;
 import io.mybatis.provider.Caching;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectKey;
 
 public interface UserAutoMapper extends
@@ -38,11 +37,6 @@ public interface UserAutoMapper extends
     ListMapper<UserAuto>,
     SumMapper<UserAuto> {
 
-  @Override
-  @Lang(Caching.class)
-  @Options(useGeneratedKeys = true, keyProperty = "id")
-  @InsertProvider(type = EntityProvider.class, method = "insert")
-  int insert(UserAuto entity);
 
   @Override
   @Lang(Caching.class)

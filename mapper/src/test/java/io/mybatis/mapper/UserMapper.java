@@ -25,7 +25,10 @@ import io.mybatis.mapper.fn.FnMapper;
 import io.mybatis.mapper.list.ListMapper;
 import io.mybatis.mapper.model.User;
 import io.mybatis.provider.Caching;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Lang;
+import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
 
@@ -39,7 +42,6 @@ public interface UserMapper extends
 
   @Override
   @Lang(Caching.class)
-  @Options(useGeneratedKeys = true, keyProperty = "id")
   @InsertProvider(type = EntityProvider.class, method = "insert")
   int insert(User entity);
 

@@ -27,7 +27,7 @@ import java.sql.SQLException;
 
 @Entity.Table(value = "user_auto", autoResultMap = true)
 public class UserAuto {
-  @Entity.Column(id = true)
+  @Entity.Column(id = true, useGeneratedKeys = true)
   private Long    id;
   @Entity.Column("user_name")
   private String  name;

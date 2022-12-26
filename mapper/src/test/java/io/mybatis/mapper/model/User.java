@@ -26,7 +26,7 @@ import io.mybatis.provider.Entity;
     }
 )
 public class User {
-  @Entity.Column(id = true)
+  @Entity.Column(id = true, useGeneratedKeys = true)
   private Long   id;
   @Entity.Column("name")
   private String userName;

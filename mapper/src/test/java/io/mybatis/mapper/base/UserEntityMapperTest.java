@@ -40,6 +40,12 @@ public class UserEntityMapperTest extends BaseMapperTest {
       entityMapper.insert(user);
       Assert.assertNotNull(user.getId());
       entityMapper.selectByPrimaryKey(user.getId());
+
+      user = new User();
+      user.setUserName("测试");
+      entityMapper.insert(user);
+      Assert.assertNotNull(user.getId());
+      entityMapper.selectByPrimaryKey(user.getId());
       sqlSession.rollback();
     } finally {
       //不要忘记关闭sqlSession
