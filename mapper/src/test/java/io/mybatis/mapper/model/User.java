@@ -16,6 +16,7 @@
 
 package io.mybatis.mapper.model;
 
+import io.mybatis.mapper.logical.LogicalColumn;
 import io.mybatis.provider.Entity;
 
 @Entity.Table(value = "user",
@@ -32,6 +33,9 @@ public class User {
   private String userName;
   @Entity.Column
   private String sex;
+  @LogicalColumn
+  @Entity.Column
+  private Boolean status;
 
   public Long getId() {
     return id;
@@ -57,12 +61,21 @@ public class User {
     this.sex = sex;
   }
 
+  public Boolean getStatus() {
+    return status;
+  }
+
+  public void setStatus(Boolean status) {
+    this.status = status;
+  }
+
   @Override
   public String toString() {
     return "User{" +
         "id=" + id +
-        ", name='" + userName + '\'' +
+        ", userName='" + userName + '\'' +
         ", sex='" + sex + '\'' +
+        ", status=" + status +
         '}';
   }
 }

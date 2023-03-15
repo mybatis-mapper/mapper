@@ -23,6 +23,7 @@ import io.mybatis.mapper.example.Example;
 import io.mybatis.mapper.example.ExampleMapper;
 import io.mybatis.mapper.fn.FnMapper;
 import io.mybatis.mapper.list.ListMapper;
+import io.mybatis.mapper.logical.LogicalMapper;
 import io.mybatis.mapper.model.User;
 import io.mybatis.provider.Caching;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -38,6 +39,7 @@ public interface UserMapper extends
     FnMapper<User>,
     ExampleMapper<User, Example<User>>,
     ListMapper<User>,
+    LogicalMapper<User, Long>,
     SumMapper<User> {
 
   @Override
