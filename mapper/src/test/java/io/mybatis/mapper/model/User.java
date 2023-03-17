@@ -33,8 +33,8 @@ public class User {
   private String userName;
   @Entity.Column
   private String sex;
-  @LogicalColumn
-  @Entity.Column
+  @LogicalColumn(delete = "0")
+  @Entity.Column(updatable = false, insertable = false)
   private Boolean status;
 
   public Long getId() {

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface LogicalColumn {
   /**
-   * 表示逻辑删除的值，默认为null
+   * 表示逻辑删除的值，比如null、0
    */
   String delete() default "null";
 }

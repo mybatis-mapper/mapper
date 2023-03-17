@@ -13,6 +13,9 @@ import static io.mybatis.mapper.example.ExampleProvider.EXAMPLE_WHERE_CLAUSE;
 import static io.mybatis.mapper.example.ExampleProvider.UPDATE_BY_EXAMPLE_WHERE_CLAUSE;
 
 /**
+ * 支持逻辑删除的provider实现
+ * <p>NOTE: 使用时需要在实体类字段上声明@LogicalColumn注解</p>
+ *
  * @author hzw
  */
 public class LogicalProvider {
@@ -35,17 +38,7 @@ public class LogicalProvider {
 
     default String logicalNotEqualCondition(EntityTable entity) {
       EntityColumn logicalColumn = getLogicalColumn(entity);
-      return " AND " + columnNotEqualsValue(logicalColumn, deleteValue(logicalColumn)) + LF;
-    }
-
-
-    default String ifParameterNotNull(LRSupplier notNullContent, LRSupplier logicalContent) {
-      return String.format("<choose><when test=\"_parameter != null\">%s%n</when><otherwise>%s%n</otherwise></choose> ", notNullContent.getWithLR(), logicalContent.getWithLR());
-    }
-
-    @Override
-    default String ifParameterNotNull(LRSupplier content) {
-      return String.format("<if test=\"_parameter != null\">%s%n</if> ", content.getWithLR());
+      return " AND " + columnNotEqualsValueCondition(logicalColumn, deleteValue(logicalColumn)) + LF;
     }
   }
 
@@ -57,11 +50,9 @@ public class LogicalProvider {
       public String getSql(EntityTable entity) {
         return "SELECT " + entity.baseColumnAsPropertyList()
             + " FROM " + entity.table()
-            + where(
-            () -> logicalNotEqualCondition(entity) +
-                entity.whereColumns().stream().map(column ->
-                    ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty())
-                ).collect(Collectors.joining(LF)))
+            + where(() -> entity.whereColumns().stream()
+            .map(column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
+            .collect(Collectors.joining(LF)) + logicalNotEqualCondition(entity))
             + entity.groupByColumn().orElse("")
             + entity.havingColumn().orElse("")
             + entity.orderByColumn().orElse("");
@@ -83,12 +74,11 @@ public class LogicalProvider {
             + choose(() -> whenTest("fns != null and fns.isNotEmpty()", () -> "${fns.baseColumnAsPropertyList()}")
             + otherwise(() -> entity.baseColumnAsPropertyList()))
             + " FROM " + entity.tableName()
-            + trim("WHERE", "", "WHERE |OR |AND ", "", () -> ifParameterNotNull(() ->
-            where(() ->
-                entity.whereColumns().stream().map(column ->
-                    ifTest(column.notNullTest("entity."), () -> "AND " + column.columnEqualsProperty("entity."))
-                ).collect(Collectors.joining(LF)))
-        ) + logicalNotEqualCondition(entity))
+            + trim("WHERE", "", "WHERE |OR |AND ", "", () ->
+            ifParameterNotNull(() -> where(() -> entity.whereColumns().stream()
+                .map(column -> ifTest(column.notNullTest("entity."), () -> "AND " + column.columnEqualsProperty("entity.")))
+                .collect(Collectors.joining(LF))))
+                + logicalNotEqualCondition(entity))
             + entity.groupByColumn().orElse("")
             + entity.havingColumn().orElse("")
             + entity.orderByColumn().orElse("");
@@ -154,11 +144,11 @@ public class LogicalProvider {
     return SqlScript.caching(providerContext, new LogicalSqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        EntityColumn logicalColumn = getLogicalColumn(entity);
         return "SELECT " + entity.baseColumnAsPropertyList()
             + " FROM " + entity.table()
-            + where(() -> logicalNotEqualCondition(entity) + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND "))
-            + " AND " + columnNotEqualsValue(logicalColumn, deleteValue(logicalColumn)));
+            + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")))
+            // 如果将条件拼接where()中，将会依赖idColumns()的实现，要求其必须返回非空值
+            + logicalNotEqualCondition(entity);
       }
     });
   }
@@ -176,10 +166,9 @@ public class LogicalProvider {
       public String getSql(EntityTable entity) {
         return "SELECT COUNT(*)  FROM " + entity.table() + LF
             + where(() ->
-            logicalNotEqualCondition(entity) +
-                entity.whereColumns().stream().map(column ->
-                    ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty())
-                ).collect(Collectors.joining(LF)));
+            entity.whereColumns().stream().map(column ->
+                ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty())
+            ).collect(Collectors.joining(LF)) + logicalNotEqualCondition(entity));
       }
     });
   }
@@ -276,7 +265,8 @@ public class LogicalProvider {
       public String getSql(EntityTable entity) {
         return "UPDATE " + entity.table()
             + " SET " + entity.updateColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(","))
-            + where(() -> logicalNotEqualCondition(entity) + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
+            + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")))
+            + logicalNotEqualCondition(entity);
       }
     });
   }
@@ -297,7 +287,8 @@ public class LogicalProvider {
             entity.updateColumns().stream().map(column ->
                 ifTest(column.notNullTest(), () -> column.columnEqualsProperty() + ",")
             ).collect(Collectors.joining(LF)))
-            + where(() -> logicalNotEqualCondition(entity) + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")));
+            + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")))
+            + logicalNotEqualCondition(entity);
       }
     });
   }
@@ -319,9 +310,9 @@ public class LogicalProvider {
                 choose(() ->
                     whenTest("fns != null and fns.fieldNames().contains('" + column.property() + "')", () -> column.columnEqualsProperty("entity.") + ",")
                         + whenTest(column.notNullTest("entity."), () -> column.columnEqualsProperty("entity.") + ","))
-
             ).collect(Collectors.joining(LF)))
-            + where(() -> logicalNotEqualCondition(entity) + entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND ")));
+            + where(() -> entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND ")))
+            + logicalNotEqualCondition(entity);
       }
     });
   }
@@ -337,17 +328,16 @@ public class LogicalProvider {
    * @return cacheKey
    */
   public static String delete(ProviderContext providerContext) {
-    return SqlScript.caching(providerContext, new SqlScript() {
+    return SqlScript.caching(providerContext, new LogicalSqlScript() {
       @Override
       public String getSql(EntityTable entity) {
         EntityColumn logicColumn = getLogicalColumn(entity);
         return "UPDATE " + entity.table()
             + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
             + parameterNotNull("Parameter cannot be null")
-            + where(() ->
-            entity.columns().stream().map(column ->
-                ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty())
-            ).collect(Collectors.joining(LF)));
+            + where(() -> entity.columns().stream()
+            .map(column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
+            .collect(Collectors.joining(LF)) + logicalNotEqualCondition(entity));
       }
     });
   }
@@ -359,12 +349,17 @@ public class LogicalProvider {
    * @return cacheKey
    */
   public static String deleteByPrimaryKey(ProviderContext providerContext) {
-    return SqlScript.caching(providerContext, entity -> {
-      EntityColumn logicColumn = getLogicalColumn(entity);
-      return "UPDATE " + entity.table()
-          + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
-          + " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND "));
-    });
+    return SqlScript.caching(providerContext, new LogicalSqlScript() {
+          @Override
+          public String getSql(EntityTable entity) {
+            EntityColumn logicColumn = getLogicalColumn(entity);
+            return "UPDATE " + entity.table()
+                + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
+                + " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND "))
+                + logicalNotEqualCondition(entity);
+          }
+        }
+    );
   }
 
   /**
@@ -383,7 +378,7 @@ public class LogicalProvider {
           //是否允许空条件，默认允许，允许时不检查查询条件
           + (entity.getPropBoolean("deleteByExample.allowEmpty", true) ?
           "" : util.variableIsFalse("_parameter.isEmpty()", "Example Criteria cannot be empty"))
-          + EXAMPLE_WHERE_CLAUSE
+          + EXAMPLE_WHERE_CLAUSE + " AND " + columnNotEqualsValueCondition(logicColumn, deleteValue(logicColumn))
           + util.ifTest("endSql != null and endSql != ''", () -> "${endSql}");
     });
   }
@@ -400,12 +395,16 @@ public class LogicalProvider {
     return logicColumn.field().getAnnotation(LogicalColumn.class).delete();
   }
 
-  private static String columnEqualsValue(EntityColumn c, String value) {
+  private static String columnEqualsValueCondition(EntityColumn c, String value) {
     return " " + c.column() + choiceEqualsOperator(value) + value + " ";
   }
 
-  private static String columnNotEqualsValue(EntityColumn c, String value) {
-    return " " + c.column() + choiceNotEqualsOperator(value) + value + " ";
+  private static String columnEqualsValue(EntityColumn c, String value) {
+    return " " + c.column() + " = " + value + " ";
+  }
+
+  private static String columnNotEqualsValueCondition(EntityColumn c, String value) {
+    return " " + c.column() + choiceNotEqualsOperator(value) + value;
   }
 
   private static String choiceEqualsOperator(String value) {

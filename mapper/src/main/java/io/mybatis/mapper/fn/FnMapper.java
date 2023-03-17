@@ -48,22 +48,22 @@ public interface FnMapper<T> {
    * 根据实体字段条件查询唯一的实体（{@link io.mybatis.mapper.example.ExampleMapper} 可以实现一样的功能，当前方法只是示例）
    *
    * @param entity       实体类
-   * @param selectFileds 查询的字段，不区分字段是否为 null，通过 {@link Fn#of(Fn...)} 创建 {@link Fn.Fns}
+   * @param selectFields 查询的字段，不区分字段是否为 null，通过 {@link Fn#of(Fn...)} 创建 {@link Fn.Fns}
    * @return 单个实体，查询结果由多条时报错
    */
   @Lang(Caching.class)
   @SelectProvider(type = FnProvider.class, method = "selectColumns")
-  Optional<T> selectColumnsOne(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFileds);
+  Optional<T> selectColumnsOne(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFields);
 
   /**
    * 根据实体字段条件批量查询（{@link io.mybatis.mapper.example.ExampleMapper} 可以实现一样的功能，当前方法只是示例）
    *
    * @param entity       实体类
-   * @param selectFileds 查询的字段，不区分字段是否为 null，通过 {@link Fn#of(Fn...)} 创建 {@link Fn.Fns}
+   * @param selectFields 查询的字段，不区分字段是否为 null，通过 {@link Fn#of(Fn...)} 创建 {@link Fn.Fns}
    * @return 实体列表
    */
   @Lang(Caching.class)
   @SelectProvider(type = FnProvider.class, method = "selectColumns")
-  List<T> selectColumns(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFileds);
+  List<T> selectColumns(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFields);
 
 }

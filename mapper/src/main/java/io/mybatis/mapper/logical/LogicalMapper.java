@@ -2,15 +2,10 @@ package io.mybatis.mapper.logical;
 
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.example.Example;
-import io.mybatis.mapper.example.ExampleProvider;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.mapper.fn.FnMapper;
-import io.mybatis.mapper.fn.FnProvider;
 import io.mybatis.provider.Caching;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 
@@ -29,7 +24,7 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByPrimaryKeySelectiveWithForceFields")
-  int updateByPrimaryKeySelectiveWithForceFields(T entity, Fn.Fns<T> forceUpdateFields);
+  int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") T entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
 
   /* BaseMapper --- */
 
@@ -37,13 +32,13 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
 
   @Override
   @Lang(Caching.class)
-  @SelectProvider(type = FnProvider.class, method = "selectColumns")
-  Optional<T> selectColumnsOne(T entity, Fn.Fns<T> selectFileds);
+  @SelectProvider(type = LogicalProvider.class, method = "selectColumns")
+  Optional<T> selectColumnsOne(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFields);
 
   @Override
   @Lang(Caching.class)
-  @SelectProvider(type = FnProvider.class, method = "selectColumns")
-  List<T> selectColumns(T entity, Fn.Fns<T> selectFileds);
+  @SelectProvider(type = LogicalProvider.class, method = "selectColumns")
+  List<T> selectColumns(@Param("entity") T entity, @Param("fns") Fn.Fns<T> selectFields);
 
   /* FnMapper --- */
 
@@ -143,7 +138,7 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
 
   @Override
   @Lang(Caching.class)
-  @SelectProvider(type = ExampleProvider.class, method = "countByExample")
+  @SelectProvider(type = LogicalProvider.class, method = "countByExample")
   long countByExample(Example<T> example);
 
   @Override
