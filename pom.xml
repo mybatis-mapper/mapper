@@ -60,26 +60,26 @@
   </modules>
 
   <properties>
-    <revision>2.1.0</revision>
+    <revision>2.1.1-SNAPSHOT</revision>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Dfile.encoding=UTF-8</argLine>
 
-    <provider.version>2.2.0</provider.version>
+    <provider.version>2.2.1</provider.version>
 
-    <mybatis.version>3.5.11</mybatis.version>
+    <mybatis.version>3.5.13</mybatis.version>
     <mybatis-spring.version>2.1.0</mybatis-spring.version>
     <mybatis-spring-boot.version>2.3.0</mybatis-spring-boot.version>
 
-    <springframework.version>5.3.24</springframework.version>
-    <springboot.version>2.7.7</springboot.version>
+    <springframework.version>5.3.25</springframework.version>
+    <springboot.version>2.7.9</springboot.version>
 
-    <logback.version>1.2.11</logback.version>
+    <logback.version>1.4.6</logback.version>
     <hsqldb.version>2.5.2</hsqldb.version>
     <h2.version>2.1.214</h2.version>
-    <junit.version>4.13</junit.version>
+    <junit.version>4.13.2</junit.version>
   </properties>
 
   <dependencyManagement>
