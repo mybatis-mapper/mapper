@@ -47,7 +47,7 @@ public class Response<T extends Response> {
   }
 
   public static Response error() {
-    return error(Code.UNKONWN);
+    return error(Code.UNKNOWN);
   }
 
   public static Response error(String code) {
@@ -55,7 +55,7 @@ public class Response<T extends Response> {
   }
 
   public static Response error(Throwable t) {
-    return error(Code.UNKONWN.getCode(), t.getMessage());
+    return error(Code.UNKNOWN.getCode(), t.getMessage());
   }
 
   public static Response error(ServiceException e) {

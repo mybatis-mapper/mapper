@@ -28,7 +28,7 @@ public class Code {
   public static final I18n.Language LANG           = I18n.language(CODE_BUNDLE);
   public static final Code          SUCCESS        = new Code("00000");
   public static final Code          FAILURE        = new Code("M0100");
-  public static final Code          UNKONWN        = new Code("M0200");
+  public static final Code          UNKNOWN        = new Code("M0200");
   public static final Code          SAVE_FAILURE   = new Code("M0201");
   public static final Code          UPDATE_FAILURE = new Code("M0202");
   public static final Code          DELETE_FAILURE = new Code("M0203");

@@ -28,7 +28,7 @@ public class I18nTest {
     Locale.setDefault(Locale.CHINA);
     org.junit.Assert.assertEquals("操作成功", Code.SUCCESS.getMessage());
     org.junit.Assert.assertEquals("操作失败", Code.FAILURE.getMessage());
-    org.junit.Assert.assertEquals("未知错误", Code.UNKONWN.getMessage());
+    org.junit.Assert.assertEquals("未知错误", Code.UNKNOWN.getMessage());
     org.junit.Assert.assertEquals("保存失败", Code.SAVE_FAILURE.getMessage());
     org.junit.Assert.assertEquals("修改失败", Code.UPDATE_FAILURE.getMessage());
     org.junit.Assert.assertEquals("删除失败", Code.DELETE_FAILURE.getMessage());
