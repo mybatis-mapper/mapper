@@ -15,6 +15,7 @@ import java.util.Optional;
 
 /**
  * 逻辑删除的 Mapper 方法
+ * <p>继承此mapper会覆盖BaseMapper、FnMapper中的查、删、改相关方法</p>
  *
  * @author hzw
  */
@@ -114,17 +115,17 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByExample")
-  int updateByExample(T entity, Example<T> example);
+  int updateByExample(@Param("entity") T entity, @Param("example") Example<T> example);
 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByExampleSetValues")
-  int updateByExampleSetValues(Example<T> example);
+  int updateByExampleSetValues(@Param("example") Example<T> example);
 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByExampleSelective")
-  int updateByExampleSelective(T entity, Example<T> example);
+  int updateByExampleSelective(@Param("entity") T entity, @Param("example") Example<T> example);
 
   @Override
   @Lang(Caching.class)
