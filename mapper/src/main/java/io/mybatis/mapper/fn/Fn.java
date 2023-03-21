@@ -22,6 +22,7 @@ import io.mybatis.provider.EntityTable;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,11 +36,11 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
   /**
    * 缓存方法引用和对应的列信息
    */
-  Map<Fn<?, ?>, EntityColumn>           FN_COLUMN_MAP      = new HashMap<>();
+  Map<Fn<?, ?>, EntityColumn>           FN_COLUMN_MAP      = new ConcurrentHashMap<>();
   /**
    * 缓存方法引用和对应的字段信息
    */
-  Map<Fn<?, ?>, Reflections.ClassField> FN_CLASS_FIELD_MAP = new HashMap<>();
+  Map<Fn<?, ?>, Reflections.ClassField> FN_CLASS_FIELD_MAP = new ConcurrentHashMap<>();
 
   /**
    * 指定字段集合的虚拟表，当通过基类或者泛型基类获取字段时，需要设置字段所属的实体类
@@ -143,14 +144,7 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
    * @return 字段名和所在类信息
    */
   default Reflections.ClassField toClassField() {
-    if (!FN_CLASS_FIELD_MAP.containsKey(this)) {
-      synchronized (this) {
-        if (!FN_CLASS_FIELD_MAP.containsKey(this)) {
-          FN_CLASS_FIELD_MAP.put(this, Reflections.fnToFieldName(this));
-        }
-      }
-    }
-    return FN_CLASS_FIELD_MAP.get(this);
+    return FN_CLASS_FIELD_MAP.computeIfAbsent(this, key -> Reflections.fnToFieldName(key));
   }
 
   /**
@@ -159,21 +153,17 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
    * @return 方法引用对应的列信息
    */
   default EntityColumn toEntityColumn() {
-    if (!FN_COLUMN_MAP.containsKey(this)) {
-      synchronized (this) {
-        if (!FN_COLUMN_MAP.containsKey(this)) {
-          Reflections.ClassField classField = toClassField();
-          List<EntityColumn> columns = EntityFactory.create(classField.getClazz()).columns();
-          EntityColumn entityColumn = columns.stream()
-              // 先区分大小写匹配字段
-              .filter(column -> column.property().equals(classField.getField())).findFirst()
-              // 如果不存在，再忽略大小写进行匹配
-              .orElseGet(() -> columns.stream().filter(classField).findFirst().orElseThrow(() -> new RuntimeException(classField.getField() + " does not mark database column field annotations, unable to obtain column information")));
-          FN_COLUMN_MAP.put(this, entityColumn);
-        }
-      }
-    }
-    return FN_COLUMN_MAP.get(this);
+    return FN_COLUMN_MAP.computeIfAbsent(this, key -> {
+      Reflections.ClassField classField = toClassField();
+      List<EntityColumn> columns = EntityFactory.create(classField.getClazz()).columns();
+      return columns.stream()
+          // 先区分大小写匹配字段
+          .filter(column -> column.property().equals(classField.getField())).findFirst()
+          // 如果不存在，再忽略大小写进行匹配
+          .orElseGet(() -> columns.stream().filter(classField).findFirst()
+              .orElseThrow(() -> new RuntimeException(classField.getField()
+                  + " does not mark database column field annotations, unable to obtain column information")));
+    });
   }
 
   /**
