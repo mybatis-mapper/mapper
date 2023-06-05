@@ -57,6 +57,7 @@
     <module>common</module>
     <module>generator</module>
     <module>jpa</module>
+    <module>jakarta-jpa</module>
   </modules>
 
   <properties>
