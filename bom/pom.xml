@@ -68,6 +68,11 @@
         <artifactId>mybatis-jpa</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.mybatis</groupId>
+        <artifactId>mybatis-jakarta-jpa</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
