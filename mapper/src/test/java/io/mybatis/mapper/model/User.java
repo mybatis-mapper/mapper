@@ -17,6 +17,7 @@
 package io.mybatis.mapper.model;
 
 import io.mybatis.mapper.logical.LogicalColumn;
+import io.mybatis.mapper.wrapper.logical.TableLogic;
 import io.mybatis.provider.Entity;
 
 @Entity.Table(value = "user",
@@ -34,6 +35,7 @@ public class User {
   @Entity.Column
   private String sex;
   @LogicalColumn(delete = "0")
+  @TableLogic(value = "0")
   @Entity.Column(updatable = false, insertable = false)
   private Boolean status;
 
