@@ -328,6 +328,15 @@ public class Wrapper<T> {
   }
 
   /**
+   * 设置最后一个条件
+   *
+   * @param lastCriteria 条件
+   */
+  public void setLastCriteria(Criteria<T> lastCriteria) {
+    this.lastCriteria = lastCriteria;
+  }
+
+  /**
    * 是否使用 distince
    *
    * @return distince
@@ -1109,12 +1118,13 @@ public class Wrapper<T> {
 
     /**
      * 最后一组条件
-     * <p>
-     * 重复调用将覆盖
      *
      * @return 条件
      */
     public Criteria<T> last() {
+      if (currentWrapper.lastCriteria != null) {
+        return currentWrapper.lastCriteria;
+      }
       Criteria<T> criteria = currentWrapper.createCriteriaInternal();
       currentWrapper.lastCriteria = criteria;
       return criteria;
