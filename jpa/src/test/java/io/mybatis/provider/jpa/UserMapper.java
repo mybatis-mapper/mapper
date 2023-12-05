@@ -17,6 +17,7 @@
 package io.mybatis.provider.jpa;
 
 import io.mybatis.provider.Caching;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.SelectProvider;
 
@@ -26,4 +27,7 @@ public interface UserMapper {
   @SelectProvider(type = BaseProvider.class, method = "getById")
   User getById(Long id);
 
+  @Lang(Caching.class)
+  @InsertProvider(type = BaseProvider.class, method = "insertSelective")
+  int insert(User user);
 }

@@ -27,10 +27,15 @@ public class UserMapperTest extends BaseTest {
   public void testSelectById() {
     try (SqlSession sqlSession = getSqlSession()) {
       UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+
       User user = userMapper.getById(1L);
       Assert.assertNotNull(user);
       Assert.assertEquals("张无忌", user.getUsername());
       Assert.assertNull(user.getSex());
+
+      user.setId(999L);
+      userMapper.insert(user);
+      sqlSession.rollback();
     }
   }
 
