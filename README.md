@@ -9,6 +9,17 @@
 
 [加入QQ群: 277256950](https://qm.qq.com/cgi-bin/qm/qr?k=ks1Y2WVNI1xjsqMlBzAkWmBMuYqDhVqZ&jump_from=webapi&authKey=U0CL8SDMS4wsJ8H9njVcNMbOW6Gb9AsxLfFB4jbxSKa0w0ChBX3wCms0+Cjzhekw)
 
+## 支持 jakarta.persistence-api
+
+添加依赖：
+```xml
+<dependency>
+  <groupId>io.mybatis</groupId>
+  <artifactId>mybatis-jakarta-jpa</artifactId>
+  <version>2.2.0</version>
+</dependency>
+```
+
 ## 1. 快速入门
 
 这是一个不需要任何配置就可以直接使用的通用 Mapper，通过简单的学习就可以直接在项目中使用。
@@ -36,24 +47,23 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 <CodeGroupItem title="Maven" active>
 
 ```xml
-
 <dependencies>
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-mapper</artifactId>
-    <version>1.2.2</version>
+    <version>2.2.0</version>
   </dependency>
   <!-- 使用 Service 层封装时 -->
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-service</artifactId>
-    <version>1.2.2</version>
+    <version>2.2.0</version>
   </dependency>
   <!-- 使用 ActiveRecord 模式时 -->
   <dependency>
     <groupId>io.mybatis</groupId>
     <artifactId>mybatis-activerecord</artifactId>
-    <version>1.2.2</version>
+    <version>2.2.0</version>
   </dependency>
 </dependencies>
 ```
@@ -63,11 +73,11 @@ MyBatis Mapper 要求 MyBatis 最低版本为
 
 ```groovy
 dependencies {
-  compile("io.mybatis:mybatis-mapper:1.2.2")
+  compile("io.mybatis:mybatis-mapper:2.2.0")
   // 使用 Service 层封装时
-  compile("io.mybatis:mybatis-service:1.2.2")
+  compile("io.mybatis:mybatis-service:2.2.0")
   // 使用 ActiveRecord 模式时
-  compile("io.mybatis:mybatis-activerecord:1.2.2")
+  compile("io.mybatis:mybatis-activerecord:2.2.0")
 }
 ```
 
