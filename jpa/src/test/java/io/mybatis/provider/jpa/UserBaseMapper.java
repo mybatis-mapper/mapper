@@ -16,23 +16,10 @@
 
 package io.mybatis.provider.jpa;
 
-import io.mybatis.provider.Caching;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.SelectProvider;
+import io.mybatis.mapper.BaseMapper;
 
-public interface UserMapper {
+import java.io.Serializable;
 
-  @Lang(Caching.class)
-  @SelectProvider(type = BaseProvider.class, method = "getById")
-  User getById(Long id);
+public interface UserBaseMapper extends BaseMapper<User, Serializable> {
 
-  @Lang(Caching.class)
-  @InsertProvider(type = BaseProvider.class, method = "insertSelective")
-  int insert(User user);
-
-  @Lang(Caching.class)
-  @DeleteProvider(type = BaseProvider.class, method = "deleteById")
-  int deleteById(User user);
 }

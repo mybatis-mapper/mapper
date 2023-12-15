@@ -21,14 +21,14 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class UserMapperTest extends BaseTest {
+public class UserBaseMapperTest extends BaseTest {
 
   @Test
   public void testSelectById() {
     try (SqlSession sqlSession = getSqlSession()) {
-      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+      UserBaseMapper userMapper = sqlSession.getMapper(UserBaseMapper.class);
 
-      User user = userMapper.getById(1L);
+      User user = userMapper.selectByPrimaryKey(1L).get();
       Assert.assertNotNull(user);
       Assert.assertEquals("张无忌", user.getUsername());
       Assert.assertNull(user.getSex());
@@ -36,8 +36,10 @@ public class UserMapperTest extends BaseTest {
       user.setId(999L);
       Assert.assertEquals(1, userMapper.insert(user));
 
-      int count = userMapper.deleteById(user);
+      int count = userMapper.deleteByPrimaryKey(user.getId());
       Assert.assertEquals(1, count);
+      count = userMapper.deleteByPrimaryKey(user.getId());
+      Assert.assertEquals(0, count);
       sqlSession.rollback();
     }
   }
