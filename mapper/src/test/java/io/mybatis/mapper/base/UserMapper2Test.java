@@ -144,6 +144,17 @@ public class UserMapper2Test extends BaseMapperTest {
   public void testExampleWrapper() {
     try (SqlSession sqlSession = getSqlSession()) {
       UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
+      Example<User> example = new Example<>();
+      example.createCriteria().andEqualTo(User::getSex, "男").andOr(
+          example.orPart().andLike(User::getUserName, "杨%"),
+          example.orPart().le(User::getId, 10));
+      List<User> users1 = mapper.selectByExample(example);
+
+      List<User> list = mapper.wrapper().eq(User::getSex, "男")
+          .or(
+              c -> c.startsWith(User::getUserName, "杨"),
+              c -> c.le(User::getId, 10)).list();
+
       //查询 "sex=男 or name like '杨%' 的数量
       long count = mapper.wrapper().eq(User::getSex, "男")
           .or(
