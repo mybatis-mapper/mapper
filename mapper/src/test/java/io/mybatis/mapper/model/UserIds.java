@@ -17,10 +17,24 @@
 package io.mybatis.mapper.model;
 
 import io.mybatis.provider.Entity;
+import io.mybatis.provider.EntityColumn;
+import io.mybatis.provider.EntityTable;
+import io.mybatis.provider.keysql.GenId;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 @Entity.Table("user_ids")
 public class UserIds {
-  @Entity.Column(id = true)
+
+  public static class GenUserId implements GenId<Long> {
+    AtomicLong index = new AtomicLong(10000);
+    @Override
+    public Long genId(EntityTable table, EntityColumn column) {
+      return index.incrementAndGet();
+    }
+  }
+
+  @Entity.Column(id = true, genIdExecuteBefore = true, genId = GenUserId.class)
   private Long   id1;
   @Entity.Column(id = true)
   private Long   id2;
