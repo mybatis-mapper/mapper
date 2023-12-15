@@ -36,7 +36,8 @@ public class UserIdsListMapperTest extends BaseMapperTest {
       List<UserIds> users = new ArrayList<>(10);
       for (int i = 0; i < 10; i++) {
         UserIds user = new UserIds();
-        user.setId1(2L);
+        //注释后使用genId自动生成，测试批量插入genId
+        //user.setId1(2L);
         user.setId2((long) i);
         user.setName("测试" + i);
         users.add(user);
