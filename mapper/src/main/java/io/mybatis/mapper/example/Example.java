@@ -511,9 +511,17 @@ public class Example<T> {
       criteria.add(new Criterion(condition, value1, value2));
     }
 
+    public Criteria<T> andIsNull(boolean useCondition, Fn<T, Object> fn) {
+      return useCondition ? andIsNull(fn) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andIsNull(Fn<T, Object> fn) {
       addCriterion(column(fn) + " IS NULL");
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andIsNotNull(boolean useCondition, Fn<T, Object> fn) {
+      return useCondition ? andIsNotNull(fn) : (Criteria<T>) this;
     }
 
     public Criteria<T> andIsNotNull(Fn<T, Object> fn) {
@@ -521,9 +529,17 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andEqualTo(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andEqualTo(fn, value) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andEqualTo(Fn<T, Object> fn, Object value) {
       addCriterion(column(fn) + " =", value);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andNotEqualTo(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andNotEqualTo(fn, value) : (Criteria<T>) this;
     }
 
     public Criteria<T> andNotEqualTo(Fn<T, Object> fn, Object value) {
@@ -531,9 +547,17 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andGreaterThan(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andGreaterThan(fn, value) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andGreaterThan(Fn<T, Object> fn, Object value) {
       addCriterion(column(fn) + " >", value);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andGreaterThanOrEqualTo(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andGreaterThanOrEqualTo(fn, value) : (Criteria<T>) this;
     }
 
     public Criteria<T> andGreaterThanOrEqualTo(Fn<T, Object> fn, Object value) {
@@ -541,14 +565,26 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andLessThan(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andLessThan(fn, value) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andLessThan(Fn<T, Object> fn, Object value) {
       addCriterion(column(fn) + " <", value);
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andLessThanOrEqualTo(boolean useCondition, Fn<T, Object> fn, Object value) {
+      return useCondition ? andLessThanOrEqualTo(fn, value) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andLessThanOrEqualTo(Fn<T, Object> fn, Object value) {
       addCriterion(column(fn) + " <=", value);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andIn(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+      return useCondition ? andIn(fn, values) : (Criteria<T>) this;
     }
 
     @SuppressWarnings("rawtypes")
@@ -557,10 +593,18 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andNotIn(boolean useCondition, Fn<T, Object> fn, Iterable values) {
+      return useCondition ? andNotIn(fn, values) : (Criteria<T>) this;
+    }
+
     @SuppressWarnings("rawtypes")
     public Criteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
       addCriterion(column(fn) + " NOT IN", values);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andBetween(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+      return useCondition ? andBetween(fn, value1, value2) : (Criteria<T>) this;
     }
 
     public Criteria<T> andBetween(Fn<T, Object> fn, Object value1, Object value2) {
@@ -568,14 +612,26 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andNotBetween(boolean useCondition, Fn<T, Object> fn, Object value1, Object value2) {
+      return useCondition ? andNotBetween(fn, value1, value2) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
       addCriterion(column(fn) + " NOT BETWEEN", value1, value2);
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andLike(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? andLike(fn, value) : (Criteria<T>) this;
+    }
+
     public Criteria<T> andLike(Fn<T, Object> fn, String value) {
       addCriterion(column(fn) + "  LIKE", value);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andNotLike(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? andNotLike(fn, value) : (Criteria<T>) this;
     }
 
     public Criteria<T> andNotLike(Fn<T, Object> fn, String value) {
@@ -598,6 +654,10 @@ public class Example<T> {
       return (Criteria<T>) this;
     }
 
+    public Criteria<T> andCondition(boolean useCondition, String condition) {
+      return useCondition ? andCondition(condition) : (Criteria<T>) this;
+    }
+
     /**
      * 手写条件
      *
@@ -606,6 +666,10 @@ public class Example<T> {
     public Criteria<T> andCondition(String condition) {
       addCriterion(condition);
       return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andCondition(boolean useCondition, String condition, Object value) {
+      return useCondition ? andCondition(condition, value) : (Criteria<T>) this;
     }
 
     /**

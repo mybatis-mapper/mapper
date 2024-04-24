@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class UserExampleMapperTest extends BaseMapperTest {
@@ -282,6 +283,28 @@ public class UserExampleMapperTest extends BaseMapperTest {
       sqlSession.close();
     }
   }
+
+  @Test
+  public void testExampleUseCondition() {
+    try (SqlSession sqlSession = getSqlSession()) {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      Example<User> example = new Example<>();
+
+      User user = new User();
+      user.setUserName("殷%");
+
+      example.createCriteria()
+          .andNotEqualTo(Objects.nonNull(user.getId()), User::getId, user.getId())
+          .andLike(isBlank(user.getUserName()), User::getUserName, user.getUserName())
+          .andEqualTo(isBlank(user.getSex()), User::getSex, user.getSex());
+      Assert.assertEquals(5, exampleMapper.countByExample(example));
+    }
+  }
+
+  private boolean isBlank(String str) {
+    return str != null && !str.isEmpty();
+  }
+
 
 }
 
