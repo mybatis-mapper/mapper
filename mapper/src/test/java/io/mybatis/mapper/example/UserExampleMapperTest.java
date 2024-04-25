@@ -16,6 +16,7 @@
 
 package io.mybatis.mapper.example;
 
+import io.mybatis.common.util.Utils;
 import io.mybatis.mapper.BaseMapperTest;
 import io.mybatis.mapper.UserMapper;
 import io.mybatis.mapper.model.User;
@@ -295,14 +296,29 @@ public class UserExampleMapperTest extends BaseMapperTest {
 
       example.createCriteria()
           .andNotEqualTo(Objects.nonNull(user.getId()), User::getId, user.getId())
-          .andLike(isBlank(user.getUserName()), User::getUserName, user.getUserName())
-          .andEqualTo(isBlank(user.getSex()), User::getSex, user.getSex());
+          .andLike(Utils.isBlank(user.getUserName()), User::getUserName, user.getUserName())
+          .andEqualTo(Utils.isBlank(user.getSex()), User::getSex, user.getSex());
       Assert.assertEquals(5, exampleMapper.countByExample(example));
     }
   }
 
-  private boolean isBlank(String str) {
-    return str != null && !str.isEmpty();
+  @Test
+  public void testExampleUseSelective() {
+    try (SqlSession sqlSession = getSqlSession()) {
+      ExampleMapper<User, Example<User>> exampleMapper = sqlSession.getMapper(UserMapper.class);
+      Example<User> example = new Example<>();
+
+      User user = new User();
+      user.setUserName("殷%");
+      user.setSex("女");
+
+      example.createCriteriaSelective()
+          .andLike(User::getUserName, user.getUserName())
+          .andEqualTo(User::getId, user.getId())
+          .andNotEqualTo(User::getSex, user.getSex());
+
+      Assert.assertEquals(3, exampleMapper.countByExample(example));
+    }
   }
 
 

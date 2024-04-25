@@ -16,7 +16,11 @@
 
 package io.mybatis.common.util;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 工具类，主要判断空和非空，以及true和false
@@ -147,6 +151,28 @@ public class Utils {
    */
   public static <T> boolean isNotEmpty(Collection<T> collection) {
     return !isEmpty(collection);
+  }
+
+  /**
+   * 判断对象是否为空
+   *
+   * @param obj 对象
+   * @return 是否为空
+   */
+  public static boolean isEmpty(Object obj) {
+    if (Objects.isNull(obj)) {
+      return true;
+    } else if (obj instanceof Optional) {
+      return !((Optional<?>) obj).isPresent();
+    } else if (obj instanceof CharSequence) {
+      return ((CharSequence) obj).length() == 0;
+    } else if (obj.getClass().isArray()) {
+      return Array.getLength(obj) == 0;
+    } else if (obj instanceof Collection) {
+      return ((Collection<?>) obj).isEmpty();
+    } else {
+      return obj instanceof Map && ((Map<?, ?>) obj).isEmpty();
+    }
   }
 
 }

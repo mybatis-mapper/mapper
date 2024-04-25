@@ -16,6 +16,7 @@
 
 package io.mybatis.mapper.example;
 
+import io.mybatis.common.util.Utils;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 import io.mybatis.provider.EntityTable;
@@ -111,6 +112,19 @@ public class Example<T> {
   public Criteria<T> createCriteria() {
     Criteria<T> criteria = createCriteriaInternal();
     if (oredCriteria.size() == 0) {
+      oredCriteria.add(criteria);
+    }
+    return criteria;
+  }
+
+  /**
+   * 创建一组条件，第一次调用时添加到默认条件中
+   *
+   * @return 条件
+   */
+  public Criteria<T> createCriteriaSelective() {
+    Criteria<T> criteria = new Criteria<>(true);
+    if (oredCriteria.isEmpty()) {
       oredCriteria.add(criteria);
     }
     return criteria;
@@ -480,14 +494,35 @@ public class Example<T> {
 
   protected static abstract class GeneratedCriteria<T> {
     protected List<Criterion> criteria;
+    private   boolean         useSelective = false;
 
     protected GeneratedCriteria() {
       super();
       this.criteria = new ArrayList<>();
     }
 
+    protected GeneratedCriteria(boolean useSelective) {
+      super();
+      this.criteria = new ArrayList<>();
+      this.useSelective = useSelective;
+    }
+
     private String column(Fn<T, Object> fn) {
       return fn.toColumn();
+    }
+
+    /**
+     * 是否使用该条件
+     * <br/>
+     * 如果 useSelective=false 则不开启条件值判空，使用该条件
+     * <br/>
+     * 如果 useSelective=true 且 条件值不为空，使用该条件
+     *
+     * @param obj 条件值
+     * @return 是否使用
+     */
+    private boolean useCriterion(Object obj) {
+      return !useSelective || !Utils.isEmpty(obj);
     }
 
     protected void addCriterion(String condition) {
@@ -534,7 +569,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andEqualTo(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " =", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " =", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -543,7 +580,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andNotEqualTo(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " <>", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " <>", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -552,7 +591,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andGreaterThan(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " >", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " >", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -561,7 +602,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andGreaterThanOrEqualTo(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " >=", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " >=", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -570,7 +613,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andLessThan(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " <", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " <", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -579,7 +624,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andLessThanOrEqualTo(Fn<T, Object> fn, Object value) {
-      addCriterion(column(fn) + " <=", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + " <=", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -589,7 +636,9 @@ public class Example<T> {
 
     @SuppressWarnings("rawtypes")
     public Criteria<T> andIn(Fn<T, Object> fn, Iterable values) {
-      addCriterion(column(fn) + " IN", values);
+      if (useCriterion(values)) {
+        addCriterion(column(fn) + " IN", values);
+      }
       return (Criteria<T>) this;
     }
 
@@ -599,7 +648,9 @@ public class Example<T> {
 
     @SuppressWarnings("rawtypes")
     public Criteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
-      addCriterion(column(fn) + " NOT IN", values);
+      if (useCriterion(values)) {
+        addCriterion(column(fn) + " NOT IN", values);
+      }
       return (Criteria<T>) this;
     }
 
@@ -608,7 +659,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andBetween(Fn<T, Object> fn, Object value1, Object value2) {
-      addCriterion(column(fn) + " BETWEEN", value1, value2);
+      if (useCriterion(value1) && useCriterion(value2)) {
+        addCriterion(column(fn) + " BETWEEN", value1, value2);
+      }
       return (Criteria<T>) this;
     }
 
@@ -617,7 +670,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
-      addCriterion(column(fn) + " NOT BETWEEN", value1, value2);
+      if (useCriterion(value1) && useCriterion(value2)) {
+        addCriterion(column(fn) + " NOT BETWEEN", value1, value2);
+      }
       return (Criteria<T>) this;
     }
 
@@ -626,7 +681,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andLike(Fn<T, Object> fn, String value) {
-      addCriterion(column(fn) + "  LIKE", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + "  LIKE", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -635,7 +692,9 @@ public class Example<T> {
     }
 
     public Criteria<T> andNotLike(Fn<T, Object> fn, String value) {
-      addCriterion(column(fn) + "  NOT LIKE", value);
+      if (useCriterion(value)) {
+        addCriterion(column(fn) + "  NOT LIKE", value);
+      }
       return (Criteria<T>) this;
     }
 
@@ -698,6 +757,11 @@ public class Example<T> {
     protected Criteria() {
       super();
     }
+
+    protected Criteria(boolean useSelective) {
+      super(useSelective);
+    }
+
   }
 
   public static class OrCriteria<T> extends Criteria<T> {
