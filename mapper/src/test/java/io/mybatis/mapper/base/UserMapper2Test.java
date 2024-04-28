@@ -216,6 +216,24 @@ public class UserMapper2Test extends BaseMapperTest {
           .orderByAsc(User::getId).list();
     }
   }
+
+  @Test
+  public void testExampleWrapperSelective() {
+    try (SqlSession sqlSession = getSqlSession()) {
+      UserMapper2 mapper = sqlSession.getMapper(UserMapper2.class);
+      long userCount = mapper.wrapperSelective()
+          .eq(User::getSex, "女")
+          .startsWith(User::getUserName, "")
+          .contains(User::getUserName, "青")
+          .endsWith(User::getUserName, "")
+          .like(User::getUserName, "")
+          .or(c -> c.gt(User::getId, 40), c -> c.lt(false, User::getId, null))
+          .le(User::getStatus, null)
+          .count();
+
+      Assert.assertEquals(userCount, 1);
+    }
+  }
 }
 
 

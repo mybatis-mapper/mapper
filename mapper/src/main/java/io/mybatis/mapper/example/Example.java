@@ -521,7 +521,7 @@ public class Example<T> {
      * @param obj 条件值
      * @return 是否使用
      */
-    private boolean useCriterion(Object obj) {
+    protected boolean useCriterion(Object obj) {
       return !useSelective || !Utils.isEmpty(obj);
     }
 
@@ -672,6 +672,17 @@ public class Example<T> {
     public Criteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
       if (useCriterion(value1) && useCriterion(value2)) {
         addCriterion(column(fn) + " NOT BETWEEN", value1, value2);
+      }
+      return (Criteria<T>) this;
+    }
+
+    public Criteria<T> andContains(boolean useCondition, Fn<T, Object> fn, String value) {
+      return useCondition ? andContains(fn, value) : (Criteria<T>) this;
+    }
+
+    public Criteria<T> andContains(Fn<T, Object> fn, String value) {
+      if (useCriterion(value)) {
+        addCriterion(fn.toColumn() + "  LIKE", "%" + value + "%");
       }
       return (Criteria<T>) this;
     }
@@ -853,6 +864,11 @@ public class Example<T> {
     @Override
     public OrCriteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
       super.andNotBetween(fn, value1, value2);
+      return this;
+    }
+
+    @Override
+    public Criteria<T> andContains(boolean useCondition, Fn<T, Object> fn, String value) {
       return this;
     }
 

@@ -50,6 +50,13 @@ public interface BaseMapper<T, I extends Serializable>
   }
 
   /**
+   * Example 查询封装，并开启条件值判空
+   */
+  default ExampleWrapper<T, I> wrapperSelective() {
+    return new ExampleWrapper<>(BaseMapper.this, example(), true);
+  }
+
+  /**
    * 根据主键更新实体中不为空的字段，强制字段不区分是否 null，都更新
    * <p>
    * 当前方法来自 {@link io.mybatis.mapper.fn.FnMapper}，该接口中的其他方法用 {@link ExampleMapper} 也能实现

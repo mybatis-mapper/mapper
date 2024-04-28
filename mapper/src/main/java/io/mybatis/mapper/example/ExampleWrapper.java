@@ -49,6 +49,12 @@ public class ExampleWrapper<T, I extends Serializable> {
     this.current = example.createCriteria();
   }
 
+  public ExampleWrapper(BaseMapper<T, I> baseMapper, Example<T> example, boolean useSelective) {
+    this.baseMapper = baseMapper;
+    this.example = example;
+    this.current = useSelective ? example.createCriteriaSelective() : example.createCriteria();
+  }
+
   /**
    * or 一组条件
    *
@@ -318,7 +324,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> eq(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " =", value);
+    this.current.andEqualTo(fn, value);
     return this;
   }
 
@@ -351,7 +357,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> ne(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " <>", value);
+    this.current.andNotEqualTo(fn, value);
     return this;
   }
 
@@ -384,7 +390,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> gt(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " >", value);
+    this.current.andGreaterThan(fn, value);
     return this;
   }
 
@@ -417,7 +423,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> ge(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " >=", value);
+    this.current.andGreaterThanOrEqualTo(fn, value);
     return this;
   }
 
@@ -449,7 +455,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> lt(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " <", value);
+    this.current.andLessThan(fn, value);
     return this;
   }
 
@@ -482,7 +488,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值
    */
   public ExampleWrapper<T, I> le(Fn<T, Object> fn, Object value) {
-    this.current.addCriterion(fn.toColumn() + " <=", value);
+    this.current.andLessThanOrEqualTo(fn, value);
     return this;
   }
 
@@ -518,7 +524,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    */
   @SuppressWarnings("rawtypes")
   public ExampleWrapper<T, I> in(Fn<T, Object> fn, Iterable values) {
-    this.current.addCriterion(fn.toColumn() + " IN", values);
+    this.current.andIn(fn, values);
     return this;
   }
 
@@ -554,7 +560,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    */
   @SuppressWarnings("rawtypes")
   public ExampleWrapper<T, I> notIn(Fn<T, Object> fn, Iterable values) {
-    this.current.addCriterion(fn.toColumn() + " NOT IN", values);
+    this.current.andNotIn(fn, values);
     return this;
   }
 
@@ -590,7 +596,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value2 值2
    */
   public ExampleWrapper<T, I> between(Fn<T, Object> fn, Object value1, Object value2) {
-    this.current.addCriterion(fn.toColumn() + " BETWEEN", value1, value2);
+    this.current.andBetween(fn, value1, value2);
     return this;
   }
 
@@ -626,7 +632,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value2 值2
    */
   public ExampleWrapper<T, I> notBetween(Fn<T, Object> fn, Object value1, Object value2) {
-    this.current.addCriterion(fn.toColumn() + " NOT BETWEEN", value1, value2);
+    this.current.andNotBetween(fn, value1, value2);
     return this;
   }
 
@@ -659,7 +665,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值，两侧自动添加 %
    */
   public ExampleWrapper<T, I> contains(Fn<T, Object> fn, String value) {
-    this.current.addCriterion(fn.toColumn() + "  LIKE", "%" + value + "%");
+    this.current.andContains(fn, value);
     return this;
   }
 
@@ -692,7 +698,9 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值，右侧自动添加 %
    */
   public ExampleWrapper<T, I> startsWith(Fn<T, Object> fn, String value) {
-    this.current.addCriterion(fn.toColumn() + "  LIKE", value + "%");
+    if (this.current.useCriterion(value)) {
+      this.current.addCriterion(fn.toColumn() + "  LIKE", value + "%");
+    }
     return this;
   }
 
@@ -725,7 +733,9 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值，左侧自动添加 %
    */
   public ExampleWrapper<T, I> endsWith(Fn<T, Object> fn, String value) {
-    this.current.addCriterion(fn.toColumn() + "  LIKE", "%" + value);
+    if (this.current.useCriterion(value)) {
+      this.current.addCriterion(fn.toColumn() + "  LIKE", "%" + value);
+    }
     return this;
   }
 
@@ -758,7 +768,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值，需要指定 '%'(多个), '_'(单个) 模糊匹配
    */
   public ExampleWrapper<T, I> like(Fn<T, Object> fn, String value) {
-    this.current.addCriterion(fn.toColumn() + "  LIKE", value);
+    this.current.andLike(fn, value);
     return this;
   }
 
@@ -791,7 +801,7 @@ public class ExampleWrapper<T, I extends Serializable> {
    * @param value 值，需要指定 % 模糊匹配
    */
   public ExampleWrapper<T, I> notLike(Fn<T, Object> fn, String value) {
-    this.current.addCriterion(fn.toColumn() + "  NOT LIKE", value);
+    this.current.andNotLike(fn, value);
     return this;
   }
 
