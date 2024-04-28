@@ -296,8 +296,8 @@ public class UserExampleMapperTest extends BaseMapperTest {
 
       example.createCriteria()
           .andNotEqualTo(Objects.nonNull(user.getId()), User::getId, user.getId())
-          .andLike(Utils.isBlank(user.getUserName()), User::getUserName, user.getUserName())
-          .andEqualTo(Utils.isBlank(user.getSex()), User::getSex, user.getSex());
+          .andLike(Utils.isNotBlank(user.getUserName()), User::getUserName, user.getUserName())
+          .andEqualTo(Utils.isNotBlank(user.getSex()), User::getSex, user.getSex());
       Assert.assertEquals(5, exampleMapper.countByExample(example));
     }
   }
