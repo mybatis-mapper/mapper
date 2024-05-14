@@ -49,7 +49,7 @@ public class LogicalProvider {
       @Override
       public String getSql(EntityTable entity) {
         return "SELECT " + entity.baseColumnAsPropertyList()
-            + " FROM " + entity.table()
+            + " FROM " + entity.tableName()
             + where(() -> entity.whereColumns().stream()
             .map(column -> ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty()))
             .collect(Collectors.joining(LF)) + logicalNotEqualCondition(entity))
@@ -102,7 +102,7 @@ public class LogicalProvider {
             + ifTest("distinct", () -> "distinct ")
             + ifTest("selectColumns != null and selectColumns != ''", () -> "${selectColumns}")
             + ifTest("selectColumns == null or selectColumns == ''", entity::baseColumnAsPropertyList)
-            + " FROM " + entity.table()
+            + " FROM " + entity.tableName()
             + trim("WHERE", "", "WHERE |OR |AND ", "", () -> ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE) + logicalNotEqualCondition(entity))
             + ifTest("orderByClause != null", () -> " ORDER BY ${orderByClause}")
             + ifTest("orderByClause == null", () -> entity.orderByColumn().orElse(""))
@@ -127,7 +127,7 @@ public class LogicalProvider {
             + ifTest("simpleSelectColumns != null and simpleSelectColumns != ''", () -> "${simpleSelectColumns}")
             + ifTest("simpleSelectColumns == null or simpleSelectColumns == ''", () -> "*")
             + ") FROM "
-            + entity.table()
+            + entity.tableName()
             + trim("WHERE", "", "WHERE |OR |AND ", "", () -> ifParameterNotNull(() -> EXAMPLE_WHERE_CLAUSE) + logicalNotEqualCondition(entity))
             + ifTest("endSql != null and endSql != ''", () -> "${endSql}");
       }
@@ -145,7 +145,7 @@ public class LogicalProvider {
       @Override
       public String getSql(EntityTable entity) {
         return "SELECT " + entity.baseColumnAsPropertyList()
-            + " FROM " + entity.table()
+            + " FROM " + entity.tableName()
             + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")))
             // 如果将条件拼接where()中，将会依赖idColumns()的实现，要求其必须返回非空值
             + logicalNotEqualCondition(entity);
@@ -164,7 +164,7 @@ public class LogicalProvider {
     return SqlScript.caching(providerContext, new LogicalSqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "SELECT COUNT(*)  FROM " + entity.table() + LF
+        return "SELECT COUNT(*)  FROM " + entity.tableName() + LF
             + where(() ->
             entity.whereColumns().stream().map(column ->
                 ifTest(column.notNullTest(), () -> "AND " + column.columnEqualsProperty())
@@ -213,7 +213,7 @@ public class LogicalProvider {
       @Override
       public String getSql(EntityTable entity) {
         return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
-            + "UPDATE " + entity.table()
+            + "UPDATE " + entity.tableName()
             + set(() -> entity.updateColumns().stream().map(
             column -> ifTest(column.notNullTest("entity."),
                 () -> column.columnEqualsProperty("entity.") + ",")).collect(Collectors.joining(LF)))
@@ -241,7 +241,7 @@ public class LogicalProvider {
       public String getSql(EntityTable entity) {
         return ifTest("example.startSql != null and example.startSql != ''", () -> "${example.startSql}")
             + variableNotEmpty("example.setValues", "Example setValues cannot be empty")
-            + "UPDATE " + entity.table()
+            + "UPDATE " + entity.tableName()
             + EXAMPLE_SET_CLAUSE_INNER_WHEN
             + variableNotNull("example", "Example cannot be null")
             //是否允许空条件，默认允许，允许时不检查查询条件
@@ -263,7 +263,7 @@ public class LogicalProvider {
     return SqlScript.caching(providerContext, new LogicalSqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + " SET " + entity.updateColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(","))
             + where(() -> entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND ")))
             + logicalNotEqualCondition(entity);
@@ -282,7 +282,7 @@ public class LogicalProvider {
     return SqlScript.caching(providerContext, new LogicalSqlScript() {
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + set(() ->
             entity.updateColumns().stream().map(column ->
                 ifTest(column.notNullTest(), () -> column.columnEqualsProperty() + ",")
@@ -304,7 +304,7 @@ public class LogicalProvider {
 
       @Override
       public String getSql(EntityTable entity) {
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + set(() ->
             entity.updateColumns().stream().map(column ->
                 choose(() ->
@@ -332,7 +332,7 @@ public class LogicalProvider {
       @Override
       public String getSql(EntityTable entity) {
         EntityColumn logicColumn = getLogicalColumn(entity);
-        return "UPDATE " + entity.table()
+        return "UPDATE " + entity.tableName()
             + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
             + parameterNotNull("Parameter cannot be null")
             + where(() -> entity.columns().stream()
@@ -353,7 +353,7 @@ public class LogicalProvider {
           @Override
           public String getSql(EntityTable entity) {
             EntityColumn logicColumn = getLogicalColumn(entity);
-            return "UPDATE " + entity.table()
+            return "UPDATE " + entity.tableName()
                 + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
                 + " WHERE " + entity.idColumns().stream().map(EntityColumn::columnEqualsProperty).collect(Collectors.joining(" AND "))
                 + logicalNotEqualCondition(entity);
@@ -372,7 +372,7 @@ public class LogicalProvider {
     return SqlScript.caching(providerContext, (entity, util) -> {
       EntityColumn logicColumn = getLogicalColumn(entity);
       return util.ifTest("startSql != null and startSql != ''", () -> "${startSql}")
-          + "UPDATE " + entity.table()
+          + "UPDATE " + entity.tableName()
           + " SET " + columnEqualsValue(logicColumn, deleteValue(logicColumn))
           + util.parameterNotNull("Example cannot be null")
           //是否允许空条件，默认允许，允许时不检查查询条件
