@@ -216,6 +216,19 @@ public interface Fn<T, R> extends Function<T, R>, Serializable {
     public R apply(Object o) {
       return null;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      FnName<?, ?> fnName = (FnName<?, ?>) o;
+      return column == fnName.column && Objects.equals(entityClass, fnName.entityClass) && Objects.equals(name, fnName.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(entityClass, name, column);
+    }
   }
 
   /**

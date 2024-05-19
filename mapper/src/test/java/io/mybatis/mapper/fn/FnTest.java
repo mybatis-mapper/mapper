@@ -61,6 +61,20 @@ public class FnTest {
     Assert.assertEquals("when_create", Fn.column(SysRole.class, "when_create").toColumn());
   }
 
+  @Test
+  public void testMemoryOverflow() throws InterruptedException {
+    for (int i = 0; i < 100; i++) {
+      System.out.println(((Fn<User, Object>) User::getUserName).toColumn());
+      Assert.assertEquals(1, Fn.FN_COLUMN_MAP.size());
+      Assert.assertEquals(1, Fn.FN_CLASS_FIELD_MAP.size());
+    }
+    for (int i = 0; i < 100; i++) {
+      System.out.println(Fn.field(User.class, "userName").toColumn());
+      Assert.assertEquals(2, Fn.FN_COLUMN_MAP.size());
+      Assert.assertEquals(2, Fn.FN_CLASS_FIELD_MAP.size());
+    }
+  }
+
   public static class BaseId {
     @Entity.Column(id = true)
     private Long id;
