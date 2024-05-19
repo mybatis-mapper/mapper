@@ -68,7 +68,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <argLine>-Dfile.encoding=UTF-8</argLine>
 
-    <provider.version>2.2.3</provider.version>
+    <provider.version>2.2.4-SNAPSHOT</provider.version>
 
     <mybatis.version>3.5.13</mybatis.version>
     <mybatis-spring.version>2.1.0</mybatis-spring.version>
