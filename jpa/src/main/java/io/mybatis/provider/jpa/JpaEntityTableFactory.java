@@ -21,6 +21,7 @@ import io.mybatis.provider.EntityTableFactory;
 import io.mybatis.provider.Style;
 import io.mybatis.provider.util.Utils;
 
+import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
@@ -50,6 +51,10 @@ public class JpaEntityTableFactory implements EntityTableFactory {
     } else if (Utils.isEmpty(entityTable.table())) {
       //没有设置表名时，默认类名转下划线
       entityTable.table(Style.getDefaultStyle().tableName(entityClass));
+    }
+    //使用 JPA 的 @Entity 注解作为开启 autoResultMap 的标志，可以配合字段的 @Convert 注解使用
+    if(entityClass.isAnnotationPresent(Entity.class)) {
+      entityTable.autoResultMap(true);
     }
     return entityTable;
   }

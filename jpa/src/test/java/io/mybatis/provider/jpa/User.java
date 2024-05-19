@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+@javax.persistence.Entity
 @Table(name = "user")
 public class User {
   @Id
@@ -31,6 +32,9 @@ public class User {
   @Column
   @Entity.Column(selectable = false)
   private String sex;
+  @Entity.Transient
+  private String password;
+
 
   public Long getId() {
     return id;
@@ -55,4 +59,13 @@ public class User {
   public void setSex(String sex) {
     this.sex = sex;
   }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }
+

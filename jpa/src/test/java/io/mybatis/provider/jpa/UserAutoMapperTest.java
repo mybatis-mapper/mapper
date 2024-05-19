@@ -27,10 +27,23 @@ public class UserAutoMapperTest extends BaseTest {
   public void testSelectById() {
     try (SqlSession sqlSession = getSqlSession()) {
       UserAutoMapper userMapper = sqlSession.getMapper(UserAutoMapper.class);
-      UserAuto user = userMapper.getById(1L);
+      UserAuto user = userMapper.getById(1);
       Assert.assertNotNull(user);
       Assert.assertEquals("sjz", user.getUserName());
       Assert.assertNotNull(user.getAddress());
+      Assert.assertEquals("河北省", user.getAddress().getSheng());
+      Assert.assertEquals("石家庄市", user.getAddress().getShi());
+
+      UserAuto.Address address = user.getAddress();
+      address.setShi("秦皇岛市");
+      user.setUserName("qhd");
+      user.setId(null);
+      userMapper.insertSelective(user);
+      Assert.assertNotNull(user.getId());
+
+      UserAuto qhd = userMapper.getById(user.getId());
+      Assert.assertEquals("河北省", qhd.getAddress().getSheng());
+      Assert.assertEquals("秦皇岛市", qhd.getAddress().getShi());
     }
   }
 

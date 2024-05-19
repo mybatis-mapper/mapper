@@ -17,11 +17,9 @@
 package io.mybatis.provider.jpa;
 
 import io.mybatis.provider.*;
+import org.apache.ibatis.type.TypeHandler;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +67,14 @@ public class JpaEntityColumnFactory implements EntityColumnFactory {
             entityColumn.orderBy("ASC");
           } else {
             entityColumn.orderBy(orderBy.value());
+          }
+        }
+        //TypeHandler注解
+        if(field.isAnnotationPresent(Convert.class)) {
+          Convert convert = field.getAnnotation(Convert.class);
+          Class converter = convert.converter();
+          if(converter != void.class || TypeHandler.class.isAssignableFrom(converter)) {
+            entityColumn.typeHandler(converter);
           }
         }
       }
