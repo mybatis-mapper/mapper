@@ -36,8 +36,8 @@ public class JpaEntityColumnFactory implements EntityColumnFactory {
   @Override
   public Optional<List<EntityColumn>> createEntityColumn(EntityTable entityTable, EntityField field, Chain chain) {
     Optional<List<EntityColumn>> optionalEntityColumns = chain.createEntityColumn(entityTable, field);
-    if (field.isAnnotationPresent(Transient.class)) {
-      return Optional.empty();
+    if (optionalEntityColumns == IGNORE || field.isAnnotationPresent(Transient.class)) {
+      return IGNORE;
     } else if (!optionalEntityColumns.isPresent()) {
       //没有 @Transient 注解的字段都认为是表字段，不自动排除字段，字段名默认驼峰转下划线
       optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(Style.getDefaultStyle().columnName(entityTable, field))));
