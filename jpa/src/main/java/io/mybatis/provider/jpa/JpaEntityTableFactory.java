@@ -41,6 +41,12 @@ public class JpaEntityTableFactory implements EntityTableFactory {
       if (!table.name().isEmpty()) {
         entityTable.table(table.name());
       }
+      if(!table.catalog().isEmpty()) {
+        entityTable.catalog(table.catalog());
+      }
+      if(!table.schema().isEmpty()) {
+        entityTable.schema(table.schema());
+      }
     } else if (Utils.isEmpty(entityTable.table())) {
       //没有设置表名时，默认类名转下划线
       entityTable.table(Style.getDefaultStyle().tableName(entityClass));
