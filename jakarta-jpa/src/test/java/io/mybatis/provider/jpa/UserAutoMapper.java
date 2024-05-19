@@ -17,13 +17,21 @@
 package io.mybatis.provider.jpa;
 
 import io.mybatis.provider.Caching;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Lang;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectProvider;
 
 public interface UserAutoMapper {
 
   @Lang(Caching.class)
   @SelectProvider(type = BaseProvider.class, method = "getById")
-  UserAuto getById(Long id);
+  UserAuto getById(Integer id);
+
+
+  @Lang(Caching.class)
+  @Options(useGeneratedKeys = true, keyProperty = "id")
+  @InsertProvider(type = BaseProvider.class, method = "insertSelective")
+  int insertSelective(UserAuto userAuto);
 
 }

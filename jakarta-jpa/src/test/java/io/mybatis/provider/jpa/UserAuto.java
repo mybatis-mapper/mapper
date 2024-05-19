@@ -16,19 +16,30 @@
 
 package io.mybatis.provider.jpa;
 
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
 
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+@Entity
 public class UserAuto {
   @Id
-  private int    id;
-  private String userName;
-  private String address;
+  private Integer id;
+  private String  userName;
+  @Convert(converter = AddressTypeHandler.class)
+  private Address address;
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -40,11 +51,70 @@ public class UserAuto {
     this.userName = userName;
   }
 
-  public String getAddress() {
+  public Address getAddress() {
     return address;
   }
 
-  public void setAddress(String address) {
+  public void setAddress(Address address) {
     this.address = address;
+  }
+
+  public static class Address {
+    private String sheng;
+    private String shi;
+
+    public String getSheng() {
+      return sheng;
+    }
+
+    public void setSheng(String sheng) {
+      this.sheng = sheng;
+    }
+
+    public String getShi() {
+      return shi;
+    }
+
+    public void setShi(String shi) {
+      this.shi = shi;
+    }
+
+    @Override
+    public String toString() {
+      return sheng + "---" + shi;
+    }
+  }
+
+  public static class AddressTypeHandler extends BaseTypeHandler<Address> {
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Address parameter, JdbcType jdbcType) throws SQLException {
+      ps.setString(i, parameter.getSheng() + "/" + parameter.getShi());
+    }
+
+    private Address valueToAddress(String value) {
+      String[] split = value.split("/");
+      Address address = new Address();
+      address.setSheng(split[0]);
+      address.setShi(split[1]);
+      return address;
+    }
+
+    @Override
+    public Address getNullableResult(ResultSet rs, String columnName) throws SQLException {
+      String string = rs.getString(columnName);
+      return string == null ? null : valueToAddress(string);
+    }
+
+    @Override
+    public Address getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+      String string = rs.getString(columnIndex);
+      return string == null ? null : valueToAddress(string);
+    }
+
+    @Override
+    public Address getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+      String string = cs.getString(columnIndex);
+      return string == null ? null : valueToAddress(string);
+    }
   }
 }

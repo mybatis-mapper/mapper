@@ -17,10 +17,9 @@
 package io.mybatis.provider.jpa;
 
 import io.mybatis.provider.*;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+import org.apache.ibatis.type.TypeHandler;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +34,8 @@ public class JakartaJpaEntityColumnFactory implements EntityColumnFactory {
   @Override
   public Optional<List<EntityColumn>> createEntityColumn(EntityTable entityTable, EntityField field, Chain chain) {
     Optional<List<EntityColumn>> optionalEntityColumns = chain.createEntityColumn(entityTable, field);
-    if (field.isAnnotationPresent(Transient.class)) {
-      return Optional.empty();
+    if (optionalEntityColumns == IGNORE || field.isAnnotationPresent(Transient.class)) {
+      return IGNORE;
     } else if (!optionalEntityColumns.isPresent()) {
       //没有 @Transient 注解的字段都认为是表字段，不自动排除字段，字段名默认驼峰转下划线
       optionalEntityColumns = Optional.of(Arrays.asList(EntityColumn.of(field).column(Style.getDefaultStyle().columnName(entityTable, field))));
@@ -68,6 +67,14 @@ public class JakartaJpaEntityColumnFactory implements EntityColumnFactory {
             entityColumn.orderBy("ASC");
           } else {
             entityColumn.orderBy(orderBy.value());
+          }
+        }
+        //TypeHandler注解
+        if(field.isAnnotationPresent(Convert.class)) {
+          Convert convert = field.getAnnotation(Convert.class);
+          Class converter = convert.converter();
+          if(converter != void.class || TypeHandler.class.isAssignableFrom(converter)) {
+            entityColumn.typeHandler(converter);
           }
         }
       }

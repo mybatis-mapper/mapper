@@ -20,7 +20,7 @@ import io.mybatis.provider.EntityTable;
 import io.mybatis.provider.EntityTableFactory;
 import io.mybatis.provider.Style;
 import io.mybatis.provider.util.Utils;
-
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 /**
@@ -41,9 +41,19 @@ public class JakartaJpaEntityTableFactory implements EntityTableFactory {
       if (!table.name().isEmpty()) {
         entityTable.table(table.name());
       }
+      if(!table.catalog().isEmpty()) {
+        entityTable.catalog(table.catalog());
+      }
+      if(!table.schema().isEmpty()) {
+        entityTable.schema(table.schema());
+      }
     } else if (Utils.isEmpty(entityTable.table())) {
       //没有设置表名时，默认类名转下划线
       entityTable.table(Style.getDefaultStyle().tableName(entityClass));
+    }
+    //使用 JPA 的 @Entity 注解作为开启 autoResultMap 的标志，可以配合字段的 @Convert 注解使用
+    if(entityClass.isAnnotationPresent(Entity.class)) {
+      entityTable.autoResultMap(true);
     }
     return entityTable;
   }
