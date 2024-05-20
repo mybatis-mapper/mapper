@@ -88,7 +88,7 @@ public class UserAutoMapperTest extends BaseMapperTest {
     try {
       UserAutoMapper userAutoMapper = sqlSession.getMapper(UserAutoMapper.class);
       Example<UserAuto> example = userAutoMapper.example();
-      example.createCriteria().andLike(UserAuto::getAddress, "河北省%");
+      example.createCriteria().andLike(UserAuto::getAddress, new UserAuto.Address("河北省", "%"));
       List<UserAuto> userAutos = userAutoMapper.selectByExample(example);
       Assert.assertTrue(userAutos.size() >= 3);
       UserAuto userAuto = userAutos.get(0);

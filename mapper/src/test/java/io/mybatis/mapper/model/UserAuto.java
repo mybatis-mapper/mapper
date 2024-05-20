@@ -71,6 +71,14 @@ public class UserAuto {
     private String sheng;
     private String shi;
 
+    public Address() {
+    }
+
+    public Address(String sheng, String shi) {
+      this.sheng = sheng;
+      this.shi = shi;
+    }
+
     public String getSheng() {
       return sheng;
     }

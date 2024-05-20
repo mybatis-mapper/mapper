@@ -20,6 +20,7 @@ import io.mybatis.common.util.Utils;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.provider.EntityColumn;
 import io.mybatis.provider.EntityTable;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -474,7 +475,8 @@ public class Example<T> {
    * @param value 值
    */
   public Example<T> set(Fn<T, Object> fn, Object value) {
-    this.setValues.add(new Criterion(fn.toColumn(), value));
+    EntityColumn column = fn.toEntityColumn();
+    this.setValues.add(new Criterion(column.column(), value, column.typeHandler()));
     return this;
   }
 
@@ -511,6 +513,10 @@ public class Example<T> {
       return fn.toColumn();
     }
 
+    private Class<? extends TypeHandler> typehandler(Fn<T, Object> fn) {
+      return fn.toEntityColumn().typeHandler();
+    }
+
     /**
      * 是否使用该条件
      * <br/>
@@ -539,11 +545,25 @@ public class Example<T> {
       criteria.add(new Criterion(condition, value));
     }
 
+    protected void addCriterion(String condition, Object value, Class<? extends TypeHandler> typeHandler) {
+      if (value == null) {
+        throw new RuntimeException("Value for " + condition + " cannot be null");
+      }
+      criteria.add(new Criterion(condition, value, typeHandler));
+    }
+
     protected void addCriterion(String condition, Object value1, Object value2) {
       if (value1 == null || value2 == null) {
         throw new RuntimeException("Between values for " + condition + " cannot be null");
       }
       criteria.add(new Criterion(condition, value1, value2));
+    }
+
+    protected void addCriterion(String condition, Object value1, Object value2, Class<? extends TypeHandler> typeHandler) {
+      if (value1 == null || value2 == null) {
+        throw new RuntimeException("Between values for " + condition + " cannot be null");
+      }
+      criteria.add(new Criterion(condition, value1, value2, typeHandler));
     }
 
     public Criteria<T> andIsNull(boolean useCondition, Fn<T, Object> fn) {
@@ -570,7 +590,7 @@ public class Example<T> {
 
     public Criteria<T> andEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " =", value);
+        addCriterion(column(fn) + " =", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -581,7 +601,7 @@ public class Example<T> {
 
     public Criteria<T> andNotEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <>", value);
+        addCriterion(column(fn) + " <>", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -592,7 +612,7 @@ public class Example<T> {
 
     public Criteria<T> andGreaterThan(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " >", value);
+        addCriterion(column(fn) + " >", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -603,7 +623,7 @@ public class Example<T> {
 
     public Criteria<T> andGreaterThanOrEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " >=", value);
+        addCriterion(column(fn) + " >=", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -614,7 +634,7 @@ public class Example<T> {
 
     public Criteria<T> andLessThan(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <", value);
+        addCriterion(column(fn) + " <", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -625,7 +645,7 @@ public class Example<T> {
 
     public Criteria<T> andLessThanOrEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <=", value);
+        addCriterion(column(fn) + " <=", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -637,7 +657,7 @@ public class Example<T> {
     @SuppressWarnings("rawtypes")
     public Criteria<T> andIn(Fn<T, Object> fn, Iterable values) {
       if (useCriterion(values)) {
-        addCriterion(column(fn) + " IN", values);
+        addCriterion(column(fn) + " IN", values, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -649,7 +669,7 @@ public class Example<T> {
     @SuppressWarnings("rawtypes")
     public Criteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
       if (useCriterion(values)) {
-        addCriterion(column(fn) + " NOT IN", values);
+        addCriterion(column(fn) + " NOT IN", values, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -660,7 +680,7 @@ public class Example<T> {
 
     public Criteria<T> andBetween(Fn<T, Object> fn, Object value1, Object value2) {
       if (useCriterion(value1) && useCriterion(value2)) {
-        addCriterion(column(fn) + " BETWEEN", value1, value2);
+        addCriterion(column(fn) + " BETWEEN", value1, value2, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -671,29 +691,29 @@ public class Example<T> {
 
     public Criteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
       if (useCriterion(value1) && useCriterion(value2)) {
-        addCriterion(column(fn) + " NOT BETWEEN", value1, value2);
+        addCriterion(column(fn) + " NOT BETWEEN", value1, value2, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
 
-    public Criteria<T> andLike(boolean useCondition, Fn<T, Object> fn, String value) {
+    public Criteria<T> andLike(boolean useCondition, Fn<T, Object> fn, Object value) {
       return useCondition ? andLike(fn, value) : (Criteria<T>) this;
     }
 
-    public Criteria<T> andLike(Fn<T, Object> fn, String value) {
+    public Criteria<T> andLike(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + "  LIKE", value);
+        addCriterion(column(fn) + "  LIKE", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
 
-    public Criteria<T> andNotLike(boolean useCondition, Fn<T, Object> fn, String value) {
+    public Criteria<T> andNotLike(boolean useCondition, Fn<T, Object> fn, Object value) {
       return useCondition ? andNotLike(fn, value) : (Criteria<T>) this;
     }
 
-    public Criteria<T> andNotLike(Fn<T, Object> fn, String value) {
+    public Criteria<T> andNotLike(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + "  NOT LIKE", value);
+        addCriterion(column(fn) + "  NOT LIKE", value, typehandler(fn));
       }
       return (Criteria<T>) this;
     }
@@ -857,13 +877,13 @@ public class Example<T> {
     }
 
     @Override
-    public OrCriteria<T> andLike(Fn<T, Object> fn, String value) {
+    public OrCriteria<T> andLike(Fn<T, Object> fn, Object value) {
       super.andLike(fn, value);
       return this;
     }
 
     @Override
-    public OrCriteria<T> andNotLike(Fn<T, Object> fn, String value) {
+    public OrCriteria<T> andNotLike(Fn<T, Object> fn, Object value) {
       super.andNotLike(fn, value);
       return this;
     }
@@ -1311,6 +1331,8 @@ public class Example<T> {
 
     private Object secondValue;
 
+    private String typeHandler;
+
     private boolean noValue;
 
     private boolean singleValue;
@@ -1331,10 +1353,11 @@ public class Example<T> {
       this.noValue = true;
     }
 
-    protected Criterion(String condition, Object value, String typeHandler) {
+    protected Criterion(String condition, Object value, Class<? extends TypeHandler> typeHandler) {
       super();
       this.condition = condition;
       this.value = value;
+      this.typeHandler = typeHandler != null ? typeHandler.getName() : null;
       if (value instanceof Collection<?>) {
         if (condition != null) {
           this.listValue = true;
@@ -1346,16 +1369,30 @@ public class Example<T> {
       }
     }
 
-    protected Criterion(String condition, Object value, Object secondValue, String typeHandler) {
+    protected Criterion(String condition, Object value, Object secondValue, Class<? extends TypeHandler> typeHandler) {
       super();
       this.condition = condition;
       this.value = value;
       this.secondValue = secondValue;
+      this.typeHandler = typeHandler != null ? typeHandler.getName() : null;
       this.betweenValue = true;
     }
 
     protected Criterion(String condition, Object value, Object secondValue) {
       this(condition, value, secondValue, null);
+    }
+
+    public String variables(String prefix, String field) {
+      StringBuilder variables = new StringBuilder();
+      variables.append("#{");
+      if(prefix != null && !prefix.isEmpty()) {
+        variables.append(prefix).append(".");
+      }
+      variables.append(field);
+      if (typeHandler != null && !typeHandler.isEmpty()) {
+        variables.append(",typeHandler=").append(typeHandler);
+      }
+      return variables.append("}").toString();
     }
 
     public String getCondition() {
