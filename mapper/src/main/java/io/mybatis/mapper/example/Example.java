@@ -1382,13 +1382,9 @@ public class Example<T> {
       this(condition, value, secondValue, null);
     }
 
-    public String variables(String prefix, String field) {
+    public String variables(String field) {
       StringBuilder variables = new StringBuilder();
-      variables.append("#{");
-      if(prefix != null && !prefix.isEmpty()) {
-        variables.append(prefix).append(".");
-      }
-      variables.append(field);
+      variables.append("#{").append(field);
       if (typeHandler != null && !typeHandler.isEmpty()) {
         variables.append(",typeHandler=").append(typeHandler);
       }

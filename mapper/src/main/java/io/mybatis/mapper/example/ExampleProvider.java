@@ -37,7 +37,7 @@ public class ExampleProvider {
           "        ${setValue.condition},\n" +
           "      </when>\n" +
           "      <when test=\"setValue.singleValue\">\n" +
-          "        ${setValue.condition} = ${setValue.variables('setValue', 'value')},\n" +
+          "        ${setValue.condition} = ${setValue.variables('setValue.value')},\n" +
           "      </when>\n" +
           "    </choose>\n" +
           "  </foreach>\n" +
@@ -48,17 +48,17 @@ public class ExampleProvider {
           "              AND ${criterion.condition}\n" +
           "            </when>\n" +
           "            <when test=\"criterion.singleValue\">\n" +
-          "              AND ${criterion.condition} ${criterion.variables('criterion', 'value')}\n" +
+          "              AND ${criterion.condition} ${criterion.variables('criterion.value')}\n" +
           "            </when>\n" +
           "            <when test=\"criterion.betweenValue\">\n" +
-          "              AND ${criterion.condition} ${criterion.variables('criterion', 'value')} AND\n" +
-          "              ${criterion.variables('criterion', 'secondValue')}\n" +
+          "              AND ${criterion.condition} ${criterion.variables('criterion.value')} AND\n" +
+          "              ${criterion.variables('criterion.secondValue')}\n" +
           "            </when>\n" +
           "            <when test=\"criterion.listValue\">\n" +
           "              AND ${criterion.condition}\n" +
           "              <foreach close=\")\" collection=\"criterion.value\" item=\"listItem\"\n" +
           "                open=\"(\" separator=\",\">\n" +
-          "                ${criterion.variables(null, 'listItem')}\n" +
+          "                ${criterion.variables('listItem')}\n" +
           "              </foreach>\n" +
           "            </when>\n";
 
