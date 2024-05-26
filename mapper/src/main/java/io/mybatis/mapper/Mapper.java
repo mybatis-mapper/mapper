@@ -48,7 +48,7 @@ public interface Mapper<T, I extends Serializable> extends BaseMapper<T, I> {
   //@SelectKey(statement = "SELECT SEQ.NEXTVAL FROM DUAL", keyProperty = "id", before = true, resultType = long.class)
   @Options(useGeneratedKeys = true, keyProperty = "id")
   @InsertProvider(type = EntityProvider.class, method = "insert")
-  int insert(T entity);
+  <S extends T> int insert(S entity);
 
   /**
    * 保存实体中不为空的字段，默认主键自增，并且名称为 id
@@ -63,6 +63,6 @@ public interface Mapper<T, I extends Serializable> extends BaseMapper<T, I> {
   //@SelectKey(statement = "SELECT SEQ.NEXTVAL FROM DUAL", keyProperty = "id", before = true, resultType = long.class)
   @Options(useGeneratedKeys = true, keyProperty = "id")
   @InsertProvider(type = EntityProvider.class, method = "insertSelective")
-  int insertSelective(T entity);
+  <S extends T> int insertSelective(S entity);
 
 }

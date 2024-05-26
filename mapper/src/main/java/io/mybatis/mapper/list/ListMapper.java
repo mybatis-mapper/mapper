@@ -40,7 +40,7 @@ public interface ListMapper<T> {
    */
   @Lang(Caching.class)
   @InsertProvider(type = ListProvider.class, method = "insertList")
-  int insertList(@Param("entityList") List<? extends T> entityList);
+  <S extends T> int insertList(@Param("entityList") List<S> entityList);
 
   /**
    * 批量更新
@@ -50,7 +50,7 @@ public interface ListMapper<T> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = ListProvider.class, method = "updateList")
-  int updateList(@Param("entityList") List<? extends T> entityList);
+  <S extends T> int updateList(@Param("entityList") List<S> entityList);
 
 
   /**
@@ -61,5 +61,5 @@ public interface ListMapper<T> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = ListProvider.class, method = "updateListSelective")
-  int updateListSelective(@Param("entityList") List<? extends T> entityList);
+  <S extends T> int updateListSelective(@Param("entityList") List<S> entityList);
 }

@@ -25,7 +25,7 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByPrimaryKeySelectiveWithForceFields")
-  int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") T entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
+  <S extends T> int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") S entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
 
   /* BaseMapper --- */
 
@@ -58,12 +58,12 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByPrimaryKey")
-  int updateByPrimaryKey(T entity);
+  <S extends T> int updateByPrimaryKey(S entity);
 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByPrimaryKeySelective")
-  int updateByPrimaryKeySelective(T entity);
+  <S extends T> int updateByPrimaryKeySelective(S entity);
 
   @Override
   @Lang(Caching.class)
@@ -115,7 +115,7 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByExample")
-  int updateByExample(@Param("entity") T entity, @Param("example") Example<T> example);
+  <S extends T> int updateByExample(@Param("entity") S entity, @Param("example") Example<T> example);
 
   @Override
   @Lang(Caching.class)
@@ -125,7 +125,7 @@ public interface LogicalMapper<T, I extends Serializable> extends BaseMapper<T, 
   @Override
   @Lang(Caching.class)
   @UpdateProvider(type = LogicalProvider.class, method = "updateByExampleSelective")
-  int updateByExampleSelective(@Param("entity") T entity, @Param("example") Example<T> example);
+  <S extends T> int updateByExampleSelective(@Param("entity") S entity, @Param("example") Example<T> example);
 
   @Override
   @Lang(Caching.class)

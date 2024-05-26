@@ -40,7 +40,7 @@ public interface EntityMapper<T, I> extends EntityInfoMapper<T> {
    */
   @Lang(Caching.class)
   @InsertProvider(type = EntityProvider.class, method = "insert")
-  int insert(T entity);
+  <S extends T> int insert(S entity);
 
   /**
    * 保存实体中不为空的字段
@@ -50,7 +50,7 @@ public interface EntityMapper<T, I> extends EntityInfoMapper<T> {
    */
   @Lang(Caching.class)
   @InsertProvider(type = EntityProvider.class, method = "insertSelective")
-  int insertSelective(T entity);
+  <S extends T> int insertSelective(S entity);
 
   /**
    * 根据主键删除
@@ -80,7 +80,7 @@ public interface EntityMapper<T, I> extends EntityInfoMapper<T> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = EntityProvider.class, method = "updateByPrimaryKey")
-  int updateByPrimaryKey(T entity);
+  <S extends T> int updateByPrimaryKey(S entity);
 
   /**
    * 根据主键更新实体中不为空的字段
@@ -90,7 +90,7 @@ public interface EntityMapper<T, I> extends EntityInfoMapper<T> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = EntityProvider.class, method = "updateByPrimaryKeySelective")
-  int updateByPrimaryKeySelective(T entity);
+  <S extends T> int updateByPrimaryKeySelective(S entity);
 
   /**
    * 根据主键查询实体

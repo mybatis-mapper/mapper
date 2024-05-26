@@ -60,7 +60,7 @@ public interface BaseMapper<T, I extends Serializable>
    */
   @Lang(Caching.class)
   @UpdateProvider(type = FnProvider.class, method = "updateByPrimaryKeySelectiveWithForceFields")
-  int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") T entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
+  <S extends T> int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") S entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
 
   /**
    * 根据指定字段集合查询：field in (fieldValueList)

@@ -16,12 +16,25 @@
 
 package io.mybatis.provider.jpa;
 
+import io.mybatis.mapper.example.Example;
 import io.mybatis.provider.BaseTest;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class UserBaseMapperTest extends BaseTest {
+
+  class UserExtend extends User {
+    private String extend;
+
+    public String getExtend() {
+      return extend;
+    }
+
+    public void setExtend(String extend) {
+      this.extend = extend;
+    }
+  }
 
   @Test
   public void testSelectById() {
@@ -40,6 +53,28 @@ public class UserBaseMapperTest extends BaseTest {
       Assert.assertEquals(1, count);
       count = userMapper.deleteByPrimaryKey(user.getId());
       Assert.assertEquals(0, count);
+      sqlSession.rollback();
+    }
+  }
+
+  @Test
+  public void testExtend() {
+    try (SqlSession sqlSession = getSqlSession()) {
+      UserBaseMapper userMapper = sqlSession.getMapper(UserBaseMapper.class);
+      UserExtend userExtend = new UserExtend();
+      userExtend.setId(999L);
+      userExtend.setUsername("张无忌");
+      userExtend.setExtend("扩展字段");
+      Assert.assertEquals(1, userMapper.insert(userExtend));
+
+      Example<User> example = userMapper.example();
+      example.createCriteria().andEqualTo(User::getId, userExtend.getId());
+      userExtend.setUsername("test");
+      Assert.assertEquals(1, userMapper.updateByExample(userExtend, example));
+
+
+      int count = userMapper.deleteByPrimaryKey(userExtend.getId());
+      Assert.assertEquals(1, count);
       sqlSession.rollback();
     }
   }

@@ -42,7 +42,7 @@ public interface FnMapper<T> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = FnProvider.class, method = "updateByPrimaryKeySelectiveWithForceFields")
-  int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") T entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
+  <S extends T> int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") S entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
 
   /**
    * 根据实体字段条件查询唯一的实体（{@link io.mybatis.mapper.example.ExampleMapper} 可以实现一样的功能，当前方法只是示例）

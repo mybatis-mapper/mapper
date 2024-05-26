@@ -60,7 +60,7 @@ public interface ExampleMapper<T, E> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = ExampleProvider.class, method = "updateByExample")
-  int updateByExample(@Param("entity") T entity, @Param("example") E example);
+  <S extends T> int updateByExample(@Param("entity") S entity, @Param("example") E example);
 
   /**
    * 根据 Example 条件和 setValue 值更新字段
@@ -81,7 +81,7 @@ public interface ExampleMapper<T, E> {
    */
   @Lang(Caching.class)
   @UpdateProvider(type = ExampleProvider.class, method = "updateByExampleSelective")
-  int updateByExampleSelective(@Param("entity") T entity, @Param("example") E example);
+  <S extends T> int updateByExampleSelective(@Param("entity") S entity, @Param("example") E example);
 
   /**
    * 根据 Example 条件批量查询
