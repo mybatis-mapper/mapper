@@ -54,6 +54,9 @@ public class UserAutoBaseMapperTest extends BaseMapperTest {
           .set(UserAuto::getAddress, new UserAuto.Address("河北省", "秦皇岛市"))
           .eq(UserAuto::getId, 1L).update();
       Assert.assertEquals(1, update);
+
+      int delete = userAutoMapper.wrapper().eq(UserAuto::getAddress, new UserAuto.Address("河北省", "秦皇岛市")).delete();
+      Assert.assertEquals(1, delete);
       sqlSession.rollback();
     } finally {
       //不要忘记关闭sqlSession
