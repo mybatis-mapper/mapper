@@ -3,6 +3,7 @@ package io.mybatis.mapper.logical;
 import io.mybatis.mapper.BaseMapperTest;
 import io.mybatis.mapper.UserMapper;
 import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 import io.mybatis.mapper.fn.Fn;
 import io.mybatis.mapper.model.User;
 import org.apache.ibatis.cursor.Cursor;
@@ -17,6 +18,39 @@ import java.util.Optional;
  * @author hzw
  */
 public class LogicalMapperTest extends BaseMapperTest {
+
+  @Test
+  public void testWrapper() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+
+      Assert.assertEquals(53, userMapper.wrapper().list().size());
+      Assert.assertEquals(53, userMapper.wrapper().count());
+
+      ExampleWrapper<User, Long> wrapper = userMapper.wrapper().select(User::getStatus, User::getId, User::getUserName)
+          .eq(User::getUserName, "张翠山");
+      wrapper.list().forEach(System.out::println);
+
+      Assert.assertEquals(1, wrapper.list().size());
+      Assert.assertEquals(1, wrapper.count());
+      Assert.assertTrue(wrapper.one().isPresent());
+
+      // logical delete+++
+      int deleteCount = 0;
+      Assert.assertEquals(1, wrapper.delete());
+      deleteCount++;
+      Assert.assertEquals(0, wrapper.delete());
+
+
+      // logical delete ---
+      Assert.assertEquals(53 - deleteCount, userMapper.wrapper().count());
+      sqlSession.rollback();
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
 
   @Test
   public void testSelect() {
