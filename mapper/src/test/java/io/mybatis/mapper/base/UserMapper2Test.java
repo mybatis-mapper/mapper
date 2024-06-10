@@ -177,7 +177,7 @@ public class UserMapper2Test extends BaseMapperTest {
           .gt(User::getId, 1L)
           .le(User::getId, 16L)
           .eq(User::getSex, "女").list();
-
+      Assert.assertEquals(44, users.size());
       //构建的wrapper可以多次使用
       //查询条件为 id > 50 or id <= 5 or sex = '女'
       ExampleWrapper<User, Long> wrapper = mapper.wrapper()
@@ -189,6 +189,13 @@ public class UserMapper2Test extends BaseMapperTest {
       //使用当前条件获取前5条数据
       users = wrapper.top(5);
       Assert.assertEquals(5, users.size());
+
+      users = wrapper.page(2, 2);
+      Assert.assertEquals(2, users.size());
+
+      users = wrapper.offset(2, 3);
+      Assert.assertEquals(3, users.size());
+
       //追加条件后查询数量
       count = wrapper.select(User::getSex).distinct().count();
       Assert.assertEquals(2, count);
