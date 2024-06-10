@@ -19,6 +19,7 @@ package io.mybatis.mapper.example;
 import io.mybatis.common.util.Assert;
 import io.mybatis.mapper.BaseMapper;
 import io.mybatis.mapper.fn.Fn;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.RowBounds;
 
@@ -899,6 +900,18 @@ public class ExampleWrapper<T, I extends Serializable> {
    */
   public List<T> list() {
     return baseMapper.selectByExample(example);
+  }
+
+  public List<T> page(int pageNum, int pageSize) {
+    return baseMapper.selectByExample(example, new RowBounds((pageNum - 1) * pageSize, pageSize));
+  }
+
+  public List<T> offset(int offset, int limit) {
+    return baseMapper.selectByExample(example, new RowBounds(offset, limit));
+  }
+
+  public Cursor<T> cursor() {
+    return baseMapper.selectCursorByExample(example);
   }
 
   /**
