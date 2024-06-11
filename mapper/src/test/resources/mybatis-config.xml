@@ -30,6 +30,11 @@
     <package name="io.mybatis.simple.model"/>
   </typeAliases>
 
+  <plugins>
+    <!-- com.github.pagehelper为PageHelper类所在包名 -->
+    <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+  </plugins>
+
   <environments default="development">
     <environment id="development">
       <transactionManager type="JDBC">
