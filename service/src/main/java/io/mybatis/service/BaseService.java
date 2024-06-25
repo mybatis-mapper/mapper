@@ -16,6 +16,8 @@
 
 package io.mybatis.service;
 
+import io.mybatis.mapper.example.ExampleWrapper;
+
 import java.io.Serializable;
 
 /**
@@ -31,4 +33,5 @@ import java.io.Serializable;
  */
 public interface BaseService<T, I extends Serializable> extends EntityService<T, I>, ExampleService<T, I> {
 
+  ExampleWrapper<T, I> wrapper();
 }
