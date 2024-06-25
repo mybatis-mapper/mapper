@@ -1359,8 +1359,15 @@ public class Example<T> {
       super();
       this.condition = condition;
       this.value = value;
-      this.javaType = value != null ? column.javaType().getName() : null;
-      this.typeHandler = typeHandler != null ? column.typeHandler().getName() : null;
+      if (column != null) {
+        Class<?> javaTypeClass = column.javaType();
+        if (javaTypeClass != null) {
+          this.javaType = javaTypeClass.getName();
+        }
+        if (column.typeHandler() != null) {
+          this.typeHandler = column.typeHandler().getName();
+        }
+      }
       if (value instanceof Collection<?>) {
         if (condition != null) {
           this.listValue = true;
@@ -1377,8 +1384,15 @@ public class Example<T> {
       this.condition = condition;
       this.value = value;
       this.secondValue = secondValue;
-      this.javaType = value != null ? column.javaType().getName() : null;
-      this.typeHandler = typeHandler != null ? column.typeHandler().getName() : null;
+      if (column != null) {
+        Class<?> javaTypeClass = column.javaType();
+        if (javaTypeClass != null) {
+          this.javaType = javaTypeClass.getName();
+        }
+        if (column.typeHandler() != null) {
+          this.typeHandler = column.typeHandler().getName();
+        }
+      }
       this.betweenValue = true;
     }
 
