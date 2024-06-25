@@ -476,7 +476,7 @@ public class Example<T> {
    */
   public Example<T> set(Fn<T, Object> fn, Object value) {
     EntityColumn column = fn.toEntityColumn();
-    this.setValues.add(new Criterion(column.column(), value, column.typeHandler()));
+    this.setValues.add(new Criterion(column.column(), value, column));
     return this;
   }
 
@@ -545,11 +545,11 @@ public class Example<T> {
       criteria.add(new Criterion(condition, value));
     }
 
-    protected void addCriterion(String condition, Object value, Class<? extends TypeHandler> typeHandler) {
+    protected void addCriterion(String condition, Object value, EntityColumn column) {
       if (value == null) {
         throw new RuntimeException("Value for " + condition + " cannot be null");
       }
-      criteria.add(new Criterion(condition, value, typeHandler));
+      criteria.add(new Criterion(condition, value, column));
     }
 
     protected void addCriterion(String condition, Object value1, Object value2) {
@@ -559,11 +559,11 @@ public class Example<T> {
       criteria.add(new Criterion(condition, value1, value2));
     }
 
-    protected void addCriterion(String condition, Object value1, Object value2, Class<? extends TypeHandler> typeHandler) {
+    protected void addCriterion(String condition, Object value1, Object value2, EntityColumn column) {
       if (value1 == null || value2 == null) {
         throw new RuntimeException("Between values for " + condition + " cannot be null");
       }
-      criteria.add(new Criterion(condition, value1, value2, typeHandler));
+      criteria.add(new Criterion(condition, value1, value2, column));
     }
 
     public Criteria<T> andIsNull(boolean useCondition, Fn<T, Object> fn) {
@@ -590,7 +590,7 @@ public class Example<T> {
 
     public Criteria<T> andEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " =", value, typehandler(fn));
+        addCriterion(column(fn) + " =", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -601,7 +601,7 @@ public class Example<T> {
 
     public Criteria<T> andNotEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <>", value, typehandler(fn));
+        addCriterion(column(fn) + " <>", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -612,7 +612,7 @@ public class Example<T> {
 
     public Criteria<T> andGreaterThan(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " >", value, typehandler(fn));
+        addCriterion(column(fn) + " >", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -623,7 +623,7 @@ public class Example<T> {
 
     public Criteria<T> andGreaterThanOrEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " >=", value, typehandler(fn));
+        addCriterion(column(fn) + " >=", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -634,7 +634,7 @@ public class Example<T> {
 
     public Criteria<T> andLessThan(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <", value, typehandler(fn));
+        addCriterion(column(fn) + " <", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -645,7 +645,7 @@ public class Example<T> {
 
     public Criteria<T> andLessThanOrEqualTo(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + " <=", value, typehandler(fn));
+        addCriterion(column(fn) + " <=", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -657,7 +657,7 @@ public class Example<T> {
     @SuppressWarnings("rawtypes")
     public Criteria<T> andIn(Fn<T, Object> fn, Iterable values) {
       if (useCriterion(values)) {
-        addCriterion(column(fn) + " IN", values, typehandler(fn));
+        addCriterion(column(fn) + " IN", values, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -669,7 +669,7 @@ public class Example<T> {
     @SuppressWarnings("rawtypes")
     public Criteria<T> andNotIn(Fn<T, Object> fn, Iterable values) {
       if (useCriterion(values)) {
-        addCriterion(column(fn) + " NOT IN", values, typehandler(fn));
+        addCriterion(column(fn) + " NOT IN", values, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -680,7 +680,7 @@ public class Example<T> {
 
     public Criteria<T> andBetween(Fn<T, Object> fn, Object value1, Object value2) {
       if (useCriterion(value1) && useCriterion(value2)) {
-        addCriterion(column(fn) + " BETWEEN", value1, value2, typehandler(fn));
+        addCriterion(column(fn) + " BETWEEN", value1, value2, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -691,7 +691,7 @@ public class Example<T> {
 
     public Criteria<T> andNotBetween(Fn<T, Object> fn, Object value1, Object value2) {
       if (useCriterion(value1) && useCriterion(value2)) {
-        addCriterion(column(fn) + " NOT BETWEEN", value1, value2, typehandler(fn));
+        addCriterion(column(fn) + " NOT BETWEEN", value1, value2, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -702,7 +702,7 @@ public class Example<T> {
 
     public Criteria<T> andLike(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + "  LIKE", value, typehandler(fn));
+        addCriterion(column(fn) + "  LIKE", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -713,7 +713,7 @@ public class Example<T> {
 
     public Criteria<T> andNotLike(Fn<T, Object> fn, Object value) {
       if (useCriterion(value)) {
-        addCriterion(column(fn) + "  NOT LIKE", value, typehandler(fn));
+        addCriterion(column(fn) + "  NOT LIKE", value, fn.toEntityColumn());
       }
       return (Criteria<T>) this;
     }
@@ -1331,6 +1331,8 @@ public class Example<T> {
 
     private Object secondValue;
 
+    private String javaType;
+
     private String typeHandler;
 
     private boolean noValue;
@@ -1353,11 +1355,12 @@ public class Example<T> {
       this.noValue = true;
     }
 
-    protected Criterion(String condition, Object value, Class<? extends TypeHandler> typeHandler) {
+    protected Criterion(String condition, Object value, EntityColumn column) {
       super();
       this.condition = condition;
       this.value = value;
-      this.typeHandler = typeHandler != null ? typeHandler.getName() : null;
+      this.javaType = value != null ? column.javaType().getName() : null;
+      this.typeHandler = typeHandler != null ? column.typeHandler().getName() : null;
       if (value instanceof Collection<?>) {
         if (condition != null) {
           this.listValue = true;
@@ -1369,12 +1372,13 @@ public class Example<T> {
       }
     }
 
-    protected Criterion(String condition, Object value, Object secondValue, Class<? extends TypeHandler> typeHandler) {
+    protected Criterion(String condition, Object value, Object secondValue, EntityColumn column) {
       super();
       this.condition = condition;
       this.value = value;
       this.secondValue = secondValue;
-      this.typeHandler = typeHandler != null ? typeHandler.getName() : null;
+      this.javaType = value != null ? column.javaType().getName() : null;
+      this.typeHandler = typeHandler != null ? column.typeHandler().getName() : null;
       this.betweenValue = true;
     }
 
@@ -1385,6 +1389,9 @@ public class Example<T> {
     public String variables(String field) {
       StringBuilder variables = new StringBuilder();
       variables.append("#{").append(field);
+      if (javaType != null && !javaType.isEmpty()) {
+        variables.append(",javaType=").append(javaType);
+      }
       if (typeHandler != null && !typeHandler.isEmpty()) {
         variables.append(",typeHandler=").append(typeHandler);
       }
