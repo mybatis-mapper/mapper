@@ -47,6 +47,31 @@ public class UserFnMapperTest extends BaseMapperTest {
   }
 
   @Test
+  public void testUpdateForFieldListByPrimaryKey() {
+    SqlSession sqlSession = getSqlSession();
+    try {
+      // 元数据（1, '张无忌', '男', 1)
+      UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+      User user = mapper.selectByPrimaryKey(1L).get();
+      user.setUserName("test");
+      user.setSex("女");
+      user.setStatus(false);
+      int count = mapper.updateForFieldListByPrimaryKey(user, Fn.of(User::getUserName, User::getStatus));
+      Assert.assertEquals(1, count);
+      user = mapper.selectByPrimaryKey(1L).get();
+      // 断言 sex 不会被更新
+      Assert.assertEquals("男", user.getSex());
+      // 断言userName被成功更新
+      Assert.assertEquals("test", user.getUserName());
+      // 短信 status不会被更新，user status 为不允许更新字段, 所以这里不会更新
+      Assert.assertEquals(user.getStatus(), true);
+    } finally {
+      //不要忘记关闭sqlSession
+      sqlSession.close();
+    }
+  }
+
+  @Test
   public void testSelectColumnsOne() {
     SqlSession sqlSession = getSqlSession();
     try {

@@ -183,6 +183,28 @@ public class ServiceTest {
   }
 
   @Test
+  public void testUpdate() {
+    // 元数据 (1, 'admin', 1)
+    UserService userService = context.getBean(UserService.class);
+    User user = userService.findById(1);
+    Assert.assertNotNull(user);
+
+    user.setName("administrator");
+    user.setRoleId(11);
+    userService.update(user, User::getName);
+    user = userService.findById(1);
+    Assert.assertEquals("administrator", user.getName());
+    Assert.assertEquals(1, (int) user.getRoleId());
+
+    user.setName("admin");
+    user.setRoleId(11);
+    userService.update(user, User::getRoleId);
+    user = userService.findById(1);
+    Assert.assertEquals("administrator", user.getName());
+    Assert.assertEquals(11, (int) user.getRoleId());
+  }
+
+  @Test
   public void testIssues50() {
     UserService userService = context.getBean(UserService.class);
 

@@ -53,6 +53,27 @@ public class FnProvider {
   }
 
   /**
+   * 根据主键更新指定的字段
+   *
+   * @param providerContext 上下文
+   * @return cacheKey
+   */
+  public static String updateForFieldListByPrimaryKey(ProviderContext providerContext) {
+    return SqlScript.caching(providerContext, new SqlScript() {
+      @Override
+      public String getSql(EntityTable entity) {
+        return "UPDATE " + entity.tableName()
+            + set(() ->
+            entity.updateColumns().stream().map(column ->
+                choose(() ->
+                    whenTest("fns != null and fns.fieldNames().contains('" + column.property() + "')", () -> column.columnEqualsProperty("entity.") + ","))
+            ).collect(Collectors.joining(LF)))
+            + where(() -> entity.idColumns().stream().map(column -> column.columnEqualsProperty("entity.")).collect(Collectors.joining(" AND ")));
+      }
+    });
+  }
+
+  /**
    * 根据实体字段条件查询唯一的实体，根据实体字段条件批量查询，查询结果的数量由方法定义
    *
    * @param providerContext 上下文

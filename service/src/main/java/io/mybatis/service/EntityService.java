@@ -56,6 +56,15 @@ public interface EntityService<T, I extends Serializable> {
   T update(T entity);
 
   /**
+   * 更新（指定字段）
+   *
+   * @param entity       实体类
+   * @param updateFields 需要更新的字段
+   * @return 返回更新成功后的实体，远程服务调用时，由于序列化和反序列化，入参和返回值不是同一个对象
+   */
+  T update(T entity, Fn<T, Object>... updateFields);
+
+  /**
    * 更新（非空字段）
    *
    * @param entity 实体类
