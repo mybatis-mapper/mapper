@@ -63,6 +63,17 @@ public interface BaseMapper<T, I extends Serializable>
   <S extends T> int updateByPrimaryKeySelectiveWithForceFields(@Param("entity") S entity, @Param("fns") Fn.Fns<T> forceUpdateFields);
 
   /**
+   * 根据主键更新指定的字段
+   *
+   * @param entity       实体类型
+   * @param updateFields 指定更新的字段
+   * @return 1成功，0失败
+   */
+  @Lang(Caching.class)
+  @UpdateProvider(type = FnProvider.class, method = "updateForFieldListByPrimaryKey")
+  <S extends T> int updateForFieldListByPrimaryKey(@Param("entity") S entity, @Param("fns") Fn.Fns<T> updateFields);
+
+  /**
    * 根据指定字段集合查询：field in (fieldValueList)
    * <p>
    * 这个方法是个示例，你也可以使用 Java8 的默认方法实现一些通用方法

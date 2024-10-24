@@ -85,6 +85,13 @@ public abstract class AbstractService<T, I extends Serializable, M extends BaseM
   }
 
   @Override
+  public T update(T entity, Fn<T, Object>... updateFields) {
+    Assert.isTrue(baseMapper.updateForFieldListByPrimaryKey(
+        entity, Fn.of(updateFields)) == 1, UPDATE_FAILURE);
+    return entity;
+  }
+
+  @Override
   public T updateSelective(T entity) {
     Assert.isTrue(baseMapper.updateByPrimaryKeySelective(entity) == 1, UPDATE_FAILURE);
     return entity;
