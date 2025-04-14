@@ -91,3 +91,11 @@ insert into user_auto(id, user_name, address)
 values (1, 'sjz', '河北省/石家庄市'),
        (2, 'hd', '河北省/邯郸市'),
        (3, 'xt', '河北省/邢台市');
+
+CREATE TABLE yahoo_items (
+  data_id VARCHAR(255) NOT NULL,
+  item_id VARCHAR(255) NOT NULL,
+  insert_time TIMESTAMP,
+  update_time TIMESTAMP,
+  PRIMARY KEY (data_id)
+);
