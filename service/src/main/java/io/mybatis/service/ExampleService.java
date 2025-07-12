@@ -74,6 +74,14 @@ public interface ExampleService<T, I extends Serializable> {
   T findOne(Example<T> example);
 
   /**
+   * 根据 example 条件查询并返回第1个结果(当结果多于1个时不抛出异常)
+   *
+   * @param example 查询条件
+   * @return 实体
+   */
+  T findFirst(Example<T> example);
+
+  /**
    * 根据 example 条件查询
    *
    * @param example 查询条件
