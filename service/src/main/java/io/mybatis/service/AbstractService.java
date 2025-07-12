@@ -260,6 +260,18 @@ public abstract class AbstractService<T, I extends Serializable, M extends BaseM
   }
 
   /**
+   * 根据 example 条件查询并返回第1个结果(当结果多于1个时不抛出异常)
+   *
+   * @param example 查询条件
+   * @return 实体
+   */
+  @Override
+  public T findFirst(Example<T> example) {
+    List<T> list = baseMapper.selectByExample(example);
+    return (list == null || list.isEmpty()) ? null : list.get(0);
+  }
+
+  /**
    * 根据 example 条件查询
    *
    * @param example 查询条件
