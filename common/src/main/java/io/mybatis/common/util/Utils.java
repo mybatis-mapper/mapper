@@ -93,7 +93,7 @@ public class Utils {
     return Character.isWhitespace(c)
         || Character.isSpaceChar(c)
         || c == '\ufeff'
-        || c == '\u202a';
+        || Character.getType(c) == Character.FORMAT;
   }
 
   /**
